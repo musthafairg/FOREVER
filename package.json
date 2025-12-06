@@ -11,12 +11,14 @@
   "author": "musthfairg",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
     "mongoose": "^9.0.1",
-    "nocache": "^4.0.0"
+    "nocache": "^4.0.0",
+    "nodemailer": "^7.0.11"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

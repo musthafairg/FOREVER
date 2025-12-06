@@ -1,0 +1,41 @@
+<header class="site-header">
+  <div class="navbar">
+    <div class="logo">
+      <a href="/">FOREVER<span class="dot">.</span></a>
+    </div>
+
+    <nav class="main-nav">
+      <ul>
+        <li><a href="/">HOME</a></li>
+        <li><a href="/shop">COLLECTION</a></li>
+        <li><a href="/about">ABOUT</a></li>
+        <li><a href="/contact">CONTACT</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-right">
+      <% if (locals.user) { %>
+        <div class="dropdown user-dropdown">
+          <button type="button" class="sign-in-link dropdown-toggle">
+            <%= locals.user.name %> <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-content">
+            <a href="/userprofile">Profile</a>
+            <a href="/logout">Logout</a>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/signup" class="sign-in-link">Sign Up</a>
+        <a href="/login" class="sign-in-link">Log in</a>
+      <% } %>
+
+      <div class="icons">
+        <i class="fa-regular fa-heart"></i>
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <i class="fa-regular fa-user"></i>
+        <i class="fa-solid fa-bag-shopping"></i>
+        <i class="fa-solid fa-bars menu-toggle"></i>
+      </div>
+    </div>
+  </div>
+</header>
