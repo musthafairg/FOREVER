@@ -80,7 +80,7 @@ export const verifyOtp= async(req,res)=>{
 
     try {
         const {otp}=req.body;
-        console.log("otp from eq.body ",otp);
+        console.log("otp from req.body ",otp);
         
 
         if(Date.now() > req.session.otpExpires){
@@ -131,6 +131,48 @@ export const verifyOtp= async(req,res)=>{
 }
 
 export const resendOtp= async(req,res)=>{
+
+    try {
+        const userData=req.session.userData;
+
+        if(!userData|| !userData.email){
+            return res.status(400).json({
+                success:false,
+                message:"Session Expired. Please signup again."
+            })
+        }
+
+        const email=userData.email;
+
+        const otp=generateOtp();
+        req.session.userOtp=otp;
+        req.session.otpExpires=Date.now()+60*1000;
+
+        const emailSent= await sendVerificationEmail(email,otp);
+
+        if(emailSent){
+            console.log("Resend OTP : ",otp);
+
+            return res.status(200).json({
+                success:true,
+                message:"OTP resent successfully."
+            })
+            
+        }else{
+            return res.status(500).json({
+                success:false,
+                message:"Failed to resen OTP. Please try again."
+            })
+        }
+    } catch (error) {
+        console.error("Error resending OTP : ",error.message);
+
+        return res.status(500).json({
+            success:false,
+            message:"Internal Server Error. Please try again."
+        })
+                
+    }
 
 }
 
