@@ -1,0 +1,32 @@
+<%- include('../partials/admin/header.ejs', { page: 'dashboard' }) %>
+<div class="main-layout">
+    
+    <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="<%= locals.page === 'dashboard' ? 'active' : '' %>">
+                        <a href="/admin" style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                  
+                    <li class="<%= locals.page === 'users' ? 'active' : '' %>">
+                        <a href="/admin/users" style="color: inherit; text-decoration: none;">
+                            <i class="fas fa-users"></i>
+                            Users
+                        </a>
+                    </li>
+               
+                   
+                </ul>
+            </nav>
+        </aside>
+        
+
+<main class="dashboard-content">
+    <h2>Dashboard</h2>
+
+    
+</main>
+

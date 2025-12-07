@@ -1,0 +1,506 @@
+/* ================================================= */
+/* === admin.css: Global Variables and Styles === */
+/* ================================================= */
+
+:root {
+    --primary-color: #b25b8e;
+    --sidebar-width: 250px;
+    --header-height: 60px;
+    --card-product-bg: #f5e4ed;
+    --card-customer-bg: #e4f5ed;
+    --card-order-bg: #e8e4f5;
+    --card-revenue-bg: #f5f3e4;
+    --card-product-icon: #b25b8e;
+    --card-customer-icon: #5bb28e;
+    --card-order-icon: #8e5bb2;
+    --card-revenue-icon: #b28e5b;
+}
+
+/* --- Global Reset & Layout --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #fcfcfc;
+    min-height: 100vh;
+}
+
+/* ================================================= */
+/* === 1. HEADER STYLES === */
+/* ================================================= */
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--header-height);
+    padding: 0 30px;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.dot {
+    color: var(--primary-color);
+}
+
+.logout-button {
+    padding: 8px 15px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+    text-decoration: none; /* Ensure link style is removed */
+}
+
+.logout-button:hover {
+    background-color: #333;
+}
+
+/* ================================================= */
+/* === 2. MAIN LAYOUT AND SIDEBAR STYLES === */
+/* ================================================= */
+
+.main-layout {
+    display: flex;
+    min-height: calc(100vh - var(--header-height));
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background-color: #fff;
+    padding-top: 20px;
+    border-right: 1px solid #eee;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.03);
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav li {
+    /* Base style for list item */
+    padding: 0; /* Remove base padding as it's added to the anchor */
+    color: #555;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+/* Apply padding and display flex to the anchor tag for alignment and hover area */
+.sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 30px; 
+    color: inherit; /* Inherit color from li */
+    text-decoration: none;
+    width: 100%;
+}
+
+.sidebar-nav li a i {
+    margin-right: 15px;
+    font-size: 1.1rem;
+}
+
+/* Hover styles applied to the list item or its anchor */
+.sidebar-nav li:hover {
+    background-color: #f7f7f7;
+    color: #000;
+}
+
+/* Active state for the list item */
+.sidebar-nav li.active {
+    background-color: var(--card-product-bg);
+    color: var(--primary-color);
+    border-left: 5px solid var(--primary-color);
+    /* Adjust anchor padding to compensate for the border-left shift */
+}
+
+.sidebar-nav li.active a {
+    padding-left: 25px; /* (30px original padding - 5px border-left) */
+}
+
+
+/* ================================================= */
+/* === 3. DASHBOARD CONTENT STYLES === */
+/* ================================================= */
+
+.dashboard-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #fcfcfc;
+}
+
+.dashboard-content h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* --- Search Bar Styling (Enhancing Bootstrap look) --- */
+.input-group.rounded-pill .form-control {
+    border-top-left-radius: 50rem !important;
+    border-bottom-left-radius: 50rem !important;
+}
+
+.input-group.rounded-pill .btn {
+    border-top-right-radius: 50rem !important;
+    border-bottom-right-radius: 50rem !important;
+}
+
+.table-container {
+    background-color: #fff; /* Added white background for the table container */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Soft shadow */
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Standard table styling for non-Bootstrap tables (redundant if using Bootstrap) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+/* If you are using Bootstrap's .table-striped, some of these might be overridden */
+th {
+    background-color: #f7f7f7;
+    text-align: left;
+    padding: 12px 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle; /* Changed from top for better button alignment */
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* The rest of the CSS for cards, graph, and orders is omitted here for brevity but should be included in your full admin.css file. */
+
+
+/* --- Responsiveness --- */
+@media (max-width: 768px) {
+    /* ... (Existing media queries) ... */
+    
+    .sidebar-nav li {
+        padding: 0; /* Resetting padding for small screens */
+    }
+
+    .sidebar-nav li a {
+        padding: 12px; /* Apply padding to anchor instead */
+        justify-content: center;
+    }
+    .sidebar-nav li a span { /* Targets the text inside the anchor */
+        display: none;
+    }
+    .sidebar-nav li a i {
+        margin-right: 0;
+    }
+    .sidebar-nav li.active {
+        border-left: 0;
+        border-top: 3px solid var(--primary-color);
+    }
+    .sidebar-nav li.active a {
+        padding-left: 12px; /* Reset padding for active state on small screen */
+    }
+    
+    /* ... (Rest of media queries) ... */
+}
+
+
+/* ================================================= */
+/* === 4. CATEGORY / ADD ITEM STYLES === */
+/* ================================================= */
+
+/* Grid layout for the main content (Form + Table) */
+.card-grid {
+    display: flex;
+    gap: 20px;
+}
+
+.card-form {
+    flex: 1; /* Takes up the left side, slightly smaller */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    min-width: 300px;
+}
+
+.card-table {
+    flex: 3; /* Takes up the right side, larger */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 0; /* Let card-body handle padding */
+}
+
+.card-form .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+}
+
+/* Re-using previous table/form styles and refining them */
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 1px rgba(178, 91, 142, 0.3); /* Custom focus ring */
+}
+
+textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.d-grid .btn-primary {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.d-grid .btn-primary:hover {
+    background-color: #a05080;
+}
+
+.error-message {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/* Table specific adjustments for the category page */
+.card-table .card-body {
+    padding: 20px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f7f7f7;
+}
+
+.table-hover th, .table-hover td {
+    vertical-align: middle;
+    padding: 12px;
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    border-radius: 4px;
+    margin: 2px;
+    text-decoration: none; /* For links inside buttons */
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+}
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+.btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+/* Ensure links inside buttons have white text */
+.btn-info a, .btn-danger a, .btn-success a {
+    color: white !important;
+    text-decoration: none;
+}
+
+/* Status Badges */
+.badge.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 5px 10px;
+}
+.badge.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 5px 10px;
+}
+
+/* Search Bar Styling (Adapted for a cleaner look) */
+.search-panel {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+.search-panel .input-group {
+    width: 400px; /* Adjust search bar width */
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.search-panel .form-control {
+    border: none;
+    margin-bottom: 0;
+    padding: 10px 15px;
+}
+.search-panel .btn {
+    background-color: #f7f7f7;
+    border-left: 1px solid #ddd;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.search-panel .btn:hover {
+    background-color: #eee;
+}
+
+/* Pagination Styling */
+.pagination-container {
+    text-align: center;
+    padding: 20px 0;
+}
+.pagination-container .btn {
+    margin: 0 5px;
+}
+.pagination-container .btn-outline-primary {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    background-color: #fff;
+}
+.pagination-container .btn-outline-primary:hover {
+    background-color: var(--card-product-bg);
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+    .card-grid {
+        flex-direction: column;
+    }
+    .card-form, .card-table {
+        min-width: unset;
+        width: 100%;
+    }
+    .search-panel {
+        justify-content: center;
+    }
+    .search-panel .input-group {
+        width: 100%;
+        max-width: 450px;
+    }
+}
+
+/* ================================================= */
+/* === New / Refined Styles for the Users Page / Standard Table Layout === */
+/* ================================================= */
+
+/* --- Standard Table Card --- */
+/* The .card-table style from section 4 already covers the general look (white background, shadow, border-radius). */
+.card.card-table {
+    padding: 0; /* Keep padding at 0 so card-body can manage internal spacing */
+    margin-bottom: 30px; /* Add some margin below the table container */
+}
+
+.card-table .card-body {
+    padding: 20px;
+}
+
+/* --- Search Bar Positioning for the Users Page --- */
+/* The existing .search-panel style targets the search bar effectively. We just ensure it's positioned correctly below the main title. */
+.dashboard-content .search-panel {
+    /* If you want the search bar on the right, use this: */
+    justify-content: flex-end;
+    margin-bottom: 25px;
+}
+
+/* If you want the search bar centered on small screens: */
+@media (max-width: 992px) {
+    .dashboard-content .search-panel {
+        justify-content: center;
+    }
+}
+
+
+/* --- Action Buttons (Block/Unblock) --- */
+/* Ensure the action buttons in the user list are consistently styled */
+td .btn-sm {
+    min-width: 80px; /* Give buttons a consistent width */
+    text-align: center;
+    font-weight: 500;
+}
+
+.btn-danger {
+    background-color: #dc3545; /* Red for Block */
+}
+
+.btn-success {
+    background-color: #28a745; /* Green for Unblock */
+}
+
+/* Make sure the text on the buttons is readable */
+.btn-danger, .btn-success {
+    color: #fff;
+    border: none;
+    text-decoration: none;
+}
+
+/* Active state for the list item */
+.sidebar-nav li.active {
+    /* This creates the pink background and primary text color */
+    background-color: var(--card-product-bg); /* #f5e4ed - Light Pink */
+    color: var(--primary-color); /* #b25b8e - Primary Pink */
+    
+    /* This creates the vertical bar */
+    border-left: 5px solid var(--primary-color);
+}
+
+.sidebar-nav li.active a {
+    /* Adjusts link padding to compensate for the border */
+    padding-left: 25px; /* (30px original padding - 5px border-left) */
+}

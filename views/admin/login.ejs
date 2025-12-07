@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOREVER. - User Login</title>
-
+    <title>FOREVER. - Admin Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,29 +14,29 @@
             min-height: 100vh;
             margin: 0;
             flex-direction: column;
-            padding: 20px;
+            padding: 20px; /* Add some padding for small screens */
             box-sizing: border-box;
         }
 
         .logo {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 40px;
-            color: #000;
+            font-size: 2.5rem; /* Larger font size for the logo */
+            font-weight: 800; /* Bolder for the logo */
+            margin-bottom: 40px; /* Space below the logo */
+            color: #000; /* Black color for the text */
             text-transform: uppercase;
         }
 
         .dot {
-            color: #b25b8e;
+            color: #b25b8e; /* The pink dot color */
         }
 
         .login-container {
             background-color: #fff;
             padding: 30px;
             border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Softer shadow */
             width: 100%;
-            max-width: 380px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            max-width: 380px; /* Max width for the form */
             text-align: center;
         }
 
@@ -49,8 +48,8 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
-            text-align: left;
+            margin-bottom: 20px; /* Space between form groups */
+            text-align: left; /* Align labels to the left */
         }
 
         .form-group label {
@@ -61,36 +60,21 @@
             font-weight: 500;
         }
 
-        .form-group input {
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
             width: 100%;
             padding: 12px 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: .5rem;
-            box-sizing: border-box;
+            font-size: 1rem;
+            box-sizing: border-box; /* Include padding in width */
         }
 
-        .form-group input:focus {
-            border-color: #b25b8e;
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus {
+            border-color: #b25b8e; /* Highlight on focus */
             outline: none;
             box-shadow: 0 0 0 2px rgba(178, 91, 142, 0.2);
-        }
-
-        .forgot-password {
-            margin-top: -10px;
-            margin-bottom: 15px;
-            text-align: right;
-        }
-
-        .forgot-password a {
-            color: #b25b8e;
-            font-size: 0.9rem;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .forgot-password a:hover {
-            text-decoration: underline;
         }
 
         .login-button {
@@ -103,94 +87,35 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 5px;
             transition: background-color 0.3s ease;
         }
 
         .login-button:hover {
             background-color: #333;
         }
-
-        .google-button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            color: #555;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-
-        .google-button img {
-            width: 20px;
-            height: 20px;
-        }
-
-        .signup-link {
-            margin-top: 18px;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        .signup-link a {
-            color: #b25b8e;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .signup-link a:hover {
-            text-decoration: underline;
-        }
     </style>
-
 </head>
 <body>
-
     <div class="logo">FOREVER<span class="dot">.</span></div>
 
     <div class="login-container">
-        <h2>Welcome Back</h2>
+        <h2>Admin Panel</h2>
 
-        <form action="/login" method="post">
+   <% if (typeof error !== 'undefined') { %>
+        <div class="error-message"><%= error %></div>
+    <% } %>
 
+        <form action="/admin/login" method="post" >
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" required>
             </div>
-
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-
-            <div class="forgot-password">
-                <a href="/forgot-password">Forgot Password?</a>
-            </div>
-
             <button type="submit" class="login-button">Login</button>
-
         </form>
-
-       <a href="/auth/google" class="google-button">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
-    Sign in with Google
-       </a>
-
-
-        <div class="signup-link">
-            Don't have an account?
-            <a href="/signup">Create one</a>
-        </div>
-
     </div>
-
 </body>
 </html>
