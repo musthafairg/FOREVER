@@ -4,6 +4,7 @@ import session from 'express-session'
 import nocache from 'nocache'
 import connectDB from './config/mongodb.js'
 import path from 'path'
+import passport from './config/passport.js'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import userRouter from './routes/user.js'
@@ -12,7 +13,7 @@ import adminRouter from './routes/admin.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const app = express()
-const port =process.env.PORT||4000
+const port =process.env.PORT||5000
 connectDB()
 
 
@@ -35,6 +36,10 @@ app.set('view engine','ejs')
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
+
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use('/',userRouter)
 app.use('/admin',adminRouter)

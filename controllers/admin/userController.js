@@ -22,10 +22,11 @@ export const userInfo= async(req,res)=>{
         const userData= await User.find({
             isAdmin:false,
             $or:[
-                {name:{$regex:".*"+search+".*"}},
-                {email:{$regex:".*"+search+".*"}},
+                {name:{$regex:".*"+search+".*",$options:"i"}},
+                {email:{$regex:".*"+search+".*",$options:"i"}},
             ]
         })
+        .sort({createdAt: -1})
         .limit(limit)
         .skip((page-1)*limit)
         .exec()
@@ -45,7 +46,8 @@ export const userInfo= async(req,res)=>{
             page:"users",
             data:userData,
             totalPages:totalPages,
-            currentPage:page
+            currentPage:page,
+            search
         })
 
     } catch (error) {
