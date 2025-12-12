@@ -1,6 +1,9 @@
 import 'dotenv/config'
 import User from '../../models/userModel.js';
+import Product from '../../models/productModel.js';
+import Category from '../../models/categoryModel.js';
 import {securePassword,generateOtp,sendVerificationEmail} from '../../services/user/userServices.js'
+import bcrypt from 'bcrypt'
 
 
 
@@ -13,6 +16,98 @@ export const loadOtp= async(req,res)=>{
     }
 }
 
+
+export const loadHomepage= async(req,res)=>{
+
+    try {
+
+        const products= await Product.find({isBlocked:false}).sort({createdAt:-1})
+
+
+
+
+        return res.render("user/home",{
+            products
+        })
+        
+    } catch (error) {
+        console.error("Home page not loading :",error.message);
+        res.status(500).send("Server Error")
+        
+    }
+}
+
+export const loadShoppingPage= async(req,res)=>{
+
+    try {
+
+        let page=1
+        if(req.query.page){
+            page=req.query.page
+        }
+
+        let limit=9
+
+        let skip=(page-1)*limit
+        let search=''
+
+        if(req.query.search){
+            search=req.query.search
+        }
+
+         const gt=  Array.isArray(req.query.gt) ? req.query.gt[0] : req.query.gt
+        const lt=  Array.isArray(req.query.lt) ? req.query.lt[0] : req.query.lt
+
+        const categoryId=req.query.category
+        let sort= ''
+        if(req.query.sort){
+            sort=req.query.sort
+        }
+
+        const sortQuery={
+            priceHigh:{salePrice:-1},
+            priceLow:{salePrice:1},
+            az:{productName:1},
+            za:{productName:-1}
+        }
+
+
+        const filter={
+            isBlocked:false,
+            productName:{$regex:".*"+search+".*",$options:"i"}
+        }
+
+        const products= await Product.find(filter)
+        .sort(sortQuery[sort]||{})
+        .collation({locale:'en',strength:2})
+        .skip(skip)
+        .limit(limit)
+
+        const totalProducts= await Product.countDocuments(filter)
+
+        const totalPages= Math.ceil(totalProducts/limit)
+
+        const category= await Category.find({isListed:true})
+
+        res.render("user/shop",{
+            products,
+            category,
+            currentPage:page,
+            totalPages,
+            search,
+            sort,
+            categoryId,
+            gt,
+            lt
+        })
+        
+    } catch (error) {
+        
+        console.error("Error in loadin shopping page :",error.message);
+        res.status(500).send("server error")
+        
+    }
+}
 
 
 export const loadSignup= (req,res)=>{
@@ -29,6 +124,41 @@ export const loadLogin= (req,res)=>{
         return res.render("user/login");
     } catch (error) {
         console.error("Login page not Loading",error.message);
+        res.status(500).send("Server Error")
+        
+    }
+}
+
+
+export const login = async(req,res)=>{
+
+    try {
+        
+        const {email,password}=req.body
+
+        const existingUser= await User.findOne({email})
+
+        if(!existingUser){
+            return res.render("admin/login",{error:"Email not found"})
+        }
+
+        if(existingUser.isBlocked){
+
+             return res.render("admin/login",{error:"User blocked by Admin"})
+        }
+
+        const passwordMatched= await bcrypt.compare(password,existingUser.password)
+
+        if(!passwordMatched){
+             return res.render("admin/login",{error:"Password didn't match"})
+        }
+
+        return res.redirect("/")
+
+    } catch (error) {
+        
+        console.error("Error in post login");
+
         res.status(500).send("Server Error")
         
     }
@@ -175,4 +305,3 @@ export const resendOtp= async(req,res)=>{
     }
 
 }
-

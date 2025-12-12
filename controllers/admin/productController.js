@@ -6,6 +6,7 @@ import { dirname } from "path"
 import { fileURLToPath } from "url"
 import sharp from 'sharp'
 import { promisify } from "util"
+import { error } from "console";
 
 const unlinkAsync   =   promisify(fs.unlink)
 
@@ -190,6 +191,142 @@ export const unblockProduct=  async(req,res)=>{
         return res.redirect("/admin/products")
     } catch (error) {
         console.error("Error in Block Product : ",error.message);
+        return res.status(500).send("Server Error")
+        
+    }
+}
+
+
+export const getEditProduct= async(req,res)=>{
+    try {
+        
+        const id= req.query.id;
+        req.session.productId=id
+
+        const product= await Product.findOne({_id:id})
+        const category= await Category.find({isListed:true})
+
+        res.render("admin/editProduct",{
+            product,
+            category,
+            page:"products",
+            
+        })
+    } catch (error) {
+        console.error("Error in loading Edit Product page :",error.message);
+        return res.status(500).send("Server Error")
+        
+    }
+}
+
+
+export const editProduct= async(req,res)=>{
+    try {
+        
+        const id= req.params.id
+
+        const product= await Product.findById(id)
+        console.log("aaaaaaaaaaaa",product);
+        
+
+        if(!product){
+            return res.redirect("/admin/editProduct?error=Product+not+found")
+        }
+
+
+
+        const productData= req.body
+        console.log(req);
+        
+        console.log("req.body",req.body);
+        
+        console.log("bbbbbbbbbb",productData);
+        
+        
+        const existProductName= await Product.findOne({
+            productName:productData.productName,
+            _id:{$ne:id}
+        })
+
+        if(existProductName){
+            return res.redirect("/admin/editProduct?error=Product+with+this+name+already+exists.+please+try+with+another+name")
+        }
+
+         const images=[]
+
+            if(req.files&& req.files.length>0){
+                for (let i=0; i<req.files.length; i++){
+                    const filename= req.files[i].filename
+                    const originalImagePath= req.files[i].path
+
+                    const updatedName=  `${Date.now()}-${filename}`
+                    const resizedImagePath= path.join("public","uploads","image",updatedName)
+
+                    await sharp(originalImagePath).toFile(resizedImagePath)
+
+                    images.push(updatedName)
+                }
+            }
+
+            const categoryDoc   =    await Category.findOne({name:productData.category})
+        
+            if(!categoryDoc){
+                return res.redirect("/admin/editProduct?error=Invalid+category+name")
+            }
+
+            await Product.findByIdAndUpdate(id,{
+                productName:productData.productName,
+                description:productData.descriptionData,
+                regularPrice:productData.regularPrice,
+                salePrice:productData.salePrice,
+                quantity:productData.quantity,
+                category:categoryDoc._id,
+                $push:{productImage:{$each:images}}
+            })
+
+            return res.redirect("/admin/products")
+    } catch (error) {
+        
+         console.error("Error Updating product :",error.message)
+        res.status(500).send("Server Error")
+    }
+}
+
+
+export const deleteSingleImage= async(req,res)=>{
+
+    try {
+
+
+        
+        const {imageNameToServer,productIdToServer}=req.body
+
+        console.log("req.body", req.body);
+        
+
+        if(!imageNameToServer||!productIdToServer){
+            return res.json({status:false,message:"Invalid Request"})
+        }
+
+        await Product.findByIdAndUpdate(productIdToServer,{
+            $pull:{productImage:imageNameToServer}
+        })
+
+        const imagePath= path.join("public","uploads","image",imageNameToServer)
+
+        if(fs.existsSync(imagePath)){
+            fs.unlinkSync(imagePath)
+            console.log("Deleted image file", imagePath);
+            
+        }else{
+            console.log("Image file not found :",imagePath);
+            
+        }
+
+        return res.json({status:true})
+    } catch (error) {
+        console.error("Error deleting single image", error.message);
+
         return res.status(500).send("Server Error")
         
     }

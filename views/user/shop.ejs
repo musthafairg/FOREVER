@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop | Forever</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/header.js" defer></script>
+  <style>
+    .search-input-wrapper {
+    max-width: 500px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    border: 1px solid #dadada;
+    border-radius: 30px;
+    padding: 4px 12px;
+    background: #fff;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.05);
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    flex: 1;
+    border-radius: 30px;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.search-btn {
+    border: none;
+    background: transparent;
+    color: #444;
+    font-size: 16px;
+}
+
+.search-btn:hover {
+    color: #000;
+}
+
+.clear-btn {
+    font-size: 20px;
+    padding: 0 8px;
+    text-decoration: none;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.clear-btn:hover {
+    color: #b02a37;
+}
+
+  </style>
+</head>
+<body>
+  <%- include('../partials/user/header.ejs') %>
+
+  <div class="main-container">
+    <section class="shop-page container">
+     <div class="shop-topbar">
+    <div class="search-bar">
+        <form action="/shop/" method="get" class="d-inline w-100">
+            <div class="search-input-wrapper">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    placeholder="Search customers..." 
+                    name="search"
+                    value="<%= typeof search !== 'undefined' ? search : '' %>">
+                
+                <button class="search-btn" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+
+                <% if (search && search.length > 0) { %>
+                    <a href="/shop" class="clear-btn">×</a>
+                <% } %>
+            </div>
+        </form>
+    </div>
+
+     <form method="GET" id="sortForm">
+
+      <% if (search){%>
+        <input type="hidden" name="search" value="<%= search %>">
+
+        <%}%>
+
+            <% if (categoryId){%>
+        <input type="hidden" name="category" value="<%= categoryId %>">
+
+        <%}%>
+
+         <% if (gt){%>
+        <input type="hidden" name="gt" value="<%= gt %>">
+
+        <%}%>
+
+          <% if (lt){%>
+        <input type="hidden" name="lt" value="<%= lt %>">
+
+        <%}%>
+        
+  <select name="sort" class="sort-select" onchange="document.getElementById('sortForm').submit()">
+      <option value="">Sort By</option>
+      <option value="priceLow" <%= sort === 'priceLow' ? 'selected' : '' %>>Price: Low to High</option>
+      <option value="priceHigh" <%= sort === 'priceHigh' ? 'selected' : '' %>>Price: High to Low</option>
+      <option value="az" <%= sort === 'az' ? 'selected' : '' %>>A → Z</option>
+      <option value="za" <%= sort === 'za' ? 'selected' : '' %>>Z → A</option>
+  </select>
+</form>
+
+
+</div>
+
+
+      <div class="product-list-container">
+        <aside class="sidebar">
+          <div class="filter-section">
+            <div class="filter-title">Categories</div>
+            <div class="category-brand-container">
+              <ul>
+                <% for (let i = 0; i < category.length; i++) { %>
+                  <li class="filter-item">
+                    <a href="/filter?category=<%= category[i]._id %><%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
+                      <%= category[i].name %></a>
+                  </li>
+                <% } %>
+              </ul>
+            </div>
+          </div>
+
+         
+
+          <div class="price-filter">
+            <div class="filter-title">Filter by Price</div>
+            <form id="price-filter-form">
+              <div class="price-options">
+                <a href="/filterByPrice?gt=0&lt=500<%= search ? '&search=' + search : '' %><%= sort ? '&sort=' + sort : '' %>">
+                <button type="button" class="price-button">Under ₹500</button></a>
+                <a href="/filterByPrice?gt=500&lt=1000<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
+                  <button type="button" class="price-button">₹500 - ₹1000</button></a>
+                <a href="/filterByPrice?gt=1000&lt=1500<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
+                  <button type="button" class="price-button">₹1000 - ₹1500</button></a>
+                <a href="/filterByPrice?gt=1500&lt=1000000<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
+                  <button type="button" class="price-button">Above ₹1500</button></a>
+              </div>
+            </form>
+          </div>
+        </aside>
+
+        <main class="product-grid">
+          <% for (let i = 0; i < products.length; i++) { %>
+            <div class="product-card">
+              <span class="wishlist-btn">❤️</span>
+              <a href="/productDetails?id=<%= products[i]._id %>">
+                <img src="/uploads/image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
+                <h4><%= products[i].productName %></h4>
+                
+                <p>
+                  Price: ₹<%= products[i].salePrice.toLocaleString('en-IN') %>
+                  <span class="text-muted">
+                    <strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike>
+                  </span>
+                </p>
+              </a>
+              <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+          <% } %>
+        </main>
+      </div>
+
+     <div class="container mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-4">
+                        <%for(let i=1; i<=totalPages;i++){%>
+                            <li class="page-item <%=(i===currentPage) ? 'active' : '' %> ">
+                                <a class="page-link" href="/shop?page=<%= i %><%= search ? '&search=' +search :'' %><%= sort ? '&sort=' +sort :'' %>">
+                                    <%=i %>
+                                </a>
+                            </li>
+                        <%}%>
+                    </ul>
+                </nav>
+            </div>
+    </section>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+  <%- include('../partials/user/footer.ejs') %>
+</body>
+</html>

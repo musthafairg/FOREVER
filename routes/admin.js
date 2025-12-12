@@ -3,7 +3,7 @@ const router=express.Router()
 import {loadLogin,login,loadDashboard,logout} from '../controllers/admin/adminController.js'
 import {userInfo,blockCustomer,unblockCustomer} from '../controllers/admin/userController.js'
 import {categoryInfo,getAddCategoryPage,addCategory,listCategory,unlistCategory,geteditCategoryPage,editCategory} from '../controllers/admin/categoryController.js'
-import { getAddProductPage ,addProducts,productInfo,blockProduct,unblockProduct} from '../controllers/admin/productController.js'
+import { getAddProductPage ,addProducts,productInfo,blockProduct,unblockProduct,getEditProduct,editProduct,deleteSingleImage} from '../controllers/admin/productController.js'
 
 import multer from 'multer'
 import { storage } from '../helpers/multer.js'
@@ -37,7 +37,9 @@ router.post("/addProducts",uploads.array("images",4),addProducts)
 router.get("/products",productInfo)
 router.get("/blockProduct",blockProduct)
 router.get("/unblockProduct",unblockProduct)
-
+router.get("/editProduct",getEditProduct)
+router.post("/editProduct/:id",uploads.array("images",4),editProduct)
+router.post("/deleteImage",deleteSingleImage)
 
 
 

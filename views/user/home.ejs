@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | Forever</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/header.js" defer></script>
+</head>
+<body>
+  <%- include('../partials/user/header.ejs') %>
+
+  <section class="hero">
+    <img src="images/hero.png" alt="Hero Banner">
+  </section>
+
+  <section class="product spad">
+    <div class="container">
+      <div class="d-flex justify-content-center">
+        <h2 class="section-title">NEW ARRIVALS</h2>
+      </div>
+
+      <div class="row " >
+        <% for (let i = 0; i < products.length; i++) { %>
+          <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <div class="product-cart-wrap">
+              <div class="product-img-action-wrap">
+                <div class="product-img product-img-zoom">
+                  <a href="/productDetails?id=<%= products[i]._id %>">
+                    <img
+                      class="img-fluid default-img"
+                      src="/uploads/image/<%= products[i].productImage[0] %>"
+                      alt="<%= products[i].productName %>"
+                    >
+                  </a>
+                </div>
+
+                <a href="/addToWishlist?id=<%= products[i]._id %>" class="wishlist-btn">
+                  <i class="fas fa-heart"></i>
+                </a>
+              </div>
+
+              <div class="product-content-wrap">
+                <h6><%= products[i].productName %></h6>
+                <h5>₹ <%= products[i].salePrice %></h5>
+                <a href="/addToCart?id=<%= products[i]._id %>" class="button-add">Add to Cart</a>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/user/footer.ejs') %>
+</body>
+</html>

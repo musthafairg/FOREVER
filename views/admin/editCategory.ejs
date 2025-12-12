@@ -75,6 +75,7 @@
                                     placeholder="Type category name" 
                                     class="form-control" 
                                     id="category_name" 
+                                    value="<%=category.name%>"
                                     required
                                 />
                                 <div id="name-error" class="error-message"></div>
@@ -86,19 +87,21 @@
                                     name="description" 
                                     class="form-control" 
                                     id="descriptionId" 
+                                    
                                     required
-                                ></textarea>
+                                ><%=category.name%></textarea>
                                 <div id="description-error" class="error-message"></div>
                             </div>
 
                             <div class="mb-4">
                                 <label class="form-label">Offer</label>
-                                <textarea 
+                                <input
                                     placeholder="Enter offer in percentage " 
                                     name="offer" 
                                     class="form-control" 
-                                    id="offerId" 
-                                ></textarea>
+                                    id="offerId"
+                                    value="<%=category.categoryOffer%>" 
+                                />
                                 <div id="offer-error" class="error-message"></div>
                             </div>
                             

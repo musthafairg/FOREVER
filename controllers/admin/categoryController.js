@@ -121,7 +121,11 @@ export const geteditCategoryPage= async(req,res)=>{
     try {
 
         req.session.editId=req.query.id;
+
+        const category= await Category.findById(req.query.id)
+
         res.render("admin/editCategory",{
+            category,
             page:'category'
         })
     } catch (error) {
