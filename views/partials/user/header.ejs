@@ -1,3 +1,60 @@
+<style>
+  .user-dropdown {
+  position: relative;
+  display: inline-block;
+  font-family: "Inter", sans-serif;
+}
+
+
+.user-pill {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.user-pill:hover {
+  background: #eaeaea;
+}
+
+/* Dropdown menu */
+.user-menu {
+  display: none;
+  position: absolute;
+  top: 38px; 
+  left: 0;
+  width: 140px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0px 4px 18px rgba(0,0,0,0.15);
+  padding: 6px 0;
+  z-index: 999;
+}
+
+
+.user-menu a {
+  display: block;
+  padding: 10px 16px;
+  color: #222;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.user-menu a:hover {
+  background: #f5f5f5;
+}
+
+
+.user-dropdown:hover .user-menu {
+  display: block;
+}
+
+</style>
+
+
 <header class="site-header">
   <div class="navbar">
     <div class="logo">
@@ -13,17 +70,18 @@
       </ul>
     </nav>
 
-    <div class="header-right">
-      <% if (locals.user) { %>
-        <div class="dropdown user-dropdown">
-          <button type="button" class="sign-in-link dropdown-toggle">
-            <%= locals.user.name %> <i class="fa-solid fa-chevron-down"></i>
+          <div class="header-right">
+            <% if (locals.user) { %>
+              <div class="user-dropdown">
+           <button type="button" class="user-pill">
+           <%= locals.user.name %>
           </button>
-          <div class="dropdown-content">
-            <a href="/userprofile">Profile</a>
-            <a href="/logout">Logout</a>
-          </div>
-        </div>
+
+        <div class="user-menu">
+          <a href="/userprofile">Profile</a>
+          <a href="/logout">Logout</a>
+         </div>
+       </div>
       <% } else { %>
         <a href="/signup" class="sign-in-link">Sign Up</a>
         <a href="/login" class="sign-in-link">Log in</a>

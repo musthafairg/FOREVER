@@ -12,7 +12,8 @@ import Category from '../../models/categoryModel.js';
 
 export const getProductDetailsPage= async(req,res)=>{
     try {
-        
+
+        const user= req.session.user
         const id=req.query.id;
 
         const category=await Category.find({isListed:true})
@@ -26,7 +27,8 @@ export const getProductDetailsPage= async(req,res)=>{
         res.render("user/productDetails",{
             product,
             totalOffer,
-            category:category
+            category:category,
+            user
 
         })
     } catch (error) {
@@ -38,6 +40,7 @@ export const filterByPrice=async(req,res)=>{
     try {
 
     
+        const user=req.session.user
         
         const gt=  Array.isArray(req.query.gt) ? req.query.gt[0] : req.query.gt
         const lt=  Array.isArray(req.query.lt) ? req.query.lt[0] : req.query.lt
@@ -102,7 +105,8 @@ export const filterByPrice=async(req,res)=>{
             sort,
             categoryId,
             gt:Number(gt),
-            lt:Number(lt)
+            lt:Number(lt),
+            user
         })
     } catch (error) {
         
@@ -116,6 +120,8 @@ export const filterByPrice=async(req,res)=>{
 
 export const filter= async(req,res)=>{
     try {
+
+        const user=req.session.user
         
         const categoryId=req.query.category
 
@@ -179,7 +185,8 @@ export const filter= async(req,res)=>{
             sort,
             categoryId,
             gt,
-            lt
+            lt,
+            user
 
         })
 

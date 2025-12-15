@@ -21,13 +21,18 @@ export const loadHomepage= async(req,res)=>{
 
     try {
 
+
+        const user=req.session.user
+
+        
         const products= await Product.find({isBlocked:false}).sort({createdAt:-1})
 
 
 
 
         return res.render("user/home",{
-            products
+            products,
+            user
         })
         
     } catch (error) {
@@ -40,6 +45,8 @@ export const loadHomepage= async(req,res)=>{
 export const loadShoppingPage= async(req,res)=>{
 
     try {
+
+        const user=req.session.user
 
         let page=1
         if(req.query.page){
@@ -98,7 +105,8 @@ export const loadShoppingPage= async(req,res)=>{
             sort,
             categoryId,
             gt,
-            lt
+            lt,
+            user
         })
         
     } catch (error) {
@@ -139,19 +147,24 @@ export const login = async(req,res)=>{
         const existingUser= await User.findOne({email})
 
         if(!existingUser){
-            return res.render("admin/login",{error:"Email not found"})
+            return res.render("user/login",{error:"Email not found"})
         }
 
         if(existingUser.isBlocked){
 
-             return res.render("admin/login",{error:"User blocked by Admin"})
+             return res.render("user/login",{error:"User blocked by Admin"})
         }
 
         const passwordMatched= await bcrypt.compare(password,existingUser.password)
 
         if(!passwordMatched){
-             return res.render("admin/login",{error:"Password didn't match"})
+             return res.render("user/login",{error:"Password didn't match"})
         }
+
+
+        req.session.user=existingUser
+
+
 
         return res.redirect("/")
 
@@ -304,4 +317,163 @@ export const resendOtp= async(req,res)=>{
                 
     }
 
+}
+
+
+export const getForgotPassEmailPage= async(req,res)=>{
+    try {
+        
+        res.render("user/forgot-pass-email")
+    } catch (error) {
+        res.status(500).send("Internal Server Error")
+    }
+}
+
+
+export const getResetPassPage= async(req,res)=>{
+    try {
+        
+        res.render("user/reset-password")
+    } catch (error) {
+        res.status(500).send("Internal Server Error")
+    }
+}
+
+
+
+
+
+export const emailValid=async(req,res)=>{
+    try {
+        
+        const {email}=req.body
+
+        const isEmailVaid= await User.findOne({email:email})
+
+        if(!isEmailVaid){
+            return res.render("user/forgot-pass-email",{error:"Email not found"})
+        }
+
+        const otp=generateOtp()
+
+        const emailSent=await sendVerificationEmail(email,otp)
+
+        if(!emailSent){
+            return res.render("user/forgot-pass-email",{error:"Failed to send OTP. Try again."})
+        }
+
+        req.session.userOtp=otp
+        req.session.otpExpires=Date.now()+60*1000
+        req.session.userData={email}
+
+         console.log("OTP sent : ",otp);
+       return res.render("user/forgot-pass-otp")
+
+       
+        
+
+    } catch (error) {
+        
+        console.error("Email Verification Error")
+       return  res.send("Server Error")
+        
+    }
+}
+
+
+export const verifyOTPForgotPass=   async(req,res)=>{
+    try {
+        
+
+        const {otp}=req.body
+
+        console.log("oooooooooooooo",otp)
+
+        if(!req.session.userOtp||!req.session.otpExpires){
+
+             return res.status(400).json({
+                success:false,
+                message:"Session expired. Please resend OTP."
+            })
+        }
+
+        if(Date.now()> req.session.otpExpires){
+            return res.status(400).json({
+                success:false,
+                message:"OTP expired. Please resend OTP."
+            })
+        }
+
+
+        console.log("ssssssssss",req.session.userOtp);
+        
+        if(otp===req.session.userOtp){
+ 
+            req.session.userOtp=null
+            req.session.otpExpires=null
+           return res.json({success:true, redirectUrl:"/reset-password"})
+        }
+          return res.status(400).json({
+                success:false,
+                message:"Invalid OTP. Please try again"
+            })
+
+    } catch (error) {
+
+        console.error("Error verifying OTP :",error.message);
+        return  res.status(500).send("Server Error")
+        
+    }
+}
+
+
+export const resetPassword=  async(req,res)=>{
+    try {
+
+        const {password,confirmPassword}=req.body
+        const userEmail=req.session.userData.email;
+        console.log("eeeeeeeeeeemail",userEmail);
+        
+        if(!password==confirmPassword){
+
+            res.render("user/reset-password",{error:"Password didn't match"})
+        }
+        
+        const passwordHash=await securePassword(password)
+
+       const updatedUserData= await User.findOneAndUpdate({email:userEmail},{password:passwordHash},{new:true})
+       console.log("Updated UserData :",updatedUserData);
+       
+
+        return res.redirect("/login")
+
+    } catch (error) {
+        
+        console.error("Error in Reset Password :",error.message);
+
+        res.status(500).send("Internal Server Error")
+        
+    }
+}
+
+export const logout= async(req,res)=>{
+
+    try {
+
+        console.log(req.path);
+        
+        
+        req.session.destroy(err=>{
+            if(err){
+                console.error("Session destroy error :",err.message);
+                res.redirect('')
+                
+            }
+            res.redirect("/login")
+        })
+    } catch (error) {
+        console.error("Error in logout :",error.message);
+        res.redirect('')
+        
+    }
 }

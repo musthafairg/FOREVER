@@ -54,6 +54,13 @@
     color: #b02a37;
 }
 
+.sort-select{
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+}
+
   </style>
 </head>
 <body>
@@ -105,7 +112,7 @@
 
         <%}%>
         
-  <select name="sort" class="sort-select" onchange="document.getElementById('sortForm').submit()">
+  <select   name="sort" class="sort-select" onchange="document.getElementById('sortForm').submit()">
       <option value="">Sort By</option>
       <option value="priceLow" <%= sort === 'priceLow' ? 'selected' : '' %>>Price: Low to High</option>
       <option value="priceHigh" <%= sort === 'priceHigh' ? 'selected' : '' %>>Price: High to Low</option>
