@@ -17,7 +17,7 @@
 <style>
     .error-message {
         color: red;
-        display: none; /* Ensure error messages start hidden */
+        display: none;
     }
     .thumbnails-container {
         display: flex;
@@ -28,7 +28,7 @@
         margin-right: 10px;
         position: relative;
     }
-    /* Simple preview images if needed */
+   
     .img-preview {
         max-width: 100%;
         height: auto;
@@ -36,7 +36,7 @@
         max-height: 150px;
         margin-bottom: 10px;
     }
-    /* Generic crop container for manual cropping */
+    
     .crop-container {
         width: 400px;
         height: 400px;
@@ -189,7 +189,7 @@
                                 </div>
                             </div>
 
-                            <!-- IMAGES + MANUAL CROP SECTION -->
+                           
                             <div class="card mb-2">
 
                                 <div class="card-header">
@@ -228,7 +228,7 @@
                                 </div>
 
                                 <%}%>
-                                <!-- Image 1 -->
+                                
                                  <% if( product.productImage.length == 0){%>
                                 <div class="row">
                                     <div class="card-body align-items-center" style="margin-bottom: 20px;">
@@ -251,7 +251,7 @@
 
                                 <%}%>
 
-                                <!-- Image 2 -->
+                                
 
                                 <% if( product.productImage.length < 2 ){%>
                                 <div class="row">
@@ -273,7 +273,7 @@
                                 </div>
 
                                 <%}%>
-                                <!-- Image 3 -->
+                               
 
                                 <% if( product.productImage.length < 3 ){%>
                                 <div class="row">
@@ -295,7 +295,7 @@
                                 </div>
 
                                 <%}%>
-                                <!-- Image 4 -->
+                                
 
                                 <% if( product.productImage.length < 4 ){%>
                                 <div class="row">
@@ -430,7 +430,7 @@
 
 
 
-    // Crop Image
+    //Crop Image
 
     const cropStates= {}
 
@@ -469,7 +469,7 @@
                 cropBtn.style.display = 'inline-block';
 
                  mainImage.onload = function() {
-                    // Simple default crop box
+                    
                     cropArea.style.left = "50px";
                     cropArea.style.top = "50px";
                     cropArea.style.width = "150px";

@@ -387,7 +387,7 @@ export const verifyOTPForgotPass=   async(req,res)=>{
 
         const {otp}=req.body
 
-        console.log("oooooooooooooo",otp)
+        console.log("OTP :",otp)
 
         if(!req.session.userOtp||!req.session.otpExpires){
 
@@ -405,7 +405,7 @@ export const verifyOTPForgotPass=   async(req,res)=>{
         }
 
 
-        console.log("ssssssssss",req.session.userOtp);
+        console.log("req.session.userOTP",req.session.userOtp);
         
         if(otp===req.session.userOtp){
  
@@ -432,7 +432,7 @@ export const resetPassword=  async(req,res)=>{
 
         const {password,confirmPassword}=req.body
         const userEmail=req.session.userData.email;
-        console.log("eeeeeeeeeeemail",userEmail);
+        console.log("User mail",userEmail);
         
         if(!password==confirmPassword){
 

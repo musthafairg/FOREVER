@@ -2,6 +2,7 @@
 import User from '../../models/userModel.js';
 import Product from '../../models/productModel.js';
 import Category from '../../models/categoryModel.js';
+import { populate } from 'dotenv';
 
 
 
@@ -18,20 +19,86 @@ export const getProductDetailsPage= async(req,res)=>{
 
         const category=await Category.find({isListed:true})
 
-        const product= await Product.findById(id).populate('category')
+        const product= await Product.findById(id)
+        .populate('category')
+        .populate({
+            path:'reviews.user',
+            select:"name email"
+        })
+
+         if(!product||product.isBlocked||product.status==="Discontinued"){
+            return res.redirect("/shop")
+        }
+
+
 
         let totalOffer= Math.ceil((product.regularPrice-product.salePrice)/product.regularPrice*100)
 
        
+        const latestreviews= product.reviews
+            .reverse()
+            .slice(0,6)
 
+
+            const relatedProducts= await Product.find({
+                category:product.category._id,
+                _id:{$ne:product._id},
+                isBlocked:false,
+                status:"Available"
+            }).limit(5)
+
+
+            console.log("related",relatedProducts);
+            
         res.render("user/productDetails",{
             product,
             totalOffer,
             category:category,
-            user
+            user,
+            latestreviews,
+            relatedProducts
 
         })
     } catch (error) {
+
+        console.error("Error fetching product details: ",error.message)
+        return res.status(500).send("Internal Server Error")
+        
+    }
+}
+
+export const addReview= async(req,res)=>{
+    try {
+        
+        const userId= req.session.user?._id
+        if(!userId){
+            return res.redirect("/login")
+        }
+
+        const {productId,rating,comment}=req.body
+
+        const product= await Product.findById(productId)
+
+        if(!product||product.isBlocked||product.status==="Discontinued"){
+            return res.redirect("/shop")
+        }
+
+        product.reviews.push({
+            user:userId,
+            rating:Number(rating),
+            comment
+        })
+
+        const totalRating= product.reviews.reduce((sum,r)=>sum+r.rating,0)
+        product.avgRating= totalRating/product.reviews.length
+
+        await product.save()
+
+        return res.redirect(`/productDetails?id=${productId}`)
+    } catch (error) {
+        
+        console.error("Error adding Review :",error.message);
+        return res.status(500).send("Internal Server Error")
         
     }
 }

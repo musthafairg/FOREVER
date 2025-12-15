@@ -8,6 +8,142 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+   
+.container-spec {
+    margin-top: 40px;
+}
+
+
+.card-section,
+.review-box {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eee;
+}
+
+
+.card-section h4,
+.mt-5 h3,
+.mt-5 h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #222;
+}
+
+
+
+.highlights-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.highlights-list li {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.highlights-list li::before {
+    content: "\f058";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    color: #b25b8e;
+    font-size: 0.95rem;
+}
+
+
+
+.review-box {
+    margin-bottom: 15px;
+}
+
+/* Reviewer name */
+.review-box strong {
+    font-size: 0.95rem;
+    color: #222;
+}
+
+
+.review-box span {
+    font-size: 0.9rem;
+    color: #f5a623;
+}
+
+
+.review-box p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 6px;
+    line-height: 1.6;
+}
+
+
+
+form label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 10px;
+    display: block;
+    color: #444;
+}
+
+.form-select,
+.form-control {
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #b25b8e;
+    box-shadow: 0 0 0 2px rgba(178, 91, 142, 0.15);
+    outline: none;
+}
+
+
+.btn-primary {
+    background-color: #000;
+    border-color: #000;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+}
+
+.btn-primary:hover {
+    background-color: #333;
+    border-color: #333;
+}
+
+
+  
+
+@media (max-width: 768px) {
+    .card-section,
+    .review-box {
+        padding: 16px;
+    }
+
+    .card-section h4,
+    .mt-5 h3 {
+        font-size: 1.1rem;
+    }
+}
+
+  </style>
   <script src="/js/header.js" defer></script>
 </head>
 <body>
@@ -33,7 +169,7 @@
           <div class="col-lg-9">
             <div class="product-detail accordion-detail">
               <div class="row mb-50">
-                <!-- PRODUCT IMAGE SECTION -->
+                
                 <div class="col-md-6 col-sm-12">
                   <div class="detail-gallery">
                     <div class="product-image-slider">
@@ -58,20 +194,29 @@
                   </div>
                 </div>
 
-                <!-- PRODUCT INFORMATION -->
+               
                 <div class="col-md-6 col-sm-12">
                   <div class="detail-info">
                     <h2 class="title-detail"><%= product.productName %></h2>
 
                     <div class="product-detail-rating">
-                      <div class="pro-details-brand">
-                        <span>Brand:
-                          <a href="#"><%= product.brand %></a>
-                        </span>
-                      </div>
+                     
+                      <% if (product.avgRating > 0) { %>
+
+                        <% for (let i=1; i<=Math.floor(product.avgRating); i++){%>
+                            <span class="rating-badge">
+                          <i class="fa-solid fa-star text-warning"></i>
+                           </span>
+                          <%}%>
+                            
+                                
+                           
+                        <% } else { %>
+                            <span>No ratings yet</span>
+                        <% } %>
 
                       <div class="product-rate-cover text-end">
-                        <span class="font-small ml-5 text-muted">(25 reviews)</span>
+                        <span class="font-small ml-5 text-muted">( <%=product.reviews.length%> reviews)</span>
                       </div>
                     </div>
 
@@ -142,11 +287,96 @@
                     </ul>
                   </div>
                 </div>
-              </div> <!-- row mb-50 -->
+              </div> 
+
+               <div class="container-spec">
+        <div class="card-section mt-5">
+            <h4>Highlights</h4>
+            <ul class="highlights-list">
+                <% if (product.highlights.length > 0) { %>
+                    <% product.highlights.forEach(h => { %>
+                        <li><%= h %></li>
+                    <% }) %>
+                <% } else { %>
+                    <li>High quality build</li>
+                    <li>Premium design</li>
+                <% } %>
+            </ul>
+        </div>
+
+
+
+         <div class="mt-5">
+            <h3>Customer Reviews</h3>
+
+            <div class="row">
+                <div class="col-md-7">
+                    <% if (latestreviews.length > 0 ) { %>
+                        <% latestreviews.forEach(r => { %>
+                            <div class="review-box">
+                                <strong><%= r.user?.name || "User" %></strong>
+                                <span> – <%= r.rating %> ★</span>
+                                <p class="mt-2"><%= r.comment %></p>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No reviews yet.</p>
+                    <% } %>
+                </div>
+
+                <div class="col-md-5">
+                    <h4>Write a Review</h4>
+
+                    <form action="/product/add-review" method="POST">
+                        <input type="hidden" name="productId" value="<%= product._id %>">
+
+                        <label>Rating</label>
+                        <select name="rating" class="form-select" required>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Good</option>
+                            <option value="3">3 - Average</option>
+                            <option value="2">2 - Poor</option>
+                            <option value="1">1 - Very Bad</option>
+                        </select>
+
+                        <label class="mt-2">Comment</label>
+                        <textarea name="comment" class="form-control" rows="3"></textarea>
+
+                        <button class="btn btn-primary mt-3">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        
+
+               </div>
             </div>
           </div>
         </div>
       </div>
+
+        <div class="related-products-section">
+            <h3 class="mt-5 mb-3">Related Products</h3>
+
+            <div class="row related-products"  >
+                <% relatedProducts.forEach(p => { %>
+                    <div class="col-md-2 col-6">
+
+                        
+                        <a href="/productDetails?id=<%= p._id %>" class="text-decoration-none text-dark">
+                            <div class="related-product-card">
+                                <img src="/uploads/image/<%= p.productImage[0] %>"
+                                     class="img-fluid mb-2" style="width: 240px; height: 240px;">
+                                <p style="font-size: 14px;"><%= p.productName %></p>
+                                <strong>₹ <%= p.salePrice %></strong>
+                            </div>
+                        </a>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
     </section>
   </main>
 

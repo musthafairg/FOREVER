@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FOREVER. - User Login</title>
+   <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+
 
     <style>
         body {
@@ -149,6 +157,24 @@
         .signup-link a:hover {
             text-decoration: underline;
         }
+    .password-group {
+    position: relative;
+}
+
+.password-group input {
+    padding-right: 40px; 
+}
+
+.password-group i {
+    position: absolute;
+    right: 12px;
+    top: 68%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #777;
+    z-index: 10;
+    pointer-events: auto;
+}
     </style>
 
 </head>
@@ -166,9 +192,10 @@
                 <input type="email" id="email" name="email" required>
             </div>
 
-            <div class="form-group">
+            <div class="form-group password-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
+                <i class="fa-solid fa-eye" id="togglePass"></i>
             </div>
 
             <div class="forgot-password">
@@ -192,5 +219,18 @@
 
     </div>
 
+
+    <script>
+         const pass = document.getElementById("password");
+    
+
+    document.getElementById("togglePass").onclick = () => {
+        pass.type = pass.type === "password" ? "text" : "password";
+    };
+
+
+
+    </script>
+     
 </body>
 </html>

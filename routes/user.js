@@ -1,7 +1,7 @@
 import express from 'express'
 const router=express.Router()
 import {loadSignup,loadLogin,signupUser,loadOtp,verifyOtp,resendOtp,login,loadHomepage, loadShoppingPage,logout,getForgotPassEmailPage,emailValid, verifyOTPForgotPass,getResetPassPage,resetPassword} from '../controllers/user/userController.js'
-import {getProductDetailsPage,filter,filterByPrice} from '../controllers/user/productController.js'
+import {getProductDetailsPage,filter,filterByPrice,addReview} from '../controllers/user/productController.js'
 import passport from '../config/passport.js'
 import {userAuth} from '../middleware/auth.js'
 
@@ -41,7 +41,7 @@ router.get("/shop",userAuth,loadShoppingPage)
 router.get("/productDetails",userAuth,getProductDetailsPage)
 router.get("/filterByPrice",userAuth,filterByPrice)
 router.get("/filter",userAuth,filter)
-
+router.post("/product/add-review",addReview)
 
 
 
