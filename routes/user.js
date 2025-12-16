@@ -1,6 +1,6 @@
 import express from 'express'
 const router=express.Router()
-import {loadSignup,loadLogin,signupUser,loadOtp,verifyOtp,resendOtp,login,loadHomepage, loadShoppingPage,logout,getForgotPassEmailPage,emailValid, verifyOTPForgotPass,getResetPassPage,resetPassword} from '../controllers/user/userController.js'
+import {loadSignup,loadLogin,signupUser,loadOtp,verifyOtp,resendOtp,login,loadHomepage, loadShoppingPage,logout,getForgotPassEmailPage,emailValid, verifyOTPForgotPass,getResetPassPage,resetPassword, demoLogin} from '../controllers/user/userController.js'
 import {getProductDetailsPage,filter,filterByPrice,addReview} from '../controllers/user/productController.js'
 import passport from '../config/passport.js'
 import {userAuth} from '../middleware/auth.js'
@@ -10,6 +10,7 @@ import {userAuth} from '../middleware/auth.js'
 router.get("/login",loadLogin);
 router.post("/login",login)
 router.get("/logout",logout)
+router.get("/demoLogin",demoLogin)
 
 
 //signup Management

@@ -477,3 +477,30 @@ export const logout= async(req,res)=>{
         
     }
 }
+
+
+export const demoLogin= async(req,res)=>{
+    try {
+        const demoEmail="demo@forever.com"
+        const demoUser=await User.findOne({email:demoEmail})
+
+        if(!demoUser){
+            return res.send("Demo user not found. Please create a demo user in DB.")
+
+        }
+
+        req.session.user={
+            __dirnameid:demoUser._id,
+            name:demoUser.name,
+            email:demoUser.email
+        }
+
+        return res.redirect("/")
+
+    } catch (error) {
+        
+        console.error("Error in demo Login :",error.message);
+        return res.send("Server Error")
+        
+    }
+}
