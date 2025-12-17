@@ -25,7 +25,7 @@ export const loadHomepage= async(req,res)=>{
         const user=req.session.user
 
         
-        const products= await Product.find({isBlocked:false}).sort({createdAt:-1})
+        const products= await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(10)
 
 
 
@@ -96,6 +96,9 @@ export const loadShoppingPage= async(req,res)=>{
 
         const category= await Category.find({isListed:true})
 
+
+        
+        
         res.render("user/shop",{
             products,
             category,

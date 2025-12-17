@@ -128,15 +128,15 @@ export const productInfo= async(req,res)=>{
         let skip= (page-1)*limit
 
         const category= await Category.find({isListed:true})
-        
+       
         
         const productData= await Product.find({
             productName:{$regex:".*"+search+".*",$options:"i"}
         })
+        .populate('category')
         .sort({createdAt:-1})
         .skip(skip)
         .limit(limit)
-        .populate('category')
         .exec()
 
         const totalProducts= await Product.find({
@@ -145,10 +145,11 @@ export const productInfo= async(req,res)=>{
 
         const totalPages=Math.ceil(totalProducts/limit)
 
-if(category){
+
         res.render("admin/products",{
             page:"products",
             data:productData,
+            category,
             currentPage:page,
             totalPages,
             search,
@@ -156,7 +157,7 @@ if(category){
 
 
         })
-    }
+    
 
     } catch (error) {
         

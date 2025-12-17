@@ -542,9 +542,11 @@ ul {
 
 /* product cards (home & generic) */
 
+
 .row{
   display: flex;
-  gap: 15px;
+  gap: 25px;
+  flex-wrap: wrap;
 }
 
 .product-cart-wrap {

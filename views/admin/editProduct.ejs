@@ -320,7 +320,7 @@
                             </div>
 
                             <div>
-                                <button class="btn btn-md rounded font-sm hover-up" type="button" onclick="validateAndSubmit()" style="background-color: black; color: #f7f7f7;">Publish</button>
+                                <button class="btn btn-md rounded font-sm hover-up" type="button" onclick="validateAndSubmit()" style="background-color: black; color: #f7f7f7;">Update</button>
                             </div>
                         </form>
                     </div>
@@ -393,18 +393,18 @@
             isValid = false
         }
 
-        let imagesSelected = false;
-        for (let i = 1; i <= 4; i++) {
-            const input = document.getElementById(`input${i}`)
-            if (input && input.files && input.files.length > 0) {
-                imagesSelected = true;
-                break
-            }
-        }
-        if (!imageDatas && !imagesSelected) {
-            displayErrorMessage("images-error", 'Please select at least one image.')
-            isValid = false
-        }
+        // let imagesSelected = false;
+        // for (let i = 1; i <= 4; i++) {
+        //     const input = document.getElementById(`input${i}`)
+        //     if (input && input.files && input.files.length > 0) {
+        //         imagesSelected = true;
+        //         break
+        //     }
+        // }
+        // if (!imageDatas && !imagesSelected) {
+        //     displayErrorMessage("images-error", 'Please select at least one image.')
+        //     isValid = false
+        // }
         
         return isValid;
 
