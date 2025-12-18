@@ -150,18 +150,27 @@ export const login = async(req,res)=>{
         const existingUser= await User.findOne({email})
 
         if(!existingUser){
-            return res.render("user/login",{error:"Email not found"})
+            return res.json({
+                success:false,
+                message:"Email not found"
+            })
         }
 
         if(existingUser.isBlocked){
 
-             return res.render("user/login",{error:"User blocked by Admin"})
+             return res.json({
+                success:false,
+                message:"User blocked by Admin"
+             })
         }
 
         const passwordMatched= await bcrypt.compare(password,existingUser.password)
 
         if(!passwordMatched){
-             return res.render("user/login",{error:"Password didn't match"})
+             return res.json({
+                success:false,
+                message:"Passwords do not match"
+             })
         }
 
 
@@ -169,13 +178,17 @@ export const login = async(req,res)=>{
 
 
 
-        return res.redirect("/")
+        return res.json({success:true})
 
     } catch (error) {
         
         console.error("Error in post login");
 
-        res.status(500).send("Server Error")
+        res.status(500).json({
+        success:false,
+        message:"Server Error"
+        
+        })
         
     }
 }
@@ -187,36 +200,69 @@ export const signupUser= async (req,res)=>{
        
         
 
-        const existingUser= await User.findOne({email});
-
-        if(existingUser){
-           return  res.render("user/signup",{error:"User already exists"});
+        if(!name||!mobile||!email||!password||!confirmPassword){
+            return res.status(400).json({
+                success:false,
+                message:"All fields are required"
+            })
         }
 
+
+
+        const existingUser= await User.findOne({email});
+
+
+        if(existingUser){
+            return res.status(409).json({
+                success:false,
+                message:"User already exists"
+            })
+        }
+
+       
+
         if(password!==confirmPassword){
-           return  res.render("user/signup",{error:"password didn't match"})
+            return res.status(400).json({
+                success:false,
+                message:"Passwords do not match"
+            })
         }
 
         const otp=generateOtp();
 
         const emailSent=await sendVerificationEmail(email,otp);
 
+    
+
+
         if(!emailSent){
-            console.error("OTP sending to email not successfull");
-            return res.json("email-error")
-            
+
+            return res.status(500).json({
+                success:false,
+                message:"OTP sending failed"
+            })
         }
         req.session.userOtp=otp;
         req.session.otpExpires= Date.now()+60*1000;
         req.session.userData={name,mobile,email,password}
-        res.render("user/otp-verification");
+       
         console.log("OTP Sent  : ",otp);
+
+
+        return res.status(200).json({
+            success:true,
+            message:"OTP sent successfully",
+            redirect:"/otpPage"
+        })
         
         
     } catch (error) {
 
         console.error("Signup Error :",error.message);
-        res.status(500).json({success:false,message:"An error Occure"})    
+        return  res.status(500).json({
+            success:false,
+            message:"Server Error"
+        })    
     }
 
 }

@@ -20,6 +20,7 @@ router.post("/signup",signupUser)
 router.post("/verify-otp",verifyOtp)
 router.post("/resend-otp",resendOtp)
 router.get("/otpPage",loadOtp)
+
 router.get("/forgot-password",getForgotPassEmailPage)
 router.post("/forgot-email-valid",emailValid)
 router.post("/verify-otp-forgot",verifyOTPForgotPass)

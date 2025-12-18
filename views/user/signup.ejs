@@ -180,9 +180,9 @@
         <h2>Create Your Account</h2>
 
         
-        <% if (typeof error !== 'undefined') { %>
-            <div class="error-message"><%= error %></div>
-        <% } %>
+        
+            <div class="error-message"></div>
+    
 
         <form action="/signup" method="post" id="signup-form">
 
@@ -248,7 +248,7 @@
 
 
 
- const pass = document.getElementById("password");
+    const pass = document.getElementById("password");
     const confirm = document.getElementById("confirmPassword");
 
     document.getElementById("togglePass").onclick = () => {
@@ -263,59 +263,63 @@
          const emailid=document.getElementById("email")
          const mobileid=document.getElementById("mobile")
          const passid=document.getElementById("password")
-         const confirmid = document.getElementById("confirm-password");
+         const confirmid = document.getElementById("confirmPassword")
+
          const error1=document.getElementById("error1")
          const error2=document.getElementById("error2")
          const error3=document.getElementById("error3")
          const error4=document.getElementById("error4")
-        const error5=document.getElementById("error5")
+         const error5=document.getElementById("error5")
+
          const signupForm=document.getElementById("signup-form")
 
 
 
+         function showError(err,msg){
+            err.style.display= "block",
+            err.innerHTML= msg
+         }
+
+         function clearError(err){
+            err.style.display= "none",
+            err.innerHTML= ""
+         }
+
+
         function nameValidateChecking(e){
 
-            const nameval=nameid.value;
+            const nameval=nameid.value
             const namepattern=/^[A-Za-z\s]+$/
             if(nameval.trim()===""){
-                error1.style.display="block";
-                error1.innerHTML="please enter a valid name"
+       
+                showError(error1,"please enter a valid name")
             }else if(!namepattern.test(nameval)){
-                error1.style.display="block";
-                error1.innerHTML="Name can only contain aiphabets and spaces"
-
+               showError(error1,"Name can only contain aiphabets and spaces")
             }else{
-                error1.style.display="none";
-                error1.innerHTML="";
+                clearError(error1)
             }
         }
 
         function emailValidateChecking(e){
 
             const emailval=emailid.value;
-            const emailPattern=/^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,})$/
+            const emailPattern= /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
             if(!emailPattern.test(emailval)){
-                error2.style.display="block";
-                error2.innerHTML="Invalid Format"
+              showError(error2,"Invalid email Format")
             }else{
-                error2.style.display="none";
-                error2.innerHTML="";
+                clearError(error2)
             }
         }
 
         function mobileValidateChecking(e){
-            const mobileval=mobileid.value;
+            const mobileval=mobileid.value.trim()
+            const digitPattern= /^\d{10}$/
 
-            if(mobileval.trim()===""){
-                error3.style.display="block";
-                error3.innerHTML="Enter valid mobile number"
-            }else if(mobileval.length<10||mobileval.length>10){
-                error3.style.display="block";
-                error3.innerHTML="Enter 10 digit";
+            if(!digitPattern.test(mobileval)){
+               showError(error3,"Enter 10 digit mobile number")
             }else{
-                error3.style.display="none";
-                error3.innerHTML="";
+               clearError(error3)
             }
         }
 
@@ -326,68 +330,91 @@
             const digit=/\d/;
 
             if(passval.length<8){
-                error4.style.display="block";
-                error4.innerHTML="should contain atleast 8 characters"
+                showError(error4,"should contain atleast 8 characters")
             }else if(!alpha.test(passval)||!digit.test(passval)){
-                error4.style.display="block";
-                error4.innerHTML="Should contain alphabets & digits"
+                showError(error4,"Should contain alphabets & digits")
             }else{
-                error4.style.display="none";
-                error4.innerHTML="";
+                clearError(error4)
             }
         }
 
         function confirmPasswordValidateChecking() {
-    const passval = passid.value;
-    const confirmval = confirmid.value;
+            const passval = passid.value;
+            const confirmval = confirmid.value;
 
-    if (confirmval.trim() === "") {
-        error5.style.display = "block";
-        error5.innerHTML = "Please confirm your password";
-    } else if (confirmval !== passval) {
-        error5.style.display = "block";
-        error5.innerHTML = "Passwords do not match";
-    } else {
-        error5.style.display = "none";
-        error5.innerHTML = "";
-    }
-}
+            if (confirmval.trim() === "") {
+               showError(error5,"Please confirm your password")
+            } else if (confirmval !== passval) {
+                showError(error5,"Passwords do not match")
+            } else {
+                clearError(error5)
+            }
+        }
 
-         document.addEventListener("DOMContentLoaded",()=>{
-            signupForm.addEventListener("submit",(e)=>{
-                nameValidateChecking();
-                emailValidateChecking();
-                mobileValidateChecking();
-                passwordValidateChecking();
-                confirmPasswordValidateChecking();
+        signupForm.addEventListener("submit",async(e)=>{
+            e.preventDefault()
+
+            nameValidateChecking()
+            emailValidateChecking()
+            mobileValidateChecking()
+            passwordValidateChecking()
+            confirmPasswordValidateChecking()
+
+            if(
+                error1.innerHTML||
+                error2.innerHTML||
+                error3.innerHTML||
+                error4.innerHTML||
+                error5.innerHTML
+            ) return
 
 
+            const formData={
+                name:nameid.value,
+                email:emailid.value,
+                mobile:mobileid.value,
+                password:passid.value,
+                confirmPassword:confirmid.value
+            }
 
-                if(
-                !nameid||
-                !emailid||
-                !mobileid||
-                !passid||
-                !error1||
-                !error2||
-                !error3||
-                !error4||
-                !signupForm
-                ){
-                    console.error("One or more elements not found")
+            try{
+                const response= await fetch("/signup",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify(formData)
+                })
+
+                let result;
+
+                try{
+
+                    result= await response.json()
+                }catch{
+                    throw new Error ("Invalid server response")
                 }
+                 
 
-                if(error1.innerHTML||
-                    error2.innerHTML||
-                    error3.innerHTML||
-                    error4.innerHTML||
-                    error5.innerHTML
-                ){
-                    e.preventDefault()
+                if(!result.success){
+
+                    alert(result.message)
+                    submitBtn.disabled=false
+                    submitBtn.innerText="Create Account"
+                }else{
+                    
+                    window.location.href= result.redirect
                 }
+            } catch(error){
                 
-         })
+                submitBtn.disabled=false
+                submitBtn.innerText="Create Account"
+
+                    console.error(error.message);
+                    
+            }
         })
+
     </script>
 
 </body>
