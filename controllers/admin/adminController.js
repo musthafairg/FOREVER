@@ -31,21 +31,30 @@ export const login= async(req,res)=>{
                 console.log("Password matched in admin login");
 
                 req.session.admin=admin._id;
-                return res.redirect("/admin")
+                return res.json({ success:true})
                 
             }else{
                 console.log("password didn't match in admin login ");
-                return res.render("admin/login",{error:"password didn't match"})
+                return res.json({
+                    success:false,
+                    message:"Password do not match"
+                })
                 
             }
         }else{
             console.log("admin not found");
-            return res.render("admin/login",{error:"admin not found"})
+            return res.json({
+                success:false,
+                message:"Email not found"
+            })
         }
         
     } catch (error) {
         console.error("Admin Login Post error : ",error.message);
-        return res.status(500).send("Server Error")
+        return res.status(500).json({
+            success:false,
+            message:"Server Error"
+        })
         
     }
 }

@@ -81,9 +81,16 @@ export const addCategory= async(req,res)=>{
         console.log("New Category Saved Successfully : ",categoryData);
         
 
-        return res.redirect("/admin/category");
+        return res.status(200).json({
+            success:true,
+            message:"add new category successfully",
+            redirect:"/admin/category"
+        })
+        
+        
 
     } catch (error) {
+        console.error("Internal Server Error");
         
     }
 }
@@ -154,7 +161,13 @@ export const editCategory= async(req,res)=>{
         console.log("Category updatedd Successfully ");
         
 
-        return res.redirect("/admin/category");
+         return res.status(200).json({
+            success:true,
+            message:"Edit category successfully",
+            redirect:"/admin/category"
+        })
+        
+    
 
     } catch (error) {
         console.error("Error in Edit category : ",error.message);

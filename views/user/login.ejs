@@ -187,11 +187,14 @@
     text-align: left;
 }
 .error-message {
-    color: #d9534f;
-    font-size: 0.78rem;
-    margin-bottom: 8px;
-    text-align: center;
-    display: block;
+    background: #ffe5e5;
+    color: #b00020;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    display: none;
+    
 }
 
 
@@ -281,6 +284,7 @@
         const result= await res.json()
 
         if(!result.success){
+            errMsg.style.display="block"
             errMsg.innerText=result.message
         }else{
             window.location.href="/"

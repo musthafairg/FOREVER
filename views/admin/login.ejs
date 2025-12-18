@@ -130,6 +130,7 @@
     border-radius: 6px;
     font-size: 0.9rem;
     margin-bottom: 15px;
+    display: none;
 }
 
     </style>
@@ -140,11 +141,11 @@
     <div class="login-container">
         <h2>Admin Panel</h2>
 
-   <% if (typeof error !== 'undefined') { %>
-        <div class="error-message"><%= error %></div>
-    <% } %>
+ 
+        <div id="errMsg" class="error-message"></div>
+    
 
-        <form action="/admin/login" method="post" >
+        <form id="loginForm" >
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" required>
@@ -169,6 +170,34 @@
     };
 
 
+    const loginForm= document.getElementById("loginForm")
+    const errMsg= document.getElementById("errMsg")
+
+    loginForm.addEventListener("submit",async(e)=>{
+        e.preventDefault()
+
+        const formData= new FormData(e.target)
+        const data= Object.fromEntries(formData.entries())
+
+
+        const res= await fetch("/admin/login", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(data)
+
+        })
+
+
+        const result= await res.json()
+
+        if(!result.success){
+
+            errMsg.style.display="block"
+            errMsg.innerText=result.message
+        }else{
+            window.location.href="/admin/"
+        }
+    })
 
     </script>
 </body>

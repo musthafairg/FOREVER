@@ -399,18 +399,15 @@
                 if(!result.success){
 
                     alert(result.message)
-                    submitBtn.disabled=false
-                    submitBtn.innerText="Create Account"
+                    
                 }else{
                     
                     window.location.href= result.redirect
                 }
             } catch(error){
                 
-                submitBtn.disabled=false
-                submitBtn.innerText="Create Account"
-
-                    console.error(error.message);
+        
+              console.error(error.message);
                     
             }
         })
