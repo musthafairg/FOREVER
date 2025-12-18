@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 export const loadLogin= async(req,res)=>{
     try {
         if(req.session.admin){
-            return res.redirect("/admin")
+            return res.redirect("/admin/")
         }
        return  res.render("admin/login")
     } catch (error) {
@@ -52,16 +52,18 @@ export const login= async(req,res)=>{
 
 export const loadDashboard= async(req,res)=>{
     
-    if(req.session.admin){
+    
 
         try {
+
+
            return res.render("admin/dashboard",{page:"dashboard"})         
         } catch (error) {
             console.error("Admin Dashboard page not loading : ",error.message);
            return res.status(500).send("Server Error")
             
         }
-    }
+    
     
   
 }

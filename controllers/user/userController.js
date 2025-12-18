@@ -132,6 +132,10 @@ export const loadSignup= (req,res)=>{
 
 export const loadLogin= (req,res)=>{
     try {
+
+        if(req.session.user){
+            return res.redirect("/")
+        }
         return res.render("user/login");
     } catch (error) {
         console.error("Login page not Loading",error.message);
