@@ -126,8 +126,7 @@
             <div class="col-lg-12">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form method="POST" action="/admin/addProducts" id="productForm" enctype="multipart/form-data"
-                            onsubmit="return validateForm()"> 
+                        <form method="POST" action="/admin/addProducts" id="productForm" enctype="multipart/form-data"> 
                             <input type="hidden" id="imageDatas" name="imageDatas"> 
 
                             <div class="mb-4">
@@ -287,9 +286,35 @@
    <script>
     //Form Validation
 
-    function validateAndSubmit(){
-        if(validateForm()){
-            document.getElementById('productForm').submit()
+    async function validateAndSubmit(){
+        if(!validateForm())return
+
+
+        const form = document.getElementById("productForm")
+        const formData = new FormData(form)
+
+        try {
+            
+            const response= await fetch("/admin/addProducts",{
+                method:"POST",
+                body:formData,
+
+            })
+
+            const result = await response.json()
+
+
+
+            if(!result.success){
+                alert(result.message||"Failed to add product")
+            }else{
+                window.location.href=result.redirect
+            }
+        } catch (error) {
+            console.error("Add product error: ",error.message);
+
+            alert("something went wrong. Please try again")
+            
         }
     }
 

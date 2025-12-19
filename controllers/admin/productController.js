@@ -69,7 +69,10 @@ export const addProducts=   async(req,res)=>{
             const categoryDoc   =    await Category.findOne({name:products.category})
         
             if(!categoryDoc){
-                return res.redirect("/admin/addProducts?error=Invalid+category+name")
+                return res.json({
+                    success:false,
+                    message:"Product category not found"
+                })
             }
 
             const newProduct    = new Product({
@@ -85,7 +88,9 @@ export const addProducts=   async(req,res)=>{
 
             await newProduct.save()
 
-            return res.redirect("/admin/addProducts")
+            return res.json({success:true,
+                redirect:"/admin/products"
+            })
         }else{
             return res.redirect("/admin/addProducts?error=Product+already+exists")
         }
@@ -227,21 +232,24 @@ export const editProduct= async(req,res)=>{
         const id= req.params.id
 
         const product= await Product.findById(id)
-        console.log("aaaaaaaaaaaa",product);
+       
         
 
         if(!product){
-            return res.redirect("/admin/editProduct?error=Product+not+found")
+            return res.status(404).json({
+                success:false,
+                message:"Product not found"
+            })
         }
 
 
 
         const productData= req.body
-        console.log(req);
+   
         
-        console.log("req.body",req.body);
         
-        console.log("bbbbbbbbbb",productData);
+        
+      
         
         
         const existProductName= await Product.findOne({
@@ -250,7 +258,10 @@ export const editProduct= async(req,res)=>{
         })
 
         if(existProductName){
-            return res.redirect("/admin/editProduct?error=Product+with+this+name+already+exists.+please+try+with+another+name")
+            return res.status(409).json({
+                success:false,
+                message:"Product with this name already exists"
+            })
         }
 
          const images=[]
@@ -272,7 +283,10 @@ export const editProduct= async(req,res)=>{
             const categoryDoc   =    await Category.findOne({name:productData.category})
         
             if(!categoryDoc){
-                return res.redirect("/admin/editProduct?error=Invalid+category+name")
+                return res.status(400).json({
+                    success:false,
+                    message:"Invalid category"
+                })
             }
 
             await Product.findByIdAndUpdate(id,{
@@ -285,11 +299,17 @@ export const editProduct= async(req,res)=>{
                 $push:{productImage:{$each:images}}
             })
 
-            return res.redirect("/admin/products")
+            return res.json({
+                success:true,
+                redirect:"/admin/products"
+            })
     } catch (error) {
         
-         console.error("Error Updating product :",error.message)
-        res.status(500).send("Server Error")
+        console.error("Error Updating product :",error.message)
+        res.status(500).json({
+            success:false,
+            message:"Server error"
+        })
     }
 }
 

@@ -19,6 +19,8 @@ export const loadLogin= async(req,res)=>{
 export const login= async(req,res)=>{
     try {
         
+        console.log("aaaaassss",req.session.user);
+        
         const {email,password}=req.body;
         console.log("admin :",email,password);
 
