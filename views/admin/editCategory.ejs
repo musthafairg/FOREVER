@@ -225,7 +225,8 @@ const offer_error= document.getElementById("offer_error")
             const response= await fetch("/admin/editCategory",{
                 method:"POST",
                 headers:{"Content-Type":"application/json"},
-                body:JSON.stringify(formData)
+                body:JSON.stringify(formData),
+                credentials:"include"
             })
 
 
