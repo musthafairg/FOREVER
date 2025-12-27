@@ -94,7 +94,7 @@ export const addReview= async(req,res)=>{
 
         await product.save()
 
-        return res.redirect(`/productDetails?id=${productId}`)
+        return res.redirect(`/product-details?id=${productId}`)
     } catch (error) {
         
         console.error("Error adding Review :",error.message);

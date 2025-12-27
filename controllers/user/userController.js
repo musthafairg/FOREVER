@@ -25,6 +25,7 @@ export const loadHomepage= async(req,res)=>{
         const user=req.session.user
 
         
+        
         const products= await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(10)
 
 
@@ -153,6 +154,9 @@ export const login = async(req,res)=>{
 
         const existingUser= await User.findOne({email})
 
+        console.log("exist................",existingUser);
+        
+
         if(!existingUser){
             return res.json({
                 success:false,
@@ -179,6 +183,9 @@ export const login = async(req,res)=>{
 
 
         req.session.user=existingUser
+
+        console.log("user..........",req.session.user);
+        
 
 
 
@@ -256,7 +263,7 @@ export const signupUser= async (req,res)=>{
         return res.status(200).json({
             success:true,
             message:"OTP sent successfully",
-            redirect:"/otpPage"
+            redirect:"/otp-page"
         })
         
         
@@ -543,7 +550,7 @@ export const demoLogin= async(req,res)=>{
         }
 
         req.session.user={
-            __dirnameid:demoUser._id,
+            _id:demoUser._id,
             name:demoUser.name,
             email:demoUser.email
         }

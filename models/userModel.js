@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    profileImage:{
+      type:String,
+      default: "default-profile.avif"
+    },
     isBlocked: {
       type: Boolean,
       default: false,

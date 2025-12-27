@@ -147,13 +147,13 @@
             <div class="filter-title">Filter by Price</div>
             <form id="price-filter-form">
               <div class="price-options">
-                <a href="/filterByPrice?gt=0&lt=500<%= search ? '&search=' + search : '' %><%= sort ? '&sort=' + sort : '' %>">
+                <a href="/filter-by-price?gt=0&lt=500<%= search ? '&search=' + search : '' %><%= sort ? '&sort=' + sort : '' %>">
                 <button type="button" class="price-button">Under ₹500</button></a>
-                <a href="/filterByPrice?gt=500&lt=1000<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
+                <a href="/filter-by-price?gt=500&lt=1000<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
                   <button type="button" class="price-button">₹500 - ₹1000</button></a>
-                <a href="/filterByPrice?gt=1000&lt=1500<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
+                <a href="/filter-by-price?gt=1000&lt=1500<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
                   <button type="button" class="price-button">₹1000 - ₹1500</button></a>
-                <a href="/filterByPrice?gt=1500&lt=1000000<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
+                <a href="/filter-by-price?gt=1500&lt=1000000<%= search? '&search=' + search : '' %><%= sort? '&sort=' + sort : '' %>">
                   <button type="button" class="price-button">Above ₹1500</button></a>
               </div>
             </form>
@@ -164,7 +164,7 @@
           <% for (let i = 0; i < products.length; i++) { %>
             <div class="product-card">
               <span class="wishlist-btn">❤️</span>
-              <a href="/productDetails?id=<%= products[i]._id %>">
+              <a href="/product-details?id=<%= products[i]._id %>">
                 <img src="/uploads/image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
                 <h4><%= products[i].productName %></h4>
                 

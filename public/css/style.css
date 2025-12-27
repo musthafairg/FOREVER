@@ -404,7 +404,7 @@ ul {
 /* Error messages */
 
 .error-message {
-  background-color: #ffe0e0;
+
   color: #d9534f;
   padding: 10px 15px;
   border-radius: 8px;
@@ -464,7 +464,7 @@ ul {
 
 .otp-inputs {
   display: flex;
-  justify-content: space-between;
+  justify-content:space-evenly;
   gap: 6px;
 }
 

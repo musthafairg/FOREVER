@@ -18,28 +18,28 @@ router.get("/",adminAuth,loadDashboard)
 
 //User Management
 router.get("/users",adminAuth,userInfo)
-router.get("/blockCustomer",adminAuth,blockCustomer)
-router.get("/unblockCustomer",adminAuth,unblockCustomer)
+router.get("/block-customer",adminAuth,blockCustomer)
+router.get("/unblock-customer",adminAuth,unblockCustomer)
 
 //Category Management
 router.get("/category",adminAuth,categoryInfo)
-router.get("/addCategory",adminAuth,getAddCategoryPage)
-router.post("/addCategory",adminAuth,addCategory)
-router.get("/listCategory",adminAuth,listCategory)
-router.get("/unlistCategory",adminAuth,unlistCategory)
-router.get("/editCategory",adminAuth,geteditCategoryPage)
-router.post("/editCategory",adminAuth,editCategory)
+router.get("/add-category",adminAuth,getAddCategoryPage)
+router.post("/add-category",adminAuth,addCategory)
+router.get("/list-category",adminAuth,listCategory)
+router.get("/unlist-category",adminAuth,unlistCategory)
+router.get("/edit-category",adminAuth,geteditCategoryPage)
+router.post("/edit-category",adminAuth,editCategory)
 
 //Product Management
 
-router.get("/addProducts",adminAuth,getAddProductPage)
-router.post("/addProducts",adminAuth,uploads.array("images",4),addProducts)
+router.get("/add-products",adminAuth,getAddProductPage)
+router.post("/add-products",adminAuth,uploads.array("images",4),addProducts)
 router.get("/products",adminAuth,productInfo)
-router.get("/blockProduct",adminAuth,blockProduct)
-router.get("/unblockProduct",adminAuth,unblockProduct)
-router.get("/editProduct",adminAuth,getEditProduct)
-router.post("/editProduct/:id",adminAuth,uploads.array("images",4),editProduct)
-router.post("/deleteImage",adminAuth,deleteSingleImage)
+router.get("/block-product",adminAuth,blockProduct)
+router.get("/unblock-product",adminAuth,unblockProduct)
+router.get("/edit-product",adminAuth,getEditProduct)
+router.post("/edit-product/:id",adminAuth,uploads.array("images",4),editProduct)
+router.post("/delete-image",adminAuth,deleteSingleImage)
 
 
 export default router;
