@@ -163,7 +163,12 @@
         <main class="product-grid">
           <% for (let i = 0; i < products.length; i++) { %>
             <div class="product-card">
-              <span class="wishlist-btn">❤️</span>
+              <button
+                  class="wishlist-btn"
+                  onclick="toggleWishlist('<%= products[i]._id %>')"
+                >
+                  <i class="fas fa-heart"></i>
+                </button>
               <a href="/product-details?id=<%= products[i]._id %>">
                 <img src="/uploads/image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
                 <h4><%= products[i].productName %></h4>
@@ -199,5 +204,26 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   <%- include('../partials/user/footer.ejs') %>
+   <script>
+  async function toggleWishlist(productId) {
+    try {
+      const res = await fetch("/wishlist/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Wishlist updated");
+      } else {
+        alert("Failed");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+</script>
 </body>
 </html>

@@ -10,6 +10,8 @@ import multer from 'multer'
 import { storage } from '../helpers/multer.js'
 import { loadAddressPage,loadAddAddressPage, addAddress, loadEditAddress, updateAddress, deleteAddress, setDefaultAddress } from '../controllers/user/addressController.js'
 import { addToCart, loadCart, removeFromCart, updateCartQuantity } from '../controllers/user/cartController.js'
+import { loadCheckout } from '../controllers/user/checkoutController.js'
+import { loadWishlist, removeFromWishlist, addToWishlist } from '../controllers/user/wishlistController.js'
 const uploads   =   multer({storage})
 
 
@@ -88,4 +90,16 @@ router.get("/cart",loadCart)
 router.post("/cart/add",addToCart)
 router.post("/cart/update-qty",updateCartQuantity)
 router.post("/cart/remove",removeFromCart)
+
+// Checkout Management
+
+router.get("/checkout",loadCheckout)
+
+// Wishlist Management
+
+router.get("/wishlist",loadWishlist)
+router.post("/wishlist/add",addToWishlist)
+router.post("/wishlist/remove",removeFromWishlist)
+
+
 export default router;

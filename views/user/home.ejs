@@ -1,45 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | Forever</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home | Forever</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="/css/style.css">
-  <style>
-    
-@media (min-width: 992px) {
-  .col-lg-1-5 {
-    
-    flex: 0 0 18%;
-    max-width: 18%;
-   
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
-  </style>
-  <script src="/js/header.js" defer></script>
-</head>
-<body>
-  <%- include('../partials/user/header.ejs') %>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+      @media (min-width: 992px) {
+        .col-lg-1-5 {
+          flex: 0 0 18%;
+          max-width: 18%;
 
-  <section class="hero">
-    <img src="images/hero.png" alt="Hero Banner">
-  </section>
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+    </style>
+    <script src="/js/header.js" defer></script>
+  </head>
+  <body>
+    <%- include('../partials/user/header.ejs') %>
 
-  <section class="product spad">
-    <div class="container">
-      <div class="d-flex justify-content-center">
-        <h2 class="section-title">NEW ARRIVALS</h2>
-      </div>
+    <section class="hero">
+      <img src="images/hero.png" alt="Hero Banner" />
+    </section>
 
-      <div class="row " >
-        <% for (let i = 0; i < products.length; i++) { %>
-         <div class="col-6 col-md-4 col-lg-1-5 mb-4">
-              <div class="product-cart-wrap">
+    <section class="product spad">
+      <div class="container">
+        <div class="d-flex justify-content-center">
+          <h2 class="section-title">NEW ARRIVALS</h2>
+        </div>
+
+        <div class="row">
+          <% for (let i = 0; i < products.length; i++) { %>
+          <div class="col-6 col-md-4 col-lg-1-5 mb-4">
+            <div class="product-cart-wrap">
               <div class="product-img-action-wrap">
                 <div class="product-img product-img-zoom">
                   <a href="/product-details?id=<%= products[i]._id %>">
@@ -47,27 +53,58 @@
                       class="img-fluid default-img"
                       src="/uploads/image/<%= products[i].productImage[0] %>"
                       alt="<%= products[i].productName %>"
-                    >
+                    />
                   </a>
                 </div>
 
-                <a href="/addToWishlist?id=<%= products[i]._id %>" class="wishlist-btn">
+                <button
+                  class="wishlist-btn"
+                  onclick="toggleWishlist('<%= products[i]._id %>')"
+                >
                   <i class="fas fa-heart"></i>
-                </a>
+                </button>
               </div>
 
               <div class="product-content-wrap">
                 <h6><%= products[i].productName %></h6>
                 <h5>₹ <%= products[i].salePrice %></h5>
-                <a href="/addToCart?id=<%= products[i]._id %>" class="button-add">Add to Cart</a>
+                <a
+                  href="/addToCart?id=<%= products[i]._id %>"
+                  class="button-add"
+                  >Add to Cart</a
+                >
               </div>
             </div>
           </div>
-        <% } %>
+          <% } %>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <%- include('../partials/user/footer.ejs') %>
-</body>
+    <%- include('../partials/user/footer.ejs') %>
+
+
+    <script>
+  async function toggleWishlist(productId) {
+    try {
+      const res = await fetch("/wishlist/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Wishlist updated");
+      } else {
+        alert("Failed");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+</script>
+
+  </body>
 </html>
