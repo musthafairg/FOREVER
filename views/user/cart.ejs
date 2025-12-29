@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Cart | Forever</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    .cart-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .cart-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+
+    .cart-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 25px;
+      border: 1px solid #eee;
+    }
+
+    .cart-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 100px 1fr 120px 80px;
+      gap: 20px;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item img {
+      width: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .cart-item h4 {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .cart-price {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .qty-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qty-box button {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background: #f9f9f9;
+      cursor: pointer;
+    }
+
+    .qty-box span {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .remove-btn {
+      color: #ff3c3c;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* SUMMARY */
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .summary-total {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 14px;
+      background: #ff3c3c;
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-top: 20px;
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 60px 0;
+      color: #777;
+    }
+
+    @media (max-width: 768px) {
+      .cart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cart-item {
+        grid-template-columns: 80px 1fr;
+        grid-template-rows: auto auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<%- include('../partials/user/header.ejs') %>
+
+
+
+
+<section class="cart-container">
+
+  <div class="cart-grid">
+
+    <!-- CART ITEMS -->
+    <div class="cart-box">
+      <h2 class="cart-title">My Cart</h2>
+
+      <% if (cart && cart.items.length > 0) { %>
+
+        <% cart.items.forEach(item => { %>
+          <div class="cart-item">
+
+            <img src="/uploads/image/<%= item.productId.productImage[0] || 'placeholder.png' %>">
+
+            <div>
+              <h4><%= item.productId.productName %></h4>
+              <div class="cart-price">₹ <%= item.productId.salePrice %></div>
+            </div>
+
+            <div class="qty-box">
+              <button onclick="updateQty('<%= item.productId._id %>','dec')">
+                <i class="fa-solid fa-minus"></i>
+              </button>
+
+              <span id="qty-<%= item.productId._id %>">
+                <%= item.quantity %>
+              </span>
+
+              <button onclick="updateQty('<%= item.productId._id %>','inc')">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+
+            <div class="remove-btn" onclick="removeItem('<%= item.productId._id %>')">
+              Remove
+            </div>
+
+          </div>
+        <% }) %>
+
+      <% } else { %>
+        <div class="empty-cart">
+          <h3>Your cart is empty</h3>
+        </div>
+      <% } %>
+
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="cart-box">
+      <h2 class="cart-title">Summary</h2>
+
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span>₹ <%= subtotal %></span>
+      </div>
+
+      <div class="summary-row">
+        <span>Shipping</span>
+        <span>Free</span>
+      </div>
+
+      <hr>
+
+      <div class="summary-row summary-total">
+        <span>Total</span>
+        <span>₹ <%= subtotal %></span>
+      </div>
+
+      <button class="checkout-btn" onclick="location.href='/checkout'">
+        Proceed to Checkout
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<%- include('../partials/user/footer.ejs') %>
+
+<script>
+  async function updateQty(productId, action) {
+    const res = await fetch("/cart/update-qty", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, action })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById("qty-" + productId).innerText = data.quantity;
+      location.reload();
+    } else {
+      alert(data.message || "Action failed");
+    }
+  }
+
+  async function removeItem(productId) {
+    if (!confirm("Remove item from cart?")) return;
+
+    const res = await fetch("/cart/remove", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId })
+    });
+
+    const data = await res.json();
+    if (data.success) location.reload();
+  }
+</script>
+
+</body>
+</html>

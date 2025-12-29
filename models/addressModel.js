@@ -1,4 +1,4 @@
-import mongoose, { Schema, trusted } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 
 const addressSchema = new Schema({

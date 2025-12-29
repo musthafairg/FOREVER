@@ -1,4 +1,5 @@
 import User from '../../models/userModel.js';
+import Address from '../../models/addressModel.js';
 import bcrypt from 'bcrypt'
 import {securePassword,generateOtp,sendVerificationEmail} from '../../services/user/userServices.js'
 
@@ -8,7 +9,17 @@ export const loadUserProfile= async(req,res)=>{
 
         const user=await User.findById(req.session.user._id)
 
-        res.render("user/profile",{user})
+        const addressData = await Address.findOne({userId:req.session.user._id})
+
+        let defaultAddress= null
+        if(addressData&&addressData.address.length>0){
+            defaultAddress= addressData.address.find(addr=>addr.isDefault===true)
+        }
+
+        res.render("user/profile",{
+            user,
+            defaultAddress
+        })
     } catch (error) {
 
         console.error("Error in load Profile page :",error.message);

@@ -144,6 +144,7 @@
 
       <ul class="profile-menu">
         <li class="active"><a href="/user-profile">Profile</a></li>
+        <li><a href="/cart">Cart</a></li>
         <li>Orders</li>
         <li><a href="/address">Addresses</a></li>
         <li><a href="/edit-profile">Edit Profile</a></li>
@@ -174,14 +175,22 @@
         </div>
       </div>
 
-      <div class="profile-box">
-        <h2>Default Address</h2>
-        <p>
-          123, MG Road<br>
-          Kochi, Kerala<br>
-          682001
-        </p>
-      </div>
+     <div class="profile-box">
+  <h2>Default Address</h2>
+
+  <% if (defaultAddress) { %>
+    <p>
+      <%= defaultAddress.houseName %><br>
+      <%= defaultAddress.place %>, <%= defaultAddress.city %><br>
+      <%= defaultAddress.district %>, <%= defaultAddress.state %><br>
+      <%= defaultAddress.pincode %><br>
+      Phone: <%= defaultAddress.phone %><br>
+      Alt: <%= defaultAddress.altPhone %>
+    </p>
+  <% } else { %>
+    <p>No default address set.</p>
+  <% } %>
+</div>
 
     </div>
   </div>

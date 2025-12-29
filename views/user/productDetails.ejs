@@ -1,465 +1,565 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= product.productName %> | Forever</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= product.productName %> | Forever</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="/css/style.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
 
-  <style>
-   
-.container-spec {
-    margin-top: 40px;
-}
+    <style>
+      .container-spec {
+        margin-top: 40px;
+      }
 
+      .card-section,
+      .review-box {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 20px 22px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #eee;
+      }
 
-.card-section,
-.review-box {
-    background: #ffffff;
-    border-radius: 10px;
-    padding: 20px 22px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    border: 1px solid #eee;
-}
+      .card-section h4,
+      .mt-5 h3,
+      .mt-5 h4 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #222;
+      }
 
+      .highlights-list {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+      }
 
-.card-section h4,
-.mt-5 h3,
-.mt-5 h4 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #222;
-}
+      .highlights-list li {
+        position: relative;
+        padding-left: 28px;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+        color: #555;
+        line-height: 1.6;
+      }
 
+      .highlights-list li::before {
+        content: '\f058';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        left: 0;
+        top: 2px;
+        color: #b25b8e;
+        font-size: 0.95rem;
+      }
 
+      .review-box {
+        margin-bottom: 15px;
+      }
 
-.highlights-list {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-}
+      /* Reviewer name */
+      .review-box strong {
+        font-size: 0.95rem;
+        color: #222;
+      }
 
-.highlights-list li {
-    position: relative;
-    padding-left: 28px;
-    margin-bottom: 10px;
-    font-size: 0.95rem;
-    color: #555;
-    line-height: 1.6;
-}
+      .review-box span {
+        font-size: 0.9rem;
+        color: #f5a623;
+      }
 
-.highlights-list li::before {
-    content: "\f058";
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    position: absolute;
-    left: 0;
-    top: 2px;
-    color: #b25b8e;
-    font-size: 0.95rem;
-}
+      .review-box p {
+        font-size: 0.9rem;
+        color: #555;
+        margin-top: 6px;
+        line-height: 1.6;
+      }
 
+      form label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-top: 10px;
+        display: block;
+        color: #444;
+      }
 
+      .form-select,
+      .form-control {
+        margin-top: 5px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 0.9rem;
+      }
 
-.review-box {
-    margin-bottom: 15px;
-}
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #b25b8e;
+        box-shadow: 0 0 0 2px rgba(178, 91, 142, 0.15);
+        outline: none;
+      }
 
-/* Reviewer name */
-.review-box strong {
-    font-size: 0.95rem;
-    color: #222;
-}
+      .btn-primary {
+        background-color: #000;
+        border-color: #000;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        border-radius: 6px;
+      }
 
+      .btn-primary:hover {
+        background-color: #333;
+        border-color: #333;
+      }
 
-.review-box span {
-    font-size: 0.9rem;
-    color: #f5a623;
-}
+      @media (max-width: 768px) {
+        .card-section,
+        .review-box {
+          padding: 16px;
+        }
 
+        .card-section h4,
+        .mt-5 h3 {
+          font-size: 1.1rem;
+        }
+      }
 
-.review-box p {
-    font-size: 0.9rem;
-    color: #555;
-    margin-top: 6px;
-    line-height: 1.6;
-}
+      .zoom-container {
+        width: 100%;
+        max-width: 500px;
+        height: 550px;
+        background: #f5f5f5;
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
+      .zoom-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        transition: transform 0.25s ease;
+      }
 
+      .zoom-result {
+        width: 100%;
+        height: 550px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        background-repeat: no-repeat;
+        background-size: 200%;
+        background-position: center;
+        display: none;
+      }
+    </style>
+    <script src="/js/header.js" defer></script>
+  </head>
+  <body>
+    <%- include('../partials/user/header.ejs') %>
 
-form label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin-top: 10px;
-    display: block;
-    color: #444;
-}
+    <main class="main">
+      <div class="page-header breadcrumb-wrap">
+        <div class="container">
+          <div class="breadcrumb">
+            <a href="/" rel="nofollow">Home</a>
+            <span></span>
+            <a href="/shop" rel="nofollow">Shop</a>
 
-.form-select,
-.form-control {
-    margin-top: 5px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 0.9rem;
-}
-
-.form-control:focus,
-.form-select:focus {
-    border-color: #b25b8e;
-    box-shadow: 0 0 0 2px rgba(178, 91, 142, 0.15);
-    outline: none;
-}
-
-
-.btn-primary {
-    background-color: #000;
-    border-color: #000;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    border-radius: 6px;
-}
-
-.btn-primary:hover {
-    background-color: #333;
-    border-color: #333;
-}
-
-
-  
-
-@media (max-width: 768px) {
-    .card-section,
-    .review-box {
-        padding: 16px;
-    }
-
-    .card-section h4,
-    .mt-5 h3 {
-        font-size: 1.1rem;
-    }
-}
-
-
-.zoom-container {
-    width: 100%;
-    max-width: 500px; 
-    height: 550px;        
-    background: #f5f5f5;
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 0 auto;      
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-.zoom-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;   
-    object-position: center;
-    transition: transform 0.25s ease;
-}
-
-.zoom-result {
-    width: 100%;
-    height: 550px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    background-repeat: no-repeat;
-    background-size: 200%;
-    background-position: center;
-    display: none;
-}
-
-  </style>
-  <script src="/js/header.js" defer></script>
-</head>
-<body>
-  <%- include('../partials/user/header.ejs') %>
-
-  <main class="main">
-    <div class="page-header breadcrumb-wrap">
-      <div class="container">
-        <div class="breadcrumb">
-          <a href="/" rel="nofollow">Home</a>
-          <span></span>
-          <a href="/shop" rel="nofollow">Shop</a>
-          
-          <span></span> 
-          <a href="/product-details?id=<%= product._id %>" rel="nofollow"><%= product.productName%></a>
+            <span></span>
+            <a href="/product-details?id=<%= product._id %>" rel="nofollow"
+              ><%= product.productName%></a
+            >
+          </div>
         </div>
       </div>
-    </div>
 
-    <section class="mt-50 mb-50">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-9">
-            <div class="product-detail accordion-detail">
-              <div class="row mb-50">
-                
-                <div class="col-md-6 col-sm-12">
-                  <div class="detail-gallery">
-                    <div class="product-image-slider">
+      <section class="mt-50 mb-50">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-9">
+              <div class="product-detail accordion-detail">
+                <div class="row mb-50">
+                  <div class="col-md-6 col-sm-12">
+                    <div class="detail-gallery">
+                      <div class="product-image-slider">
+                        <div class="zoom-container" id="zoomContainer">
+                          <% if (product.productImage &&
+                          product.productImage.length > 0) { %>
 
-                      
-                      <div class="zoom-container" id="zoomContainer">
-                      <% if (product.productImage && product.productImage.length > 0) { %>
-                        
                           <figure class="border-radius-10">
-                            <img id="mainImage" class="zoom-image" src="/uploads/image/<%=product.productImage[0]%>" alt="Product Image">
+                            <img
+                              id="mainImage"
+                              class="zoom-image"
+                              src="/uploads/image/<%=product.productImage[0]%>"
+                              alt="Product Image"
+                            />
                           </figure>
-                        
-                      <% } %>
+
+                          <% } %>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="zoom-result" id="zoomResult"></div>
+                      </div>
+
+                      <div class="slider-nav-thumbnails pl-15 pr-15">
+                        <% if (product.productImage) { %> <%
+                        product.productImage.forEach(img => { %>
+                        <div>
+                          <img
+                            style="object-fit: contain"
+                            src="/uploads/image/<%= img %>"
+                            onclick="changeMainImage(this.src)"
+                            alt="Thumbnail"
+                          />
+                        </div>
+                        <% }) %> <% } %>
                       </div>
                     </div>
-
-                    <div  class="col-md-6">
-
-                    <div class="zoom-result" id="zoomResult"></div>
-                    
-                    </div>
-
-                    <div class="slider-nav-thumbnails pl-15 pr-15">
-                      <% if (product.productImage) { %>
-                        <% product.productImage.forEach(img => { %>
-                          <div>
-                            <img style="object-fit: contain;" src="/uploads/image/<%= img %>" onclick="changeMainImage(this.src)" alt="Thumbnail">
-                          </div>
-                        <% }) %>
-                      <% } %>
-                    </div>
                   </div>
-                </div>
 
-               
-                <div class="col-md-6 col-sm-12">
-                  <div class="detail-info">
-                    <h2 class="title-detail"><%= product.productName %></h2>
+                  <div class="col-md-6 col-sm-12">
+                    <div class="detail-info">
+                      <h2 class="title-detail"><%= product.productName %></h2>
 
-                    <div class="product-detail-rating">
-                     
-                      <% if (product.avgRating > 0) { %>
-
-                        <% for (let i=1; i<=Math.floor(product.avgRating); i++){%>
-                            <span class="rating-badge">
+                      <div class="product-detail-rating">
+                        <% if (product.avgRating > 0) { %> <% for (let i=1;
+                        i<=Math.floor(product.avgRating); i++){%>
+                        <span class="rating-badge">
                           <i class="fa-solid fa-star text-warning"></i>
-                           </span>
-                          <%}%>
-                            
-                                
-                           
-                        <% } else { %>
-                            <span>No ratings yet</span>
+                        </span>
+                        <%}%> <% } else { %>
+                        <span>No ratings yet</span>
                         <% } %>
 
-                      <div class="product-rate-cover text-end">
-                        <span class="font-small ml-5 text-muted">( <%=product.reviews.length%> reviews)</span>
+                        <div class="product-rate-cover text-end">
+                          <span class="font-small ml-5 text-muted"
+                            >( <%=product.reviews.length%> reviews)</span
+                          >
+                        </div>
                       </div>
-                    </div>
 
-                    <div class="clearfix product-price-cover mt-10">
-                      <div class="product-price primary-color float-left">
-                        <ins>
-                          <span class="text-brand">₹ <%= product.salePrice %></span>
-                        </ins>
+                      <div class="clearfix product-price-cover mt-10">
+                        <div class="product-price primary-color float-left">
+                          <ins>
+                            <span class="text-brand"
+                              >₹ <%= product.salePrice %></span
+                            >
+                          </ins>
 
-                        <ins>
-                          <span class="old-price font-md ml-15">
-                            ₹ <%= product.regularPrice %>
+                          <ins>
+                            <span class="old-price font-md ml-15">
+                              ₹ <%= product.regularPrice %>
+                            </span>
+                          </ins>
+
+                          <span class="save-price font-md color3 ml-15">
+                            <% if (!totalOffer) { %> No Offers <% } else { %>
+                            <%= totalOffer %>% Off <% } %>
                           </span>
-                        </ins>
-
-                        <span class="save-price font-md color3 ml-15">
-                          <% if (!totalOffer) { %>
-                            No Offers
-                          <% } else { %>
-                            <%= totalOffer %>% Off
-                          <% } %>
-                        </span>
+                        </div>
                       </div>
-                    </div>
 
-                    <div class="bt-1 border-color-1 mt-15 mb-15"></div>
+                      <div class="bt-1 border-color-1 mt-15 mb-15"></div>
 
-                    <div class="short-desc mb-30">
-                      <p><%= product.description %></p>
-                    </div>
+                      <div class="short-desc mb-30">
+                        <p><%= product.description %></p>
+                      </div>
 
-                    <div class="product_sort_info font-xs mb-30">
-                      <ul>
-                        <li class="mb-10">1 Year Brand Warranty</li>
-                        <li class="mb-10">30 Day Return Policy</li>
-                        <li>Cash on Delivery available</li>
+                      <div class="product_sort_info font-xs mb-30">
+                        <ul>
+                          <li class="mb-10">1 Year Brand Warranty</li>
+                          <li class="mb-10">30 Day Return Policy</li>
+                          <li>Cash on Delivery available</li>
+                        </ul>
+                      </div>
+
+                      <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+
+                      <div class="detail-extralink">
+                        <% const isUnavailable = product.isBlocked ||
+                        product.status !== "Available" || product.quantity <= 0;
+                        %>
+
+                        <div
+                          class="detail-qty border radius"
+                          style="<%= isUnavailable ? 'opacity:0.6;pointer-events:none;' : '' %>"
+                        >
+                          <a href="#" class="qty-down"
+                            ><i class="fa-solid fa-angle-down"></i>
+</a>
+                          <span class="qty-val" id="quantity">1</span>
+                          <a href="#" class="qty-up"
+                            ><i class="fa-solid fa-angle-up"></i>
+</a>
+                        </div>
+
+                        <div class="product-extra-link2">
+                          <% if ( product.isBlocked || product.status !==
+                          "Available" || product.quantity <= 0 ) { %>
+
+                          <button
+                            class="button-add-to-cart"
+                            disabled
+                            style="opacity: 0.6; cursor: not-allowed"
+                          >
+                            Out of Stock
+                          </button>
+
+                          <% } else { %>
+
+                          <button
+                            type="button"
+                            class="button-add-to-cart"
+                            id="addToCartBtn"
+                            data-product-id="<%= product._id %>"
+                            data-stock="<%= product.quantity %>"
+                          >
+                            Add to Cart
+                          </button>
+
+                          <% } %>
+
+                          <a
+                            aria-label="Add To Wishlist"
+                            class="action-btn hover-up"
+                            href="#"
+                          >
+                            <i class="fi-rs-heart"></i>
+                          </a>
+                        </div>
+                      </div>
+
+                      <ul class="product-meta font-xs color-grey mt-50">
+                        <li class="mb-5">
+                          Stock Code: <a href="#">FWM15VKT</a>
+                        </li>
+                        <li class="mb-5">
+                          Tags:
+                          <a href="#" rel="tag"
+                            ><%= product.category?.name %></a
+                          >
+                        </li>
+                        <li>
+                          Availability: <% if ( product.quantity > 0 &&
+                          product.status === "Available" && !product.isBlocked )
+                          { %>
+                          <span class="in-stock text-success ml-5">
+                            <%= product.quantity %> Items in Stock
+                          </span>
+                          <% } else { %>
+                          <span class="text-danger ml-5">Out of Stock</span>
+                          <% } %>
+                        </li>
                       </ul>
                     </div>
-
-                    <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-
-                    <div class="detail-extralink">
-                      <div class="detail-qty border radius">
-                        <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                        <span class="qty-val" id="quantity">1</span>
-                        <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                      </div>
-
-                      <div class="product-extra-link2">
-                        <button type="submit" class="button-add-to-cart">Add to Cart</button>
-                        <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#">
-                          <i class="fi-rs-heart"></i>
-                        </a>
-                      </div>
-                    </div>
-
-                    <ul class="product-meta font-xs color-grey mt-50">
-                      <li class="mb-5">Stock Code: <a href="#">FWM15VKT</a></li>
-                      <li class="mb-5">Tags:
-                        <a href="#" rel="tag"><%= product.category?.name %></a>
-                      </li>
-                      <li>
-                        Availability:
-                        <span class="in-stock text-success ml-5">
-                          <%=product.quantity %> Items in Stock
-                        </span>
-                      </li>
-                    </ul>
                   </div>
                 </div>
-              </div> 
 
-               <div class="container-spec">
-        <div class="card-section mt-5">
-            <h4>Highlights</h4>
-            <ul class="highlights-list">
-                <% if (product.highlights.length > 0) { %>
-                    <% product.highlights.forEach(h => { %>
-                        <li><%= h %></li>
-                    <% }) %>
-                <% } else { %>
-                    <li>High quality build</li>
-                    <li>Premium design</li>
-                <% } %>
-            </ul>
-        </div>
+                <div class="container-spec">
+                  <div class="card-section mt-5">
+                    <h4>Highlights</h4>
+                    <ul class="highlights-list">
+                      <% if (product.highlights.length > 0) { %> <%
+                      product.highlights.forEach(h => { %>
+                      <li><%= h %></li>
+                      <% }) %> <% } else { %>
+                      <li>High quality build</li>
+                      <li>Premium design</li>
+                      <% } %>
+                    </ul>
+                  </div>
 
+                  <div class="mt-5">
+                    <h3>Customer Reviews</h3>
 
-
-         <div class="mt-5">
-            <h3>Customer Reviews</h3>
-
-            <div class="row">
-                <div class="col-md-7">
-                    <% if (latestreviews.length > 0 ) { %>
-                        <% latestreviews.forEach(r => { %>
-                            <div class="review-box">
-                                <strong><%= r.user?.name || "User" %></strong>
-                                <span> – <%= r.rating %> ★</span>
-                                <p class="mt-2"><%= r.comment %></p>
-                            </div>
-                        <% }) %>
-                    <% } else { %>
+                    <div class="row">
+                      <div class="col-md-7">
+                        <% if (latestreviews.length > 0 ) { %> <%
+                        latestreviews.forEach(r => { %>
+                        <div class="review-box">
+                          <strong><%= r.user?.name || "User" %></strong>
+                          <span> – <%= r.rating %> ★</span>
+                          <p class="mt-2"><%= r.comment %></p>
+                        </div>
+                        <% }) %> <% } else { %>
                         <p>No reviews yet.</p>
-                    <% } %>
-                </div>
+                        <% } %>
+                      </div>
 
-                <div class="col-md-5">
-                    <h4>Write a Review</h4>
+                      <div class="col-md-5">
+                        <h4>Write a Review</h4>
 
-                    <form action="/product/add-review" method="POST">
-                        <input type="hidden" name="productId" value="<%= product._id %>">
+                        <form action="/product/add-review" method="POST">
+                          <input
+                            type="hidden"
+                            name="productId"
+                            value="<%= product._id %>"
+                          />
 
-                        <label>Rating</label>
-                        <select name="rating" class="form-select" required>
+                          <label>Rating</label>
+                          <select name="rating" class="form-select" required>
                             <option value="5">5 - Excellent</option>
                             <option value="4">4 - Good</option>
                             <option value="3">3 - Average</option>
                             <option value="2">2 - Poor</option>
                             <option value="1">1 - Very Bad</option>
-                        </select>
+                          </select>
 
-                        <label class="mt-2">Comment</label>
-                        <textarea name="comment" class="form-control" rows="3"></textarea>
+                          <label class="mt-2">Comment</label>
+                          <textarea
+                            name="comment"
+                            class="form-control"
+                            rows="3"
+                          ></textarea>
 
-                        <button class="btn btn-primary mt-3">Submit Review</button>
-                    </form>
+                          <button class="btn btn-primary mt-3">
+                            Submit Review
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
 
+          <div class="related-products-section">
+            <h3 class="mt-5 mb-3">Related Products</h3>
 
-        
-
-               </div>
+            <div class="row related-products">
+              <% relatedProducts.forEach(p => { %>
+              <div class="col-md-2 col-6">
+                <a
+                  href="/product-details?id=<%= p._id %>"
+                  class="text-decoration-none text-dark"
+                >
+                  <div class="related-product-card">
+                    <img
+                      src="/uploads/image/<%= p.productImage[0] %>"
+                      class="img-fluid mb-2"
+                      style="width: 240px; height: 240px"
+                    />
+                    <p style="font-size: 14px"><%= p.productName %></p>
+                    <strong>₹ <%= p.salePrice %></strong>
+                  </div>
+                </a>
+              </div>
+              <% }) %>
             </div>
           </div>
         </div>
+      </section>
+    </main>
 
- <div class="related-products-section">
-            <h3 class="mt-5 mb-3">Related Products</h3>
+    <%- include('../partials/user/footer.ejs') %>
 
-            <div class="row related-products"  >
-                <% relatedProducts.forEach(p => { %>
-                    <div class="col-md-2 col-6">
-
-                        
-                        <a href="/product-details?id=<%= p._id %>" class="text-decoration-none text-dark">
-                            <div class="related-product-card">
-                                <img src="/uploads/image/<%= p.productImage[0] %>"
-                                     class="img-fluid mb-2" style="width: 240px; height: 240px;">
-                                <p style="font-size: 14px;"><%= p.productName %></p>
-                                <strong>₹ <%= p.salePrice %></strong>
-                            </div>
-                        </a>
-                    </div>
-                <% }) %>
-            </div>
-        </div>
-
-      </div>
-
-       
-    </section>
-  </main>
-
-  <%- include('../partials/user/footer.ejs') %>
+    <script>
 
 
 
-  <script>
+      const qtyEl = document.getElementById("quantity");
+      const maxStock = <%= product.quantity %>;
+      const MAX_LIMIT = 5;
+      const MAX_ALLOWED = Math.min(maxStock, MAX_LIMIT);
+
+      document.querySelector(".qty-up")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        let qty = parseInt(qtyEl.innerText);
+        if (qty < MAX_ALLOWED) {
+          qtyEl.innerText = qty + 1;
+        }
+      });
+
+      document.querySelector(".qty-down")?.addEventListener("click", (e) => {
+        e.preventDefault();
+        let qty = parseInt(qtyEl.innerText);
+        if (qty > 1) {
+          qtyEl.innerText = qty - 1;
+        }
+      });
+
+              function changeMainImage(src){
+                document.getElementById("mainImage").src=src
+              }
 
 
-    function changeMainImage(src){
-      document.getElementById("mainImage").src=src
-    }
+
+          const zoomContainer = document.getElementById("zoomContainer");
+          const zoomImage = document.getElementById("mainImage");
+          const zoomResult = document.getElementById("zoomResult");
+
+          zoomContainer.addEventListener("mouseenter", () => {
+              zoomResult.style.display = "block";
+              zoomResult.style.backgroundImage = `url(${zoomImage.src})`;
+          });
+
+          zoomContainer.addEventListener("mousemove", (e) => {
+              const rect = zoomContainer.getBoundingClientRect();
+              const x = ((e.clientX - rect.left) / rect.width) * 100;
+              const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+              zoomResult.style.backgroundPosition = `${x}% ${y}%`;
+          });
+
+          zoomContainer.addEventListener("mouseleave", () => {
+              zoomResult.style.display = "none";
+          });
 
 
-    
-const zoomContainer = document.getElementById("zoomContainer");
-const zoomImage = document.getElementById("mainImage");
-const zoomResult = document.getElementById("zoomResult");
 
-zoomContainer.addEventListener("mouseenter", () => {
-    zoomResult.style.display = "block";
-    zoomResult.style.backgroundImage = `url(${zoomImage.src})`;
-});
 
-zoomContainer.addEventListener("mousemove", (e) => {
-    const rect = zoomContainer.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+            const addToCartBtn = document.getElementById("addToCartBtn");
 
-    zoomResult.style.backgroundPosition = `${x}% ${y}%`;
-});
+            if (addToCartBtn) {
+              addToCartBtn.addEventListener("click", async () => {
+                const productId = addToCartBtn.dataset.productId;
+                const quantity = parseInt(document.getElementById("quantity").innerText);
 
-zoomContainer.addEventListener("mouseleave", () => {
-    zoomResult.style.display = "none";
-});
-  </script>
-</body>
+                try {
+                  addToCartBtn.disabled=true;
+
+                  const res = await fetch("/cart/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ productId, quantity })
+                  });
+
+                  addToCartBtn.disabled= false;
+
+                  const data = await res.json();
+
+                  if (data.success) {
+                    alert("Added to cart");
+                    window.location.reload();
+                  } else {
+                    alert(data.message || "Unable to add to cart");
+                  }
+
+                } catch (err) {
+                  console.error(err);
+                  alert("Something went wrong");
+                }
+              });
+            }
+    </script>
+  </body>
 </html>

@@ -9,6 +9,7 @@ import {profileUpload} from '../middleware/profileUpload.js'
 import multer from 'multer'
 import { storage } from '../helpers/multer.js'
 import { loadAddressPage,loadAddAddressPage, addAddress, loadEditAddress, updateAddress, deleteAddress, setDefaultAddress } from '../controllers/user/addressController.js'
+import { addToCart, loadCart, removeFromCart, updateCartQuantity } from '../controllers/user/cartController.js'
 const uploads   =   multer({storage})
 
 
@@ -82,5 +83,9 @@ router.post("/address/edit/:index",updateAddress)
 router.get("/address/delete/:index",deleteAddress)
 router.get("/address/default/:index",setDefaultAddress)
 
-
+//Cart Management
+router.get("/cart",loadCart)
+router.post("/cart/add",addToCart)
+router.post("/cart/update-qty",updateCartQuantity)
+router.post("/cart/remove",removeFromCart)
 export default router;
