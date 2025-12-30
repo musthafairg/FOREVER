@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Success</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .success-box {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .success-box h2 {
+      margin-bottom: 10px;
+    }
+    .success-actions a {
+      margin: 10px;
+      display: inline-block;
+      padding: 12px 22px;
+      background: #000;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+<%- include('../partials/user/header.ejs') %>
+
+<div class="success-box">
+  <img src="/images/order-success.png" width="200">
+  <h2>Thank you for your order!</h2>
+  <p>Your order has been placed successfully.</p>
+
+  <div class="success-actions">
+    <a href="/orders">View Order</a>
+    <a href="/shop">Continue Shopping</a>
+  </div>
+</div>
+
+<%- include('../partials/user/footer.ejs') %>
+</body>
+</html>

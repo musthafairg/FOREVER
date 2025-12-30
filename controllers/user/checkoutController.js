@@ -42,6 +42,10 @@ export const loadCheckout=async(req,res)=>{
             subtotal+= item.productId.salePrice*item.quantity
         })
 
+        const shipping=0
+        const discount=0
+        const tax= Math.round(subtotal*0.05)
+        const total= subtotal + tax+ shipping-discount
 
         const addressData= await Address.findOne({userId})
 
@@ -54,7 +58,11 @@ export const loadCheckout=async(req,res)=>{
             cart,
             addresses,
             defaultAddress,
-            subtotal
+            subtotal,
+            discount,
+            shipping,
+            total,
+            tax
         })
     } catch (error) {
         

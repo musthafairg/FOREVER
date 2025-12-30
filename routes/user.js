@@ -12,6 +12,7 @@ import { loadAddressPage,loadAddAddressPage, addAddress, loadEditAddress, update
 import { addToCart, loadCart, removeFromCart, updateCartQuantity } from '../controllers/user/cartController.js'
 import { loadCheckout } from '../controllers/user/checkoutController.js'
 import { loadWishlist, removeFromWishlist, addToWishlist } from '../controllers/user/wishlistController.js'
+import { cancelOrder, cancelOrderItem, downloadInvoice, loadOrderDetail, loadOrders, loadSuccess, placeOrder } from '../controllers/user/orderController.js'
 const uploads   =   multer({storage})
 
 
@@ -91,9 +92,17 @@ router.post("/cart/add",addToCart)
 router.post("/cart/update-qty",updateCartQuantity)
 router.post("/cart/remove",removeFromCart)
 
-// Checkout Management
+// Order Management
 
 router.get("/checkout",loadCheckout)
+router.post("/checkout/place-order",placeOrder)
+router.get("/orders",loadOrders)
+router.get("/orders/:id",loadOrderDetail)
+router.post("/orders/:id/cancel",cancelOrder)
+router.post("/orders/:id/cancel-item",cancelOrderItem)
+router.get("/orders/:id/invoice",downloadInvoice)
+router.get("/order-success",loadSuccess)
+
 
 // Wishlist Management
 

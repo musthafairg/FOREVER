@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order <%= order.orderId %> | Forever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #fafafa;
+    }
+
+    .order-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .order-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      border: 1px solid #eee;
+      margin-bottom: 25px;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .order-header h2 {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .status-badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .Placed { background: #e6f4ea; color: #137333; height: 30px; margin-top: 60px;}
+    .Cancelled { background: #fdecea; color: #d93025; }
+    .Delivered { background: #e0f2f1; color: #00796b; }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+   
+    .address-box {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #444;
+    }
+
+   
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .items-table th,
+    .items-table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .items-table th {
+      background: #f8f8f8;
+      font-weight: 600;
+    }
+
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .item-info img {
+      width: 60px;
+      border-radius: 6px;
+    }
+
+   
+    .price-summary {
+      max-width: 360px;
+      margin-left: auto;
+      margin-top: 20px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .price-row.total {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+   
+    .order-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #ff3c3c;
+      color: #fff;
+    }
+
+    .btn-outline {
+      border: 1px solid #ddd;
+      color: #333;
+      background: #fff;
+    }
+
+    .btn-primary:hover { background: #e53636; }
+    .btn-outline:hover { background: #f5f5f5; }
+
+    @media (max-width: 768px) {
+      .price-summary {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<%- include('../partials/user/header.ejs') %>
+
+<section class="order-container">
+
+  <!-- ORDER HEADER -->
+  <div class="order-card">
+    <div class="order-header">
+      <div>
+        <h2>Order Details</h2>
+        <p><strong>Order ID:</strong> <%= order.orderId %></p>
+        <p><strong>Date:</strong> <%= order.createdAt.toDateString() %></p>
+      </div>
+
+      <span class="status-badge <%= order.orderStatus %>">
+        <%= order.orderStatus %>
+      </span>
+    </div>
+  </div>
+
+  <!-- ADDRESS -->
+  <div class="order-card">
+    <h3>Delivery Address</h3>
+    <div class="address-box">
+      <strong><%= order.address.name %></strong><br>
+      <%= order.address.houseName %>, <%= order.address.place %><br>
+      <%= order.address.district %>, <%= order.address.state %> - <%= order.address.pincode %><br>
+      Phone: <%= order.address.phone %>
+    </div>
+  </div>
+
+  <!-- ITEMS -->
+  <div class="order-card">
+    <h3>Ordered Items</h3>
+
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% order.items.forEach(item => { %>
+          <tr>
+            <td>
+              <div class="item-info">
+                <img src="/uploads/image/<%= item.productImage %>">
+                <span><%= item.productName %></span>
+              </div>
+            </td>
+            <td>₹ <%= item.price %></td>
+            <td><%= item.quantity %></td>
+            <td>₹ <%= item.itemTotal %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <!-- PRICE SUMMARY -->
+    <div class="price-summary">
+      <div class="price-row">
+        <span>Subtotal</span>
+        <span>₹ <%= order.priceDetails.subtotal %></span>
+      </div>
+      <div class="price-row">
+        <span>Tax</span>
+        <span>₹ <%= order.priceDetails.tax %></span>
+      </div>
+      <div class="price-row">
+        <span>Shipping</span>
+        <span>Free</span>
+      </div>
+      <div class="price-row total">
+        <span>Total</span>
+        <span>₹ <%= order.priceDetails.total %></span>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="order-actions">
+      <a href="/orders" class="btn btn-outline">Back to Orders</a>
+      <a href="/orders/<%= order._id %>/invoice" class="btn btn-primary">
+        Download Invoice
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<%- include('../partials/user/footer.ejs') %>
+
+</body>
+</html>

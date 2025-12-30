@@ -60,6 +60,7 @@
     border-radius: 5px;
 
 }
+ 
 
   </style>
 </head>
@@ -164,7 +165,7 @@
           <% for (let i = 0; i < products.length; i++) { %>
             <div class="product-card">
               <button
-                  class="wishlist-btn"
+                  class="wishlist-btn" style="color: #FF6B6B;"
                   onclick="toggleWishlist('<%= products[i]._id %>')"
                 >
                   <i class="fas fa-heart"></i>
