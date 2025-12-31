@@ -230,17 +230,31 @@ export const downloadInvoice = async (req, res) => {
       userId: req.session.user._id,
     });
 
-    const doc = new PDFDocument();
+    if(!order){
+      return res.status(404).send("Order not Found")
+    }
+
+    const doc = new PDFDocument({margin:40});
+
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
       `attachment; filename=${order.orderId}.pdf`
     );
 
-    doc.pipe(res);
-    doc.fontSize(18).text("FOREVER - Invoice");
-    doc.text(`Order ID : ${order.orderId}`);
-    doc.text(`Total : ₹${order.priceDetails.total}`);
+    doc.pipe(res)
+
+    doc.fontSize(20).text("FOREVER ",{align:"center"})
+    doc.moveDown()
+    doc.fontSize(18).text(`Invoice`)
+    doc.text(`Order ID : ${order.orderId}`)
+    doc.text(`Date: ${order.createdAt.toDateString()}`)
+    doc.moveDown()
+
+    doc.text(`Total Amount : ₹${order.priceDetails.total}`)
+    doc.moveDown()
+
+    doc.text("Thank you for shopping with FOREVER.",{align:"center"})
     doc.end();
   } catch (error) {
     console.error("Error in download Invoice:", error.message);

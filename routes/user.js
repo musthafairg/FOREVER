@@ -12,7 +12,7 @@ import { loadAddressPage,loadAddAddressPage, addAddress, loadEditAddress, update
 import { addToCart, loadCart, removeFromCart, updateCartQuantity } from '../controllers/user/cartController.js'
 import { loadCheckout } from '../controllers/user/checkoutController.js'
 import { loadWishlist, removeFromWishlist, addToWishlist } from '../controllers/user/wishlistController.js'
-import { cancelOrder, cancelOrderItem, downloadInvoice, loadOrderDetail, loadOrders, loadSuccess, placeOrder } from '../controllers/user/orderController.js'
+import { cancelOrder, cancelOrderItem, downloadInvoice, loadOrderDetail, loadOrders, loadSuccess, placeOrder, returnOrder } from '../controllers/user/orderController.js'
 const uploads   =   multer({storage})
 
 
@@ -101,6 +101,7 @@ router.get("/orders/:id",loadOrderDetail)
 router.post("/orders/:id/cancel",cancelOrder)
 router.post("/orders/:id/cancel-item",cancelOrderItem)
 router.get("/orders/:id/invoice",downloadInvoice)
+router.post("/orders/:id/return",returnOrder)
 router.get("/order-success",loadSuccess)
 
 

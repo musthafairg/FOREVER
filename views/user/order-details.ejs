@@ -48,8 +48,8 @@
     }
 
     .Placed { background: #e6f4ea; color: #137333; height: 30px; margin-top: 60px;}
-    .Cancelled { background: #fdecea; color: #d93025; }
-    .Delivered { background: #e0f2f1; color: #00796b; }
+    .Cancelled { background: #fdecea; color: #d93025;  height: 30px; margin-top: 60px;}
+    .Delivered { background: #e0f2f1; color: #00796b; height: 30px; margin-top: 60px; }
 
     h3 {
       font-size: 16px;
@@ -201,20 +201,36 @@
       </thead>
 
       <tbody>
-        <% order.items.forEach(item => { %>
-          <tr>
-            <td>
-              <div class="item-info">
-                <img src="/uploads/image/<%= item.productImage %>">
-                <span><%= item.productName %></span>
-              </div>
-            </td>
-            <td>₹ <%= item.price %></td>
-            <td><%= item.quantity %></td>
-            <td>₹ <%= item.itemTotal %></td>
-          </tr>
-        <% }) %>
-      </tbody>
+<% order.items.forEach(item => { %>
+  <tr>
+    <td>
+      <div class="item-info">
+        <img src="/uploads/image/<%= item.productImage %>">
+        <span><%= item.productName %></span>
+      </div>
+
+      <% if (!item.isCancelled && order.orderStatus !== "Delivered") { %>
+        <button class="btn btn-outline"
+          style="margin-top:6px;padding:4px 10px;font-size:12px"
+          onclick="cancelItem('<%= order.orderId %>', '<%= item.productId %>')">
+          Cancel Item
+        </button>
+      <% } %>
+
+      <% if (item.isCancelled) { %>
+        <div style="color:#d93025;font-size:12px;margin-top:4px;">
+          Cancelled
+        </div>
+      <% } %>
+    </td>
+
+    <td>₹ <%= item.price %></td>
+    <td><%= item.quantity %></td>
+    <td>₹ <%= item.itemTotal %></td>
+  </tr>
+<% }) %>
+</tbody>
+
     </table>
 
     <!-- PRICE SUMMARY -->
@@ -239,16 +255,95 @@
 
     <!-- ACTIONS -->
     <div class="order-actions">
-      <a href="/orders" class="btn btn-outline">Back to Orders</a>
-      <a href="/orders/<%= order._id %>/invoice" class="btn btn-primary">
-        Download Invoice
-      </a>
-    </div>
-  </div>
+
+  <a href="/orders" class="btn btn-outline">Back to Orders</a>
+
+  <a href="/orders/<%= order.orderId %>/invoice"
+     class="btn btn-primary">
+    Download Invoice
+  </a>
+
+  <% if (order.orderStatus === "Placed" || order.orderStatus === "Shipped") { %>
+    <button class="btn btn-primary"
+            onclick="cancelOrder('<%= order.orderId %>')">
+      Cancel Order
+    </button>
+  <% } %>
+
+  <% if (order.orderStatus === "Delivered") { %>
+    <button class="btn btn-outline"
+            onclick="returnOrder('<%= order.orderId %>')">
+      Return Order
+    </button>
+  <% } %>
+
+</div>
 
 </section>
 
 <%- include('../partials/user/footer.ejs') %>
+
+
+
+
+<script>
+async function cancelOrder(orderId) {
+  const reason = prompt("Reason for cancellation (optional):");
+
+  const res = await fetch(`/orders/${orderId}/cancel`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reason })
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    alert("Order cancelled");
+    location.reload();
+  } else {
+    alert("Unable to cancel order");
+  }
+}
+
+async function cancelItem(orderId, productId) {
+  const reason = prompt("Reason for cancelling this item (optional):");
+
+  const res = await fetch(`/orders/${orderId}/cancel-item`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productId, reason })
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    alert("Item cancelled");
+    location.reload();
+  } else {
+    alert("Unable to cancel item");
+  }
+}
+
+async function returnOrder(orderId) {
+  const reason = prompt("Reason for return (required):");
+  if (!reason) return alert("Return reason is required");
+
+  const res = await fetch(`/orders/${orderId}/return`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reason })
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    alert("Order returned");
+    location.reload();
+  } else {
+    alert("Unable to return order");
+  }
+}
+</script>
+
+
 
 </body>
 </html>

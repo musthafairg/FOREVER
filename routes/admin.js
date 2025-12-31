@@ -7,6 +7,7 @@ import { getAddProductPage ,addProducts,productInfo,blockProduct,unblockProduct,
 import {adminAuth}from '../middleware/auth.js'
 import multer from 'multer'
 import { storage } from '../helpers/multer.js'
+import { loadAdminOrderDetail, loadAdminOrders, updateOrderStatus } from '../controllers/admin/orderController.js'
 const uploads   =   multer({storage})
 
 //Login Management
@@ -41,5 +42,9 @@ router.get("/edit-product",adminAuth,getEditProduct)
 router.post("/edit-product/:id",adminAuth,uploads.array("images",4),editProduct)
 router.post("/delete-image",adminAuth,deleteSingleImage)
 
+// Order Management
 
+router.get("/orders",loadAdminOrders)
+router.get("/orders/:id",loadAdminOrderDetail)
+router.post("/orders/:id/status",updateOrderStatus)
 export default router;

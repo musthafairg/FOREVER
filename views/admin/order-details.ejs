@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order <%= order.orderId %> | Admin</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+
+<header class="admin-header">
+  <div class="logo">FOREVER<span class="dot">.</span></div>
+  <a href="/admin/logout" class="logout-button">Logout</a>
+</header>
+
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <ul>
+        <li><a href="/admin"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+        <li><a href="/admin/users"><i class="fas fa-users"></i>Users</a></li>
+        <li><a href="/admin/products"><i class="fas fa-list"></i>Products</a></li>
+        <li class="active"><a href="/admin/orders"><i class="fas fa-box"></i>Orders</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dashboard-content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="card-title">Order Details</h2>
+      <a href="/admin/orders" class="btn btn-outline-secondary btn-sm">← Back</a>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="card mb-4">
+      <div class="card-body row">
+        <div class="col-md-6">
+          <p><strong>Order ID:</strong> <%= order.orderId %></p>
+          <p><strong>Date:</strong> <%= order.createdAt.toDateString() %></p>
+          <p><strong>Payment:</strong> Cash on Delivery</p>
+        </div>
+
+        <div class="col-md-6 text-md-end">
+          <p>
+            <strong>Status:</strong>
+            <span class="badge 
+              <%= order.orderStatus === 'Delivered' ? 'bg-success' :
+                  order.orderStatus === 'Cancelled' ? 'bg-danger' :
+                  'bg-warning text-dark' %>">
+              <%= order.orderStatus %>
+            </span>
+          </p>
+
+          <!-- STATUS UPDATE -->
+          <form action="/admin/orders/<%= order.orderId %>/status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
+            <select name="status" class="form-select form-select-sm w-auto">
+              <option disabled selected>Change Status</option>
+              <option value="Placed">Placed</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Out for Delivery">Out for Delivery</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            <button class="btn btn-sm btn-dark">Update</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMER + ADDRESS -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Customer Details</h5>
+            <p><strong>Name:</strong> <%= order.userId.name %></p>
+            <p><strong>Email:</strong> <%= order.userId.email %></p>
+            <p><strong>Phone:</strong> <%= order.address.phone %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Delivery Address</h5>
+            <p>
+              <%= order.address.name %><br>
+              <%= order.address.houseName %>, <%= order.address.place %><br>
+              <%= order.address.district %>, <%= order.address.state %> - <%= order.address.pincode %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Ordered Items</h5>
+
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% order.items.forEach(item => { %>
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img src="/uploads/image/<%= item.productImage %>" width="50">
+                    <span><%= item.productName %></span>
+                  </div>
+                </td>
+                <td>₹ <%= item.price %></td>
+                <td><%= item.quantity %></td>
+                <td>₹ <%= item.itemTotal %></td>
+                <td>
+                  <% if(item.isCancelled){ %>
+                    <span class="badge bg-danger">Cancelled</span>
+                  <% } else { %>
+                    <span class="badge bg-success">Active</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PRICE SUMMARY -->
+    <div class="card">
+      <div class="card-body col-md-5 ms-auto">
+        <h5 class="card-title">Price Summary</h5>
+        <p class="d-flex justify-content-between">
+          <span>Subtotal</span>
+          <span>₹ <%= order.priceDetails.subtotal %></span>
+        </p>
+        <p class="d-flex justify-content-between">
+          <span>Tax</span>
+          <span>₹ <%= order.priceDetails.tax %></span>
+        </p>
+        <p class="d-flex justify-content-between">
+          <span>Shipping</span>
+          <span>Free</span>
+        </p>
+        <hr>
+        <p class="d-flex justify-content-between fw-bold">
+          <span>Total</span>
+          <span>₹ <%= order.priceDetails.total %></span>
+        </p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
