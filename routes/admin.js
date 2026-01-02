@@ -8,8 +8,10 @@ import {adminAuth}from '../middleware/auth.js'
 import multer from 'multer'
 import { storage } from '../helpers/multer.js'
 import { loadAdminOrderDetail, loadAdminOrders, updateOrderStatus } from '../controllers/admin/orderController.js'
+import { validate } from '../middleware/validate.js'
 const uploads   =   multer({storage})
-
+import {loadStockPage,updateStock} from '../controllers/admin/stockController.js'
+import {updateStockSchema} from '../validations/stockSchema.js'
 //Login Management
 router.get("/login",loadLogin)
 router.post("/login",login)
@@ -47,4 +49,8 @@ router.post("/delete-image",adminAuth,deleteSingleImage)
 router.get("/orders",adminAuth,loadAdminOrders)
 router.get("/orders/:id",adminAuth,loadAdminOrderDetail)
 router.post("/orders/:id/status",adminAuth,updateOrderStatus)
+
+
+router.get("/stock",adminAuth,loadStockPage)
+router.patch("/stock/:id",adminAuth,validate(updateStockSchema),updateStock)
 export default router;
