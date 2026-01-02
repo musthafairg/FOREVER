@@ -167,6 +167,95 @@
         background-position: center;
         display: none;
       }
+      /* ===== REVIEWS SECTION ===== */
+
+.reviews-section {
+  margin-top: 40px;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+/* Review Card */
+.review-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Avatar */
+.review-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #b25b8e;
+  color: #fff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-name {
+  font-size: 0.95rem;
+  color: #222;
+}
+
+/* Stars */
+.review-stars i {
+  font-size: 0.8rem;
+  color: #ddd;
+}
+
+.review-stars i.active {
+  color: #f5a623;
+}
+
+.review-text {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.no-review-text {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* Write Review Card */
+.write-review-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.write-review-card h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.write-review-card .form-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #444;
+}
+
     </style>
     <script src="/js/header.js" defer></script>
   </head>
@@ -304,11 +393,11 @@
                         >
                           <a href="#" class="qty-down"
                             ><i class="fa-solid fa-angle-down"></i>
-</a>
+                          </a>
                           <span class="qty-val" id="quantity">1</span>
                           <a href="#" class="qty-up"
                             ><i class="fa-solid fa-angle-up"></i>
-</a>
+                          </a>
                         </div>
 
                         <div class="product-extra-link2">
@@ -387,53 +476,80 @@
                     </ul>
                   </div>
 
-                  <div class="mt-5">
-                    <h3>Customer Reviews</h3>
+                  <div class="reviews-section mt-5">
+                    <h3 class="section-title">Customer Reviews</h3>
 
-                    <div class="row">
+                    <div class="row g-4">
+                      <!-- REVIEWS LIST -->
                       <div class="col-md-7">
-                        <% if (latestreviews.length > 0 ) { %> <%
+                        <% if (latestreviews.length > 0) { %> <%
                         latestreviews.forEach(r => { %>
-                        <div class="review-box">
-                          <strong><%= r.user?.name || "User" %></strong>
-                          <span> – <%= r.rating %> ★</span>
-                          <p class="mt-2"><%= r.comment %></p>
+
+                        <div class="review-card">
+                          <div class="review-header">
+                            <div class="review-avatar">
+                              <%= (r.user?.name || "U")[0].toUpperCase() %>
+                            </div>
+
+                            <div>
+                              <strong class="review-name">
+                                <%= r.user?.name || "User" %>
+                              </strong>
+
+                              <div class="review-stars">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                <i
+                                  class="fa-solid fa-star <%= i <= r.rating ? 'active' : '' %>"
+                                ></i>
+                                <% } %>
+                              </div>
+                            </div>
+                          </div>
+
+                          <% if (r.comment) { %>
+                          <p class="review-text"><%= r.comment %></p>
+                          <% } %>
                         </div>
+
                         <% }) %> <% } else { %>
-                        <p>No reviews yet.</p>
+                        <p class="no-review-text">No reviews yet.</p>
                         <% } %>
                       </div>
 
+                      <!-- WRITE REVIEW -->
                       <div class="col-md-5">
-                        <h4>Write a Review</h4>
+                        <div class="write-review-card">
+                          <h4 class="mb-3">Write a Review</h4>
 
-                        <form action="/product/add-review" method="POST">
-                          <input
-                            type="hidden"
-                            name="productId"
-                            value="<%= product._id %>"
-                          />
+                          <form action="/product/add-review" method="POST">
+                            <input
+                              type="hidden"
+                              name="productId"
+                              value="<%= product._id %>"
+                            />
 
-                          <label>Rating</label>
-                          <select name="rating" class="form-select" required>
-                            <option value="5">5 - Excellent</option>
-                            <option value="4">4 - Good</option>
-                            <option value="3">3 - Average</option>
-                            <option value="2">2 - Poor</option>
-                            <option value="1">1 - Very Bad</option>
-                          </select>
+                            <label class="form-label">Rating</label>
+                            <select name="rating" class="form-select" required>
+                              <option value="5">★★★★★ Excellent</option>
+                              <option value="4">★★★★☆ Good</option>
+                              <option value="3">★★★☆☆ Average</option>
+                              <option value="2">★★☆☆☆ Poor</option>
+                              <option value="1">★☆☆☆☆ Very Bad</option>
+                            </select>
 
-                          <label class="mt-2">Comment</label>
-                          <textarea
-                            name="comment"
-                            class="form-control"
-                            rows="3"
-                          ></textarea>
+                            <label class="form-label mt-3">Comment</label>
+                            <textarea
+                              name="comment"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Share your experience..."
+                            ></textarea>
 
-                          <button class="btn btn-primary mt-3">
-                            Submit Review
-                          </button>
-                        </form>
+                            <button class="btn btn-dark mt-3 w-100">
+                              Submit Review
+                            </button>
+                          </form>
+                        </div>
                       </div>
                     </div>
                   </div>
