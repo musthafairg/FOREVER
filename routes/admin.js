@@ -44,7 +44,7 @@ router.post("/delete-image",adminAuth,deleteSingleImage)
 
 // Order Management
 
-router.get("/orders",loadAdminOrders)
-router.get("/orders/:id",loadAdminOrderDetail)
-router.post("/orders/:id/status",updateOrderStatus)
+router.get("/orders",adminAuth,loadAdminOrders)
+router.get("/orders/:id",adminAuth,loadAdminOrderDetail)
+router.post("/orders/:id/status",adminAuth,updateOrderStatus)
 export default router;

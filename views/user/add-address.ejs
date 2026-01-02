@@ -127,6 +127,12 @@
   border: none;
   cursor: pointer;
 }
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
 
 </style>
 
@@ -162,63 +168,71 @@
       <div class="profile-box">
         <h2>Add New Address</h2>
 
-        <form action="/address/add" method="POST" class="form-box">
+        <form class="form-box" id="addressForm">
 
-          <div class="form-group">
-            <label>Address Type</label>
-            <input type="text" name="addressType" placeholder="Home / Office" required>
-          </div>
+  <div class="form-group">
+    <label>Address Type</label>
+    <input name="addressType">
+    <small id="error-addressType" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" name="name" required>
-          </div>
+  <div class="form-group">
+    <label>Full Name</label>
+    <input name="name">
+    <small id="error-name" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>House Name / Flat</label>
-            <input type="text" name="houseName" required>
-          </div>
+  <div class="form-group">
+    <label>House Name</label>
+    <input name="houseName">
+    <small id="error-houseName" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>Place</label>
-            <input type="text" name="place" required>
-          </div>
+  <div class="form-group">
+    <label>Place</label>
+    <input name="place">
+    <small id="error-place" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>City</label>
-            <input type="text" name="city" required>
-          </div>
+  <div class="form-group">
+    <label>City</label>
+    <input name="city">
+    <small id="error-city" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>District</label>
-            <input type="text" name="district" required>
-          </div>
+  <div class="form-group">
+    <label>District</label>
+    <input name="district">
+    <small id="error-district" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>State</label>
-            <input type="text" name="state" required>
-          </div>
+  <div class="form-group">
+    <label>State</label>
+    <input name="state">
+    <small id="error-state" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>Pincode</label>
-            <input type="number" name="pincode" required>
-          </div>
+  <div class="form-group">
+    <label>Pincode</label>
+    <input name="pincode">
+    <small id="error-pincode" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>Phone</label>
-            <input type="text" name="phone" required>
-          </div>
+  <div class="form-group">
+    <label>Phone</label>
+    <input name="phone">
+    <small id="error-phone" class="error"></small>
+  </div>
 
-          <div class="form-group">
-            <label>Alternate Phone</label>
-            <input type="text" name="altPhone" required>
-          </div>
+  <div class="form-group">
+    <label>Alternate Phone</label>
+    <input name="altPhone">
+    <small id="error-altPhone" class="error"></small>
+  </div>
 
-          <button type="submit" class="btn-primary">
-            Save Address
-          </button>
+  <button class="btn-primary">Save Address</button>
+</form>
 
-        </form>
       </div>
 
     </section>
@@ -229,3 +243,40 @@
 
  <%- include('../partials/user/footer.ejs') %>
 
+<script>
+const form = document.getElementById("addressForm");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+
+  document.querySelectorAll(".error").forEach(el => el.innerText = "");
+
+  const formData = new FormData(form);
+  const payload = Object.fromEntries(formData.entries());
+
+
+    const res = await fetch("/address/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const response = await res.json();
+
+    if (!response.success) {
+      for (const field in response.errors) {
+        const errorEl = document.getElementById(`error-${field}`);
+        if (errorEl) {
+          errorEl.innerText = response.errors[field];
+        }
+      }
+      return;
+    }
+
+  
+    window.location.href = "/address";
+
+  
+});
+</script>

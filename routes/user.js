@@ -15,7 +15,8 @@ import { loadWishlist, removeFromWishlist, addToWishlist } from '../controllers/
 import { cancelOrder, cancelOrderItem, downloadInvoice, loadOrderDetail, loadOrders, loadSuccess, placeOrder, returnOrder } from '../controllers/user/orderController.js'
 const uploads   =   multer({storage})
 
-
+import { validate } from '../middleware/validate.js'
+import { addressSchema } from '../validations/address.validation.js'
 
 //Login Management
 
@@ -78,38 +79,38 @@ router.post("/verify-otp-email",verifyOtpEmail)
 
 //Address Management
 
-router.get("/address",loadAddressPage)
-router.get("/address/add",loadAddAddressPage)
-router.post("/address/add",addAddress)
-router.get("/address/edit/:index",loadEditAddress)
-router.post("/address/edit/:index",updateAddress)
-router.get("/address/delete/:index",deleteAddress)
-router.get("/address/default/:index",setDefaultAddress)
+router.get("/address",userAuth,loadAddressPage)
+router.get("/address/add",userAuth,loadAddAddressPage)
+router.post("/address/add",userAuth,validate(addressSchema),addAddress)
+router.get("/address/edit/:index",userAuth,loadEditAddress)
+router.post("/address/edit/:index",userAuth,validate(addressSchema),updateAddress)
+router.get("/address/delete/:index",userAuth,deleteAddress)
+router.get("/address/default/:index",userAuth,setDefaultAddress)
 
 //Cart Management
-router.get("/cart",loadCart)
-router.post("/cart/add",addToCart)
-router.post("/cart/update-qty",updateCartQuantity)
-router.post("/cart/remove",removeFromCart)
+router.get("/cart",userAuth,loadCart)
+router.post("/cart/add",userAuth,addToCart)
+router.post("/cart/update-qty",userAuth,updateCartQuantity)
+router.post("/cart/remove",userAuth,removeFromCart)
 
 // Order Management
 
-router.get("/checkout",loadCheckout)
-router.post("/checkout/place-order",placeOrder)
-router.get("/orders",loadOrders)
-router.get("/orders/:id",loadOrderDetail)
-router.post("/orders/:id/cancel",cancelOrder)
-router.post("/orders/:id/cancel-item",cancelOrderItem)
-router.get("/orders/:id/invoice",downloadInvoice)
-router.post("/orders/:id/return",returnOrder)
-router.get("/order-success",loadSuccess)
+router.get("/checkout",userAuth,loadCheckout)
+router.post("/checkout/place-order",userAuth,placeOrder)
+router.get("/orders",userAuth,loadOrders)
+router.get("/orders/:id",userAuth,loadOrderDetail)
+router.post("/orders/:id/cancel",userAuth,cancelOrder)
+router.post("/orders/:id/cancel-item",userAuth,cancelOrderItem)
+router.get("/orders/:id/invoice",userAuth,downloadInvoice)
+router.post("/orders/:id/return",userAuth,returnOrder)
+router.get("/order-success",userAuth,loadSuccess)
 
 
 // Wishlist Management
 
-router.get("/wishlist",loadWishlist)
-router.post("/wishlist/add",addToWishlist)
-router.post("/wishlist/remove",removeFromWishlist)
+router.get("/wishlist",userAuth,loadWishlist)
+router.post("/wishlist/add",userAuth,addToWishlist)
+router.post("/wishlist/remove",userAuth,removeFromWishlist)
 
 
 export default router;
