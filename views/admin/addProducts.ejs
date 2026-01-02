@@ -353,7 +353,7 @@
 
         
         const quantityVal= parseInt(quantity)
-        if(isNaN(quantityVal)||quantityVal<0){
+        if(isNaN(quantityVal)||quantityVal<=0){
             displayErrorMessage('quantity-error','Please a valid non-negative integer quantity.')
             isValid=false
         }

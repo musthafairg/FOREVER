@@ -26,6 +26,16 @@
           padding-right: 0;
         }
       }
+       .add-cart {
+    background: #000;
+    color: #fff;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
     </style>
     <script src="/js/header.js" defer></script>
   </head>
@@ -68,11 +78,10 @@
               <div class="product-content-wrap">
                 <h6><%= products[i].productName %></h6>
                 <h5>₹ <%= products[i].salePrice %></h5>
-                <a
-                  href="/addToCart?id=<%= products[i]._id %>"
-                  class="button-add"
-                  >Add to Cart</a
-                >
+                <button class="add-cart"
+                      onclick="addToCart('<%= products[i]._id %>')">
+                Add to Cart
+              </button>
               </div>
             </div>
           </div>
@@ -102,6 +111,36 @@
       }
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  
+  async function removeWishlist(productId) {
+    const res = await fetch("/wishlist/remove", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId })
+    });
+
+    const data = await res.json();
+    if (data.success) location.reload();
+  }
+
+  async function addToCart(productId) {
+    const res = await fetch("/cart/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, quantity: 1 })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("Added to cart");
+      
+  await removeWishlist(productId);
+      location.reload();
+    } else {
+      alert(data.message || "Unable to add");
     }
   }
 </script>
