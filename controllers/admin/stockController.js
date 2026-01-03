@@ -1,22 +1,22 @@
 import Product from "../../models/productModel.js";
 
-/* ---------------- LOAD STOCK PAGE ---------------- */
+
 export const loadStockPage = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
+    const page = Number(req.query.page) || 1
     const limit = 10;
     const skip = (page - 1) * limit;
-    const search = req.query.search || "";
+    const search = req.query.search || ""
 
     const query = {
       productName: { $regex: search, $options: "i" }
     };
 
-    const total = await Product.countDocuments(query);
+    const total = await Product.countDocuments(query)
     const products = await Product.find(query)
       .sort({ updatedAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
 
     res.render("admin/stock", {
       products,
@@ -27,12 +27,12 @@ export const loadStockPage = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Load stock error:", error.message);
-    res.status(500).send("Server Error");
+    console.error("Load stock error:", error.message)
+    res.status(500).send("Server Error")
   }
 };
 
-/* ---------------- UPDATE STOCK (AJAX) ---------------- */
+
 export const updateStock = async (req, res) => {
   try {
     const { id } = req.params;
@@ -58,7 +58,7 @@ export const updateStock = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Update stock error:", error.message);
-    res.status(500).json({ success: false });
+    console.error("Update stock error:", error.message)
+    res.status(500).json({ success: false })
   }
 };

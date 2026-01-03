@@ -50,7 +50,10 @@ router.get("/orders",adminAuth,loadAdminOrders)
 router.get("/orders/:id",adminAuth,loadAdminOrderDetail)
 router.post("/orders/:id/status",adminAuth,updateOrderStatus)
 
+//Stock Management
 
 router.get("/stock",adminAuth,loadStockPage)
 router.patch("/stock/:id",adminAuth,validate(updateStockSchema),updateStock)
+
+
 export default router;

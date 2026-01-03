@@ -45,20 +45,20 @@ export const userInfo = async (req, res) => {
       search,
     });
   } catch (error) {
-    console.error("Error in userInfo Controll : ", error.message);
+    console.error("Error in userInfo Controll : ", error.message)
     return res.status(500).send("Server Error");
   }
 };
 
 export const blockCustomer = async (req, res) => {
   try {
-    const id = req.query.id;
-    await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
+    const id = req.query.id
+    await User.updateOne({ _id: id }, { $set: { isBlocked: true } })
     console.log("user blocked successfully");
 
     return res.redirect("/admin/users");
   } catch (error) {
-    console.error("Error in blocking user in admin side: ", error.message);
+    console.error("Error in blocking user in admin side: ", error.message)
     return res.status(500).send("Server Error");
   }
 };
@@ -67,11 +67,11 @@ export const unblockCustomer = async (req, res) => {
   try {
     const id = req.query.id;
 
-    await User.updateOne({ _id: id }, { $set: { isBlocked: false } });
+    await User.updateOne({ _id: id }, { $set: { isBlocked: false } })
     console.log("unblocking user successfully");
     return res.redirect("/admin/users");
   } catch (error) {
-    console.error("Error in unblocking user in admin side :", error.message);
+    console.error("Error in unblocking user in admin side :", error.message)
     return res.status(500).send("Server Error");
   }
 };

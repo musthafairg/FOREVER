@@ -169,93 +169,92 @@
       }
       /* ===== REVIEWS SECTION ===== */
 
-.reviews-section {
-  margin-top: 40px;
-}
+      .reviews-section {
+        margin-top: 40px;
+      }
 
-.section-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #222;
-}
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #222;
+      }
 
-/* Review Card */
-.review-card {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 16px 18px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-}
+      /* Review Card */
+      .review-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+      }
 
-.review-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+      .review-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-/* Avatar */
-.review-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #b25b8e;
-  color: #fff;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+      /* Avatar */
+      .review-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #b25b8e;
+        color: #fff;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-.review-name {
-  font-size: 0.95rem;
-  color: #222;
-}
+      .review-name {
+        font-size: 0.95rem;
+        color: #222;
+      }
 
-/* Stars */
-.review-stars i {
-  font-size: 0.8rem;
-  color: #ddd;
-}
+      /* Stars */
+      .review-stars i {
+        font-size: 0.8rem;
+        color: #ddd;
+      }
 
-.review-stars i.active {
-  color: #f5a623;
-}
+      .review-stars i.active {
+        color: #f5a623;
+      }
 
-.review-text {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  color: #555;
-  line-height: 1.6;
-}
+      .review-text {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #555;
+        line-height: 1.6;
+      }
 
-.no-review-text {
-  font-size: 0.9rem;
-  color: #777;
-}
+      .no-review-text {
+        font-size: 0.9rem;
+        color: #777;
+      }
 
-/* Write Review Card */
-.write-review-card {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+      /* Write Review Card */
+      .write-review-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
 
-.write-review-card h4 {
-  font-size: 1.1rem;
-  font-weight: 600;
-}
+      .write-review-card h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
 
-.write-review-card .form-label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #444;
-}
-
+      .write-review-card .form-label {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #444;
+      }
     </style>
     <script src="/js/header.js" defer></script>
   </head>
@@ -592,90 +591,103 @@
 
 
 
-      const qtyEl = document.getElementById("quantity");
-      const maxStock = <%= product.quantity %>;
-      const MAX_LIMIT = 5;
-      const MAX_ALLOWED = Math.min(maxStock, MAX_LIMIT);
+           const qtyEl = document.getElementById("quantity");
+           const maxStock = <%= product.quantity %>;
+           const MAX_LIMIT = 5;
+           const MAX_ALLOWED = Math.min(maxStock, MAX_LIMIT);
 
-      document.querySelector(".qty-up")?.addEventListener("click", (e) => {
-        e.preventDefault();
-        let qty = parseInt(qtyEl.innerText);
-        if (qty < MAX_ALLOWED) {
-          qtyEl.innerText = qty + 1;
-        }
-      });
+           document.querySelector(".qty-up")?.addEventListener("click", (e) => {
+             e.preventDefault();
+             let qty = parseInt(qtyEl.innerText);
+             if (qty < MAX_ALLOWED) {
+               qtyEl.innerText = qty + 1;
+             }
+           });
 
-      document.querySelector(".qty-down")?.addEventListener("click", (e) => {
-        e.preventDefault();
-        let qty = parseInt(qtyEl.innerText);
-        if (qty > 1) {
-          qtyEl.innerText = qty - 1;
-        }
-      });
+           document.querySelector(".qty-down")?.addEventListener("click", (e) => {
+             e.preventDefault();
+             let qty = parseInt(qtyEl.innerText);
+             if (qty > 1) {
+               qtyEl.innerText = qty - 1;
+             }
+           });
 
-              function changeMainImage(src){
-                document.getElementById("mainImage").src=src
-              }
-
-
-
-          const zoomContainer = document.getElementById("zoomContainer");
-          const zoomImage = document.getElementById("mainImage");
-          const zoomResult = document.getElementById("zoomResult");
-
-          zoomContainer.addEventListener("mouseenter", () => {
-              zoomResult.style.display = "block";
-              zoomResult.style.backgroundImage = `url(${zoomImage.src})`;
-          });
-
-          zoomContainer.addEventListener("mousemove", (e) => {
-              const rect = zoomContainer.getBoundingClientRect();
-              const x = ((e.clientX - rect.left) / rect.width) * 100;
-              const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-              zoomResult.style.backgroundPosition = `${x}% ${y}%`;
-          });
-
-          zoomContainer.addEventListener("mouseleave", () => {
-              zoomResult.style.display = "none";
-          });
+                   function changeMainImage(src){
+                     document.getElementById("mainImage").src=src
+                   }
 
 
 
+               const zoomContainer = document.getElementById("zoomContainer");
+               const zoomImage = document.getElementById("mainImage");
+               const zoomResult = document.getElementById("zoomResult");
 
-            const addToCartBtn = document.getElementById("addToCartBtn");
+               zoomContainer.addEventListener("mouseenter", () => {
+                   zoomResult.style.display = "block";
+                   zoomResult.style.backgroundImage = `url(${zoomImage.src})`;
+               });
 
-            if (addToCartBtn) {
-              addToCartBtn.addEventListener("click", async () => {
-                const productId = addToCartBtn.dataset.productId;
-                const quantity = parseInt(document.getElementById("quantity").innerText);
+               zoomContainer.addEventListener("mousemove", (e) => {
+                   const rect = zoomContainer.getBoundingClientRect();
+                   const x = ((e.clientX - rect.left) / rect.width) * 100;
+                   const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-                try {
-                  addToCartBtn.disabled=true;
+                   zoomResult.style.backgroundPosition = `${x}% ${y}%`;
+               });
 
-                  const res = await fetch("/cart/add", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ productId, quantity })
-                  });
+               zoomContainer.addEventListener("mouseleave", () => {
+                   zoomResult.style.display = "none";
+               });
 
-                  addToCartBtn.disabled= false;
 
-                  const data = await res.json();
+               
 
-                  if (data.success) {
-                    alert("Added to cart");
-                    window.location.reload();
-                  } else {
-                    alert(data.message || "Unable to add to cart");
-                  }
+               async function removeWishlist(productId) {
+         const res = await fetch("/wishlist/remove", {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({ productId })
+         });
 
-                } catch (err) {
-                  console.error(err);
-                  alert("Something went wrong");
-                }
-              });
-            }
+         const data = await res.json();
+         if (data.success) location.reload();
+       }
+
+
+                 const addToCartBtn = document.getElementById("addToCartBtn");
+
+                 if (addToCartBtn) {
+                   addToCartBtn.addEventListener("click", async () => {
+                     const productId = addToCartBtn.dataset.productId;
+                     const quantity = parseInt(document.getElementById("quantity").innerText);
+
+                     try {
+                       addToCartBtn.disabled=true;
+
+                       const res = await fetch("/cart/add", {
+                         method: "POST",
+                         headers: { "Content-Type": "application/json" },
+                         body: JSON.stringify({ productId, quantity })
+                       });
+
+                       addToCartBtn.disabled= false;
+
+                       const data = await res.json();
+
+                       if (data.success) {
+
+                            await removeWishlist(productId);
+                              window.location.reload();
+                                
+                              } else {
+                                alert(data.message || "Unable to add");
+                              }
+                     } catch (err) {
+                       console.error(err);
+                       alert("Something went wrong");
+                     }
+                   });
+                 }
     </script>
   </body>
 </html>
