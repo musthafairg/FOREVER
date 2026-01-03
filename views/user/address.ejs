@@ -1,151 +1,159 @@
-
 <title>Home | My Addresses</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="/css/style.css">
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<link rel="stylesheet" href="/css/style.css" />
 <style>
-    .profile-container {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
+  .profile-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
 
-.profile-grid {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 30px;
-}
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+  }
 
-.profile-sidebar {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 10px;
-}
+  .profile-sidebar {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+  }
 
-.profile-card {
-  padding: 25px;
-  text-align: center;
-  border-bottom: 1px solid #eee;
-}
+  .profile-card {
+    padding: 25px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
 
-.profile-avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
-  margin-left: 29%;
-}
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    margin-left: 29%;
+  }
 
-.profile-menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+  .profile-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
 
-.profile-menu li {
-  padding: 14px 20px;
-  cursor: pointer;
-  border-bottom: 1px solid #f1f1f1;
-  font-weight: 500;
-}
+  .profile-menu li {
+    padding: 14px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f1f1;
+    font-weight: 500;
+  }
 
-.profile-menu li.active {
-  background: #f9f9f9;
-  color: #ff3c3c;
-}
+  .profile-menu li.active {
+    background: #f9f9f9;
+    color: #ff3c3c;
+  }
 
-.profile-menu li.danger {
-  color: #ff3c3c;
-}
+  .profile-menu li.danger {
+    color: #ff3c3c;
+  }
 
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  margin: -20px;
-}
+  .profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin: -20px;
+  }
 
-.profile-box {
-  background: #fff;
-  border-radius: 10px;
-  padding: 25px;
-  border: 1px solid #eee;
-}
+  .profile-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    border: 1px solid #eee;
+  }
 
-.profile-box h2 {
-  margin-bottom: 20px;
-  font-size: 20px;
-}
+  .profile-box h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
 
-.info-grid label {
-  font-size: 13px;
-  color: #888;
-}
+  .info-grid label {
+    font-size: 13px;
+    color: #888;
+  }
 
-.form-box {
-  max-width: 800px;
-  margin: 20px;
-}
+  .form-box {
+    max-width: 800px;
+    margin: 20px;
+  }
 
-.form-group {
-  margin-bottom: 18px;
-}
+  .form-group {
+    margin-bottom: 18px;
+  }
 
-.form-group label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-}
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
 
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-}
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
 
-.form-group small {
-  font-size: 12px;
-  color: #999;
-}
+  .form-group small {
+    font-size: 12px;
+    color: #999;
+  }
 
-.btn-primary {
-  background: #ff3c3c;
-  color: #fff;
-  margin-top: 20px;
-  padding: 12px;
-  width: 100%;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
-
+  .btn-primary {
+    background: #ff3c3c;
+    color: #fff;
+    margin-top: 20px;
+    padding: 12px;
+    width: 100%;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
 </style>
 
- <%- include('../partials/user/header.ejs') %>
-
+<%- include('../partials/user/header.ejs') %>
 
 <section class="profile-container">
   <div class="profile-grid">
-
     <!-- LEFT SIDEBAR -->
     <aside class="profile-sidebar">
       <div class="profile-card">
-        <img src="/uploads/profile/<%= user.profileImage %>"  alt="User" class="profile-avatar">
+        <img
+          src="/uploads/profile/<%= user.profileImage %>"
+          alt="User"
+          class="profile-avatar"
+        />
         <h3><%= user.name%></h3>
         <p><%= user.email%></p>
       </div>
 
       <ul class="profile-menu">
-        <li ><a href="/user-profile">Profile</a></li>
+        <li><a href="/user-profile">Profile</a></li>
         <li><a href="/cart">Cart</a></li>
         <li><a href="/orders">Orders</a></li>
         <li class="active"><a href="/address">Addresses</a></li>
@@ -157,103 +165,135 @@
     </aside>
 
     <!-- MAIN CONTENT -->
-   <section class="profile-content">
-
+    <section class="profile-content">
       <!-- HEADER -->
       <div class="profile-box">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
           <h2>My Addresses</h2>
-          <a href="/address/add" class="btn-primary" style="width:auto;padding:10px 16px;">
+          <a
+            href="/address/add"
+            class="btn-primary"
+            style="width: auto; padding: 10px 16px"
+          >
             Add New Address
           </a>
         </div>
       </div>
 
       <!-- ADDRESS LIST -->
-      <% if(addressData && addressData.address.length > 0) { %>
+      <% if(addressData && addressData.address.length > 0) { %> <%
+      addressData.address.forEach((addr, index) => { %>
+      <div class="profile-box">
+        <h2><%= addr.addressType %></h2>
 
-        <% addressData.address.forEach((addr, index) => { %>
-          <div class="profile-box">
-
-            <h2><%= addr.addressType %></h2>
-
-            <div class="info-grid">
-              <div>
-                <label>Name</label>
-                <p><%= addr.name %></p>
-              </div>
-
-              <div>
-                <label>House / Flat</label>
-                <p><%= addr.houseName %></p>
-              </div>
-
-              <div>
-                <label>Place</label>
-                <p><%= addr.place %></p>
-              </div>
-
-              <div>
-                <label>City</label>
-                <p><%= addr.city %></p>
-              </div>
-
-              <div>
-                <label>District</label>
-                <p><%= addr.district %></p>
-              </div>
-
-              <div>
-                <label>State</label>
-                <p><%= addr.state %></p>
-              </div>
-
-              <div>
-                <label>Pincode</label>
-                <p><%= addr.pincode %></p>
-              </div>
-
-              <div>
-                <label>Phone</label>
-                <p><%= addr.phone %></p>
-              </div>
-
-              <div>
-                <label>Alternate Phone</label>
-                <p><%= addr.altPhone %></p>
-              </div>
-            </div>
-
-            <div style="margin-top:15px; display: flex; gap: 15px; align-items: center;">
-
-              <% if(!addr.isDefault){%>
-                <a href="/address/default/<%= index %>">Set as Default</a>
-                <% } else{%>
-
-                  <span style="color: green; font-weight: 500;">
-                    Default Address
-                  </span>
-                <% } %>
-
-              <a href="/address/edit/<%= index %>" style="margin-right:15px;">Edit</a>
-              <a href="/address/delete/<%= index %>" style="color:red;">Delete</a>
-            </div>
-
+        <div class="info-grid">
+          <div>
+            <label>Name</label>
+            <p><%= addr.name %></p>
           </div>
-        <% }) %>
 
-      <% } else { %>
-        <div class="profile-box">
-          <p>No addresses found. Please add one.</p>
+          <div>
+            <label>House / Flat</label>
+            <p><%= addr.houseName %></p>
+          </div>
+
+          <div>
+            <label>Place</label>
+            <p><%= addr.place %></p>
+          </div>
+
+          <div>
+            <label>City</label>
+            <p><%= addr.city %></p>
+          </div>
+
+          <div>
+            <label>District</label>
+            <p><%= addr.district %></p>
+          </div>
+
+          <div>
+            <label>State</label>
+            <p><%= addr.state %></p>
+          </div>
+
+          <div>
+            <label>Pincode</label>
+            <p><%= addr.pincode %></p>
+          </div>
+
+          <div>
+            <label>Phone</label>
+            <p><%= addr.phone %></p>
+          </div>
+
+          <div>
+            <label>Alternate Phone</label>
+            <p><%= addr.altPhone %></p>
+          </div>
         </div>
+
+        <div
+          style="
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+          "
+        >
+          <% if(!addr.isDefault){%>
+          <a href="/address/default/<%= index %>">Set as Default</a>
+          <% } else{%>
+
+          <span style="color: green; font-weight: 500"> Default Address </span>
+          <% } %>
+
+          <a href="/address/edit/<%= index %>" style="margin-right: 15px"
+            >Edit</a
+          >
+          <a
+            href="javascript:void(0)"
+            onclick="confirmDelete('/address/delete/<%= index %>')"
+            style="color: red"
+          >
+            Delete
+          </a>
+        </div>
+      </div>
+      <% }) %> <% } else { %>
+      <div class="profile-box">
+        <p>No addresses found. Please add one.</p>
+      </div>
       <% } %>
-
     </section>
-
-
-</div>
+  </div>
 </section>
 
+<%- include('../partials/user/footer.ejs') %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
 
- <%- include('../partials/user/footer.ejs') %>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmDelete(url) {
+  Swal.fire({
+    title: "Delete Address?",
+    text: "This address will be permanently removed.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it",
+    cancelButtonText: "Cancel"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = url;
+    }
+  });
+}
+</script>
