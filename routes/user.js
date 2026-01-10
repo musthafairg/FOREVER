@@ -69,14 +69,14 @@ router.post("/product/add-review",userAuth,addReview)
 
 //Profile Management
 router.get("/user-profile",userAuth,loadUserProfile)
-router.get("/change-password",loadEditPasswordPage)
-router.post("/change-password",changePassword)
-router.get("/edit-profile",loadEditProfilePage)
-router.post("/edit-profile",profileUpload.single("profileImage"),updateProfile)
-router.get("/change-email",loadChangeEmailPage)
-router.post("/change-email",updateEmail)
-router.get("/otp-page-user-profile",getotp)
-router.post("/verify-otp-email",verifyOtpEmail)
+router.get("/change-password",userAuth,loadEditPasswordPage)
+router.post("/change-password",userAuth,changePassword)
+router.get("/edit-profile",userAuth,loadEditProfilePage)
+router.post("/edit-profile",userAuth,profileUpload.single("profileImage"),updateProfile)
+router.get("/change-email",userAuth,loadChangeEmailPage)
+router.post("/change-email",userAuth,updateEmail)
+router.get("/otp-page-user-profile",userAuth,getotp)
+router.post("/verify-otp-email",userAuth,verifyOtpEmail)
 
 
 //Address Management

@@ -12,6 +12,8 @@ import { validate } from '../middleware/validate.js'
 const uploads   =   multer({storage})
 import {loadStockPage,updateStock} from '../controllers/admin/stockController.js'
 import {updateStockSchema} from '../validations/stockSchema.js'
+import { addCategoryOffer, addProductOffer, loadCategoryOffers, loadProductOffers, toggleCategoryOffer, toggleProductOffer } from '../controllers/admin/offerController.js'
+import { createCoupon, deleteCoupon, loadCoupons, toggleCoupon } from '../controllers/admin/couponControoller.js'
 //Login Management
 router.get("/login",loadLogin)
 router.post("/login",login)
@@ -54,6 +56,35 @@ router.post("/orders/:id/status",adminAuth,updateOrderStatus)
 
 router.get("/stock",adminAuth,loadStockPage)
 router.patch("/stock/:id",adminAuth,validate(updateStockSchema),updateStock)
+
+
+//Product Offers 
+
+router.get("/offers/product",adminAuth,loadProductOffers)
+router.post("/offers/product/add",adminAuth,addProductOffer)
+router.get("offers/product/toggle/:id",adminAuth,toggleProductOffer)
+
+
+
+// Category Offers
+
+router.get("/offers/category",adminAuth,loadCategoryOffers)
+router.post("/offers/category/add",adminAuth,addCategoryOffer)
+router.get("offers/category/toggle/:id",adminAuth,toggleCategoryOffer)
+
+
+// Coupon Management
+
+router.get("/coupons",adminAuth,loadCoupons)
+router.post("/coupons/add",adminAuth,createCoupon)
+router.get("/coupons/toggle/:id",adminAuth,toggleCoupon)
+router.get("/coupons/delete/:id",adminAuth,deleteCoupon)
+
+
+
+
+
+
 
 
 export default router;
