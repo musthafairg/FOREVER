@@ -156,8 +156,19 @@
       <span>₹ <%= total %></span>
     </div>
 
+    <label>
+  <input type="radio" name="paymentMethod" value="COD" checked>
+  Cash on Delivery
+</label>
+
+<label>
+  <input type="radio" name="paymentMethod" value="ONLINE">
+  Online Payment
+</label>
+
+
     <button type="submit" class="place-order-btn">
-      Place Order (Cash on Delivery)
+      Place Order
     </button>
 
     </form>
@@ -167,27 +178,58 @@
 
 <%- include('../partials/user/footer.ejs') %>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script>
 document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const formData = new FormData(e.target);
+  const payload = Object.fromEntries(formData.entries());
 
   const res = await fetch("/checkout/place-order", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(formData)
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify(payload)
   });
 
   const data = await res.json();
 
-  if (data.success) {
-    window.location.href = "/order-success";
-  } else {
-    alert(data.message || "Order failed");
+  if (payload.paymentMethod === "COD") {
+    window.location.href = data.redirect;
+    return;
   }
+
+  // ONLINE PAYMENT
+  const options = {
+    key: data.key,
+    amount: data.amount,
+    currency: "INR",
+    name: "FOREVER",
+    order_id: data.razorpayOrderId,
+    handler: async function (response) {
+      const verify = await fetch("/payment/verify",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          ...response,
+          orderId: data.dbOrderId
+        })
+      });
+
+      const result = await verify.json();
+      if(result.success){
+        window.location.href="/order-success";
+      }else{
+        window.location.href="/order-failure";
+      }
+    }
+  };
+
+  new Razorpay(options).open();
 });
 </script>
+
 
 </body>
 </html>

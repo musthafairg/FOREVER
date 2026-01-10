@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { required } from "zod/mini";
 
 
 
@@ -52,8 +53,13 @@ const orderSchema = new Schema({
     },
     paymentMethod:{
         type:String,
-        enum:["COD"],
-        default:"COD"
+        enum:["COD","ONLINE"],
+        required:true
+    },
+     paymentStatus: {
+      type: String,
+      enum: ["PENDING", "PAID", "FAILED"],
+      default: "PENDING"
     },
     orderStatus:{
         type:String,
@@ -73,7 +79,11 @@ const orderSchema = new Schema({
     isReturned:{
         type:Boolean,
         default:false
-    }
+    },
+
+    razorpayOrderId: String,
+    razorpayPaymentId: String,
+    razorpaySignature: String
    
 },
  {timestamps:true}
