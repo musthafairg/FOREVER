@@ -2,72 +2,96 @@ import Cart from '../../models/cartModel.js'
 import Address from '../../models/addressModel.js'
 import Product from '../../models/productModel.js'
 import User from '../../models/userModel.js'
+import { applyBestOffer } from '../../utils/applyBestOffer.js'
+import Coupon from '../../models/couponModel.js'
 
+export const loadCheckout = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
 
+    const couponData= req.session.appliedCoupon||null
+   
 
-export const loadCheckout=async(req,res)=>{
-    try {
-        
-        const userId=req.session.user._id
+    const cart = await Cart.findOne({ userId })
+      .populate({
+        path: "items.productId",
+        populate: { path: "category" }
+      });
 
-        const user= await User.findById(userId)
-
-        const cart =await Cart.findOne({userId})
-        .populate("items.productId")
-
-        if(!cart|| cart.items.length===0){
-            return res.redirect("/cart")
-        }
-
-        const validItems= cart.items.filter(item=>{
-            const p= item.productId
-            return(
-                p&&
-                !p.isBlocked&&
-                p.status==="Available"&&
-                p.quantity>=item.quantity
-            )
-        })
-
-        if(validItems.length===0){
-            return res.redirect("/cart")
-        }
-
-        cart.items= validItems
-        await cart.save()
-
-        let subtotal=0
-
-        cart.items.forEach(item=>{
-            subtotal+= item.productId.salePrice*item.quantity
-        })
-
-        const shipping=0
-        const discount=0
-        const tax= Math.round(subtotal*0.05)
-        const total= subtotal + tax+ shipping-discount
-
-        const addressData= await Address.findOne({userId})
-
-        const addresses= addressData ? addressData.address: [];
-
-        const defaultAddress= addresses.find(a=>a.isDefault)||null
-
-        res.render("user/checkout",{
-            user,
-            cart,
-            addresses,
-            defaultAddress,
-            subtotal,
-            discount,
-            shipping,
-            total,
-            tax
-        })
-    } catch (error) {
-        
-        console.error("Checkout load error :",error.message)
-        res.status(500).send("Server Error")
-        
+    if (!cart || cart.items.length === 0) {
+      return res.redirect("/cart");
+      
     }
-}
+
+
+    cart.items = cart.items.filter(item => {
+      const p = item.productId;
+      return (
+        p &&
+        !p.isBlocked &&
+        p.status === "Available" &&
+        p.quantity >= item.quantity
+      );
+    });
+
+    if (cart.items.length === 0) {
+      return res.redirect("/cart");
+    }
+
+    let subtotal = 0;
+
+
+    const checkoutItems = await Promise.all(
+      cart.items.map(async item => {
+        const offer = await applyBestOffer(item.productId);
+
+        const itemTotal = offer.finalPrice * item.quantity;
+        subtotal += itemTotal;
+
+        return {
+          ...item.toObject(),
+          finalPrice: offer.finalPrice,
+          originalPrice: offer.originalPrice,
+          discountPercent: offer.discountPercent,
+          itemTotal
+        };
+      })
+    );
+
+    const shipping = 0;
+    const tax = Math.round(subtotal * 0.05);
+    const couponDiscount= couponData ? couponData.discount : 0  
+    const total = subtotal + tax + shipping - couponDiscount;
+
+    const addressData = await Address.findOne({ userId });
+    const addresses = addressData ? addressData.address : [];
+    const defaultAddress = addresses.find(a => a.isDefault) || null;
+
+
+    const coupons= await Coupon.find({
+      isActive:true,
+      expiryDate:{$gt:new Date},
+      minPurchase:{$lte:subtotal}
+    })
+
+    res.render("user/checkout", {
+      user,
+      cart: { ...cart.toObject(), items: checkoutItems },
+      addresses,
+      defaultAddress,
+      subtotal,
+      discount:couponDiscount,
+      shipping,
+      tax,
+      total,
+      coupon: couponData,
+      couponDiscount,
+      coupons
+    });
+
+  } catch (error) {
+    console.error("Checkout load error:", error.message);
+    res.status(500).send("Server Error");
+  }
+};

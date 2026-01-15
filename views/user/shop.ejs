@@ -184,7 +184,7 @@
                 <h4><%= products[i].productName %></h4>
                 
                 <p>
-                  Price: ₹<%= products[i].salePrice.toLocaleString('en-IN') %>
+                  Price: ₹<%= products[i].finalPrice.toLocaleString('en-IN') %>
                   <span class="text-muted">
                     <strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike>
                   </span>
@@ -194,6 +194,7 @@
             </div>
           <% } %>
         </main>
+        
       </div>
 
      <div class="container mt-4">
@@ -257,7 +258,7 @@
 
     const data = await res.json();
     if (data.success) {
-      alert("Added to cart");
+     // alert("Added to cart");
       
   await removeWishlist(productId);
       location.reload();

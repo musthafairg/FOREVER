@@ -6,72 +6,113 @@ import User from "../../models/userModel.js";
 import PDFDocument from "pdfkit";
 import razorpay from "../../config/razorpay.js";
 import crypto from "crypto";
+import { applyBestOffer } from "../../utils/applyBestOffer.js";
+import Coupon from "../../models/couponModel.js"
+
+
 
 const generateOrderId = async () => {
   const count = await Order.countDocuments();
 
   return `FR-${new Date().getDate()}-${String(count + 1).padStart(6, "0")}`;
 };
-
 export const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user._id;
     const { addressId, paymentMethod } = req.body;
 
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
+    const couponData= req.session.appliedCoupon
+    let couponDiscount=  0;
+    if(couponData){
+      couponDiscount = couponData.discount
+    }
+    const cart = await Cart.findOne({ userId })
+      .populate({
+        path: "items.productId",
+        populate: { path: "category" }
+      });
+
     if (!cart || cart.items.length === 0) {
       return res.json({ success: false, message: "Cart empty" });
     }
 
     const addressData = await Address.findOne({ userId });
     const selectedAddress = addressData.address.find(
-      (a) => a._id.toString() === addressId
+      a => a._id.toString() === addressId
     );
 
-    const items = cart.items.map((i) => ({
-      productId: i.productId._id,
-      productName: i.productId.productName,
-      productImage: i.productId.productImage[0],
-      price: i.productId.salePrice,
-      quantity: i.quantity,
-      itemTotal: i.productId.salePrice * i.quantity,
-    }));
+    if (!selectedAddress) {
+      return res.json({ success: false, message: "Invalid address" });
+    }
 
-    const subtotal = items.reduce((a, b) => a + b.itemTotal, 0);
+    let subtotal = 0;
+
+    const items = await Promise.all(
+      cart.items.map(async (i) => {
+        const offer = await applyBestOffer(i.productId);
+
+        const itemTotal = offer.finalPrice * i.quantity;
+        subtotal += itemTotal;
+
+        return {
+          productId: i.productId._id,
+          productName: i.productId.productName,
+          productImage: i.productId.productImage[0],
+          price: offer.finalPrice,                
+          quantity: i.quantity,
+          itemTotal,
+          discountPercent: offer.discountPercent   
+        };
+      })
+    );
+
     const tax = Math.round(subtotal * 0.05);
-    const total = subtotal + tax;
+    const total = subtotal + tax - couponDiscount;
 
     const order = new Order({
       orderId: await generateOrderId(),
       userId,
       items,
       address: selectedAddress,
-      priceDetails: { subtotal, tax, shipping: 0, discount: 0, total },
+      priceDetails: {
+        subtotal,
+        tax,
+        shipping: 0,
+        discount: couponDiscount,
+        total
+      },
       paymentMethod,
-      paymentStatus: paymentMethod === "COD" ? "PAID" : "PENDING",
+      paymentStatus: paymentMethod === "COD" ? "PAID" : "PENDING"
     });
 
     await order.save();
 
-    // reduce stock
+    if(couponData){
+      await Coupon.findByIdAndUpdate(couponData.id,{
+        $inc:{usedCount:1}
+      })
+      req.session.appliedCoupon=null;
+    }
+  
     for (const i of cart.items) {
       await Product.findByIdAndUpdate(i.productId._id, {
-        $inc: { quantity: -i.quantity },
+        $inc: { quantity: -i.quantity }
       });
     }
 
     await Cart.deleteOne({ userId });
 
-    // ✅ COD FLOW
     if (paymentMethod === "COD") {
-      return res.json({ success: true, redirect: "/order-success" });
+      return res.json({
+        success: true,
+        redirect: "/order-success"
+      });
     }
 
-    // ✅ ONLINE FLOW (Razorpay)
     const razorpayOrder = await razorpay.orders.create({
       amount: total * 100,
       currency: "INR",
-      receipt: order.orderId,
+      receipt: order.orderId
     });
 
     order.razorpayOrderId = razorpayOrder.id;
@@ -82,13 +123,15 @@ export const placeOrder = async (req, res) => {
       razorpayOrderId: razorpayOrder.id,
       amount: razorpayOrder.amount,
       key: process.env.RAZORPAY_KEY_ID,
-      dbOrderId: order._id,
+      dbOrderId: order._id
     });
-  } catch (err) {
-    console.error(err);
+
+  } catch (error) {
+    console.error("Place order error:", error.message);
     res.status(500).json({ success: false });
   }
 };
+
 
 export const verifyPayment = async (req, res) => {
   try {
@@ -131,6 +174,18 @@ export const loadSuccess = async (req, res) => {
     res.render("user/order-success", { user });
   } catch (error) {
     console.error("Error in load order success page: ", error.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+export const loadFailure = async (req, res) => {
+  try {
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
+
+    res.render("user/order-failure", { user });
+  } catch (error) {
+    console.error("Error in load order failure page: ", error.message);           
     res.status(500).send("Server Error");
   }
 };
@@ -350,6 +405,10 @@ doc.text("Tax", labelX, y, { width: 80, align: "right" });
 doc.text(`${order.priceDetails.tax}`, valueX, y, { width: 70, align: "right" });
 y += 14;
 
+doc.text("Discount", labelX, y, { width: 80, align: "right" });
+doc.text(`${order.priceDetails.discount}`, valueX, y, { width: 70, align: "right" });
+y += 14;
+
 doc.text("Shipping", labelX, y, { width: 80, align: "right" });
 doc.text(`${order.priceDetails.shipping}`, valueX, y, { width: 70, align: "right" });
 y += 10;
@@ -362,7 +421,7 @@ doc.text("Total Amount", labelX, y, { width: 80, align: "right" });
 doc.text(`${order.priceDetails.total}`, valueX, y, { width: 70, align: "right" });
 
 
-y += 40;
+y += 80;
 doc.font("Helvetica").fontSize(9).text(
   "Thank you for shopping with FOREVER.\nThis is a system generated invoice and does not require a signature.",
   leftX,

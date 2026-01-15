@@ -2,55 +2,70 @@ import Cart from "../../models/cartModel.js";
 import Product from "../../models/productModel.js";
 import Category from "../../models/categoryModel.js";
 import User from "../../models/userModel.js"
-
+import {applyBestOffer } from "../../utils/applyBestOffer.js";
 const Max_QUANTITY_PER_PRODUCT = 5;
 
 
-export const loadCart =async(req,res)=>{
+export const loadCart = async (req, res) => {
   try {
+    const userId = req.session.user._id;
+    const user = await User.findById(userId);
 
-    const userId=req.session.user._id
+    const cart = await Cart.findOne({ userId })
+      .populate({
+        path: "items.productId",
+        populate: { path: "category" }
+      });
 
-    const user= await User.findById(userId)
-    const cart=await Cart.findOne({userId})
-    .populate("items.productId")
-
-    if(!cart|| cart.items.length===0){
-      return res.render("user/cart",{
+    if (!cart || cart.items.length === 0) {
+      return res.render("user/cart", {
         user,
-        cart:null,
-        subtotal:0
-      })
+        cart: null,
+        subtotal: 0
+      });
     }
 
-cart.items= cart.items.filter(item=>{
-  const p= item.productId
-  return (
-    p&& 
-    !p.isBlocked&&
-    p.status==="Available"&&
-    p.quantity>0
-  )
-})
-    
-let subtotal=0
+    cart.items = cart.items.filter(item => {
+      const p = item.productId;
+      return (
+        p &&
+        !p.isBlocked &&
+        p.status === "Available" &&
+        p.quantity > 0
+      );
+    });
 
-cart.items.forEach(item=>{
+    let subtotal = 0;
 
-  subtotal+= item.productId.salePrice*item.quantity
-})
+   
+    const cartItemsWithOffer = await Promise.all(
+      cart.items.map(async item => {
+        const offer = await applyBestOffer(item.productId);
 
-await cart.save()
+        const itemTotal = offer.finalPrice * item.quantity;
+        subtotal += itemTotal;
 
-    res.render("user/cart",{
+        return {
+          ...item.toObject(),
+          finalPrice: offer.finalPrice,
+          originalPrice: offer.originalPrice,
+          discountPercent: offer.discountPercent,
+          itemTotal
+        };
+      })
+    );
+
+    res.render("user/cart", {
       user,
-      cart,
-    subtotal})
+      cart: { ...cart.toObject(), items: cartItemsWithOffer },
+      subtotal
+    });
+
   } catch (error) {
-    console.error("Load cart error:", error)
-    res.status(500).send("Server Error")
+    console.error("Load cart error:", error.message);
+    res.status(500).send("Server Error");
   }
-}
+};
 
 export const addToCart = async (req, res) => {
   try {

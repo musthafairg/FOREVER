@@ -95,7 +95,7 @@
 
             <td><%= p.productName %></td>
 
-            <td>₹ <%= p.salePrice %></td>
+            <td>₹ <%= p.finalPrice %></td>
 
             <td>
               <button class="add-cart"
@@ -150,7 +150,7 @@
 
     const data = await res.json();
     if (data.success) {
-      alert("Added to cart");
+      //alert("Added to cart");
       
   await removeWishlist(productId);
       location.reload();

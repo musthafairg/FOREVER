@@ -77,7 +77,7 @@
 
               <div class="product-content-wrap">
                 <h6><%= products[i].productName %></h6>
-                <h5>₹ <%= products[i].salePrice %></h5>
+                <h5>₹ <%= products[i].finalPrice %></h5>
                 <button class="add-to-cart-btn"
                       onclick="addToCart('<%= products[i]._id %>')">
                 Add to Cart
@@ -135,7 +135,7 @@
 
     const data = await res.json();
     if (data.success) {
-      alert("Added to cart");
+      //alert("Added to cart");
       
   await removeWishlist(productId);
       location.reload();

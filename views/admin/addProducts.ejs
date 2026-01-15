@@ -161,13 +161,7 @@
                                         <div id="regularPrice-error" class="error-message"></div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Sale price</label>
-                                        <input placeholder="$" name="salePrice" type="text" class="form-control border">
-                                        <div id="salePrice-error" class="error-message"></div>
-                                    </div>
-                                </div>
+                               
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Quantity</label>
@@ -337,7 +331,7 @@
         const name= document.getElementsByName('productName')[0].value
         const description= document.getElementsByName('descriptionData')[0].value
         const price= document.getElementsByName('regularPrice')[0].value
-        const salePrice= document.getElementsByName('salePrice')[0].value
+        
         const category= document.getElementsByName('category')[0].value
         const quantity= document.getElementsByName('quantity')[0].value
         imageDatas= document.getElementById("imageDatas")?.value
@@ -372,15 +366,9 @@
             isValid = false
         }
 
-        const salePriceVal = parseFloat(salePrice);
+        
         const regularPriceVal = parseFloat(price);
-        if (!/^\d+(\.\d{1,2})?$/.test(salePrice) || salePriceVal < 0) {
-            displayErrorMessage('salePrice-error', 'Please enter a valid non-negative sale price.')
-            isValid = false
-        } else if (regularPriceVal > 0 && salePriceVal >= regularPriceVal) {
-            displayErrorMessage('salePrice-error', 'Sale price must be less than the regular price.')
-            isValid = false
-        }
+       
 
         let imagesSelected = false;
         for (let i = 1; i <= 4; i++) {

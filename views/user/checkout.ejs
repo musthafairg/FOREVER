@@ -118,7 +118,7 @@
           <div>
             <strong><%= item.productId.productName %></strong><br>
             Qty: <%= item.quantity %><br>
-            ₹ <%= item.productId.salePrice * item.quantity %>
+            ₹ <%= item.finalPrice * item.quantity %>
           </div>
         </div>
       <% }) %>
@@ -150,6 +150,94 @@
         <span>- ₹ <%= discount %></span>
       </div>
     <% } %>
+
+
+      <h2>Apply Coupon</h2>
+
+<div style="display:flex; gap:8px;">
+  <input 
+    type="text" 
+    id="couponCode" 
+    placeholder="Enter coupon code"
+    style="flex:1;padding:8px;border:1px solid #ccc;border-radius:6px"
+  />
+
+  <button 
+    type="button" 
+    onclick="applyCoupon()" 
+    class="place-order-btn"
+    style="margin-top:0;padding:10px"
+  >
+    Apply
+  </button>
+</div>
+
+<% if (coupon) { %>
+  <div class="summary-row">
+    <span>Coupon (<%= coupon.code %>)</span>
+    <span>- ₹ <%= couponDiscount %></span>
+  </div>
+
+  <button 
+    type="button"
+    onclick="removeCoupon()"
+    style="background:none;border:none;color:#dc3545;cursor:pointer"
+  >
+    Remove Coupon
+  </button>
+<% } %>
+
+
+
+<h3 style="margin-top:20px;font-size:15px;">Available Coupons</h3>
+
+<% if (coupons.length > 0) { %>
+  <% coupons.forEach(c => { %>
+    <div style="
+      border:1px dashed #ccc;
+      padding:10px;
+      border-radius:6px;
+      margin-bottom:10px;
+      background:#fafafa;
+    ">
+      <strong><%= c.code %></strong>
+
+      <p style="font-size:13px;margin:5px 0;">
+        <% if (c.discountType === "PERCENT") { %>
+          <%= c.discountValue %>% OFF
+          <% if (c.maxDiscount) { %>
+            (Max ₹<%= c.maxDiscount %>)
+          <% } %>
+        <% } else { %>
+          Flat ₹<%= c.discountValue %> OFF
+        <% } %>
+      </p>
+
+      <p style="font-size:12px;color:#666;">
+        Min Purchase: ₹<%= c.minPurchase %>
+      </p>
+
+      <button
+        type="button"
+        onclick="applyCouponFromList('<%= c.code %>')"
+        style="
+          background:#000;
+          color:#fff;
+          padding:6px 12px;
+          border:none;
+          border-radius:4px;
+          font-size:12px;
+          cursor:pointer;
+        "
+      >
+        Apply
+      </button>
+    </div>
+  <% }) %>
+<% } else { %>
+  <p style="font-size:13px;color:#777;">No coupons available</p>
+<% } %>
+
 
     <div class="summary-row total">
       <span>Total</span>
@@ -187,6 +275,8 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
   const formData = new FormData(e.target);
   const payload = Object.fromEntries(formData.entries());
 
+  const SUBTOTAL = <%= subtotal %>;
+
   const res = await fetch("/checkout/place-order", {
     method: "POST",
     headers: { "Content-Type":"application/json" },
@@ -200,7 +290,7 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
     return;
   }
 
-  // ONLINE PAYMENT
+
   const options = {
     key: data.key,
     amount: data.amount,
@@ -228,6 +318,49 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
 
   new Razorpay(options).open();
 });
+
+
+
+async function applyCoupon() {
+  const code = document.getElementById("couponCode").value;
+
+  if (!code) {
+    alert("Enter coupon code");
+    return;
+  }
+
+  const res = await fetch("/coupon/apply", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      code,
+      subtotal: SUBTOTAL    })
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    location.reload();
+  } else {
+    alert(data.message);
+  }
+}
+
+async function removeCoupon() {
+  await fetch("/coupon/remove", { method: "POST" });
+  location.reload();
+}
+
+
+
+
+function applyCouponFromList(code) {
+  document.getElementById("couponCode").value = code;
+  applyCoupon();
+}
+
+
+
 </script>
 
 

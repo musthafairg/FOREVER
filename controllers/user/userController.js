@@ -4,6 +4,8 @@ import Product from '../../models/productModel.js';
 import Category from '../../models/categoryModel.js';
 import {securePassword,generateOtp,sendVerificationEmail} from '../../services/user/userServices.js'
 import bcrypt from 'bcrypt'
+import ProductOffer from '../../models/productofferModel.js';
+import CategoryOffer from '../../models/categoryofferModel.js';
 
 
 
@@ -28,11 +30,42 @@ export const loadHomepage= async(req,res)=>{
         
         const products= await Product.find({isBlocked:false}).sort({createdAt:-1}).limit(10)
 
+ const productOffers=await ProductOffer.find({isActive:true})
+        const categoryOffers= await CategoryOffer.find({isActive:true})
+
+        const productOfferMap= new Map()
+        const categoryOfferMap= new Map()
+
+        productOffers.forEach(o=>
+            productOfferMap.set(o.productId.toString(),o.discount)
+        )
+
+        categoryOffers.forEach(o=>
+            categoryOfferMap.set(o.categoryId.toString(),o.discount)
+        )
+
+
+        const productsWithOffer= products.map(product=>{
+            const productDiscount=productOfferMap.get(product._id.toString()) ||0
+
+            const categoryDiscount=categoryOfferMap.get(product.category?._id.toString() || 0)
+
+            const maxDiscount= Math.max(productDiscount,categoryDiscount)
+
+            const finalPrice= maxDiscount > 0 ? Math.round(product.regularPrice-(product.regularPrice*maxDiscount/100)) : product.regularPrice
+
+
+            return {
+                ...product.toObject(),
+                finalPrice,
+                discountPercent:maxDiscount
+            }
+        })
 
 
 
         return res.render("user/home",{
-            products,
+            products:productsWithOffer,
             user
         })
         
@@ -73,8 +106,8 @@ export const loadShoppingPage= async(req,res)=>{
         }
 
         const sortQuery={
-            priceHigh:{salePrice:-1},
-            priceLow:{salePrice:1},
+            priceHigh:{regularPrice:-1},
+            priceLow:{regularPrice:1},
             az:{productName:1},
             za:{productName:-1}
         }
@@ -91,6 +124,41 @@ export const loadShoppingPage= async(req,res)=>{
         .skip(skip)
         .limit(limit)
 
+
+        
+        const productOffers=await ProductOffer.find({isActive:true})
+        const categoryOffers= await CategoryOffer.find({isActive:true})
+
+        const productOfferMap= new Map()
+        const categoryOfferMap= new Map()
+
+        productOffers.forEach(o=>
+            productOfferMap.set(o.productId.toString(),o.discount)
+        )
+
+        categoryOffers.forEach(o=>
+            categoryOfferMap.set(o.categoryId.toString(),o.discount)
+        )
+
+
+        const productsWithOffer= products.map(product=>{
+            const productDiscount=productOfferMap.get(product._id.toString()) ||0
+
+            const categoryDiscount=categoryOfferMap.get(product.category?._id.toString() || 0)
+
+            const maxDiscount= Math.max(productDiscount,categoryDiscount)
+
+            const finalPrice= maxDiscount > 0 ? Math.round(product.regularPrice-(product.regularPrice*maxDiscount/100)) : product.regularPrice
+
+
+            return {
+                ...product.toObject(),
+                finalPrice,
+                discountPercent:maxDiscount
+            }
+        })
+
+
         const totalProducts= await Product.countDocuments(filter)
 
         const totalPages= Math.ceil(totalProducts/limit)
@@ -101,7 +169,7 @@ export const loadShoppingPage= async(req,res)=>{
         
         
         res.render("user/shop",{
-            products,
+            products:productsWithOffer,
             category,
             currentPage:page,
             totalPages,

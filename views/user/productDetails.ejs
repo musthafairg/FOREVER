@@ -348,21 +348,30 @@
                         <div class="product-price primary-color float-left">
                           <ins>
                             <span class="text-brand"
-                              >₹ <%= product.salePrice %></span
+                              >₹ <%= offerData.finalPrice %></span
                             >
                           </ins>
 
+                          <% if (offerData.discountPercent>0){ %>
                           <ins>
                             <span class="old-price font-md ml-15">
-                              ₹ <%= product.regularPrice %>
+                              ₹ <%= offerData.originalPrice %>
                             </span>
                           </ins>
+                          <%}%>
 
                           <span class="save-price font-md color3 ml-15">
-                            <% if (!totalOffer) { %> No Offers <% } else { %>
-                            <%= totalOffer %>% Off <% } %>
+                            <% if (offerData.discountPercent > 0) { %> <%=
+                            offerData.discountPercent %>% OFF <% } else { %> No
+                            Offers <% } %>
                           </span>
                         </div>
+
+                        <% if (offerData.discountPercent > 0) { %>
+                        <small class="text-muted d-block mt-1">
+                          Applied <%= offerData.appliedOffer %> Offer
+                        </small>
+                        <% } %>
                       </div>
 
                       <div class="bt-1 border-color-1 mt-15 mb-15"></div>
@@ -574,7 +583,7 @@
                       style="width: 240px; height: 240px"
                     />
                     <p style="font-size: 14px"><%= p.productName %></p>
-                    <strong>₹ <%= p.salePrice %></strong>
+                    <strong>₹ <%= p.regularPrice %></strong>
                   </div>
                 </a>
               </div>
@@ -591,103 +600,103 @@
 
 
 
-           const qtyEl = document.getElementById("quantity");
-           const maxStock = <%= product.quantity %>;
-           const MAX_LIMIT = 5;
-           const MAX_ALLOWED = Math.min(maxStock, MAX_LIMIT);
+          const qtyEl = document.getElementById("quantity");
+          const maxStock = <%= product.quantity %>;
+          const MAX_LIMIT = 5;
+          const MAX_ALLOWED = Math.min(maxStock, MAX_LIMIT);
 
-           document.querySelector(".qty-up")?.addEventListener("click", (e) => {
-             e.preventDefault();
-             let qty = parseInt(qtyEl.innerText);
-             if (qty < MAX_ALLOWED) {
-               qtyEl.innerText = qty + 1;
-             }
-           });
+          document.querySelector(".qty-up")?.addEventListener("click", (e) => {
+            e.preventDefault();
+            let qty = parseInt(qtyEl.innerText);
+            if (qty < MAX_ALLOWED) {
+              qtyEl.innerText = qty + 1;
+            }
+          });
 
-           document.querySelector(".qty-down")?.addEventListener("click", (e) => {
-             e.preventDefault();
-             let qty = parseInt(qtyEl.innerText);
-             if (qty > 1) {
-               qtyEl.innerText = qty - 1;
-             }
-           });
+          document.querySelector(".qty-down")?.addEventListener("click", (e) => {
+            e.preventDefault();
+            let qty = parseInt(qtyEl.innerText);
+            if (qty > 1) {
+              qtyEl.innerText = qty - 1;
+            }
+          });
 
-                   function changeMainImage(src){
-                     document.getElementById("mainImage").src=src
-                   }
-
-
-
-               const zoomContainer = document.getElementById("zoomContainer");
-               const zoomImage = document.getElementById("mainImage");
-               const zoomResult = document.getElementById("zoomResult");
-
-               zoomContainer.addEventListener("mouseenter", () => {
-                   zoomResult.style.display = "block";
-                   zoomResult.style.backgroundImage = `url(${zoomImage.src})`;
-               });
-
-               zoomContainer.addEventListener("mousemove", (e) => {
-                   const rect = zoomContainer.getBoundingClientRect();
-                   const x = ((e.clientX - rect.left) / rect.width) * 100;
-                   const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-                   zoomResult.style.backgroundPosition = `${x}% ${y}%`;
-               });
-
-               zoomContainer.addEventListener("mouseleave", () => {
-                   zoomResult.style.display = "none";
-               });
+                  function changeMainImage(src){
+                    document.getElementById("mainImage").src=src
+                  }
 
 
-               
 
-               async function removeWishlist(productId) {
-         const res = await fetch("/wishlist/remove", {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           body: JSON.stringify({ productId })
-         });
+              const zoomContainer = document.getElementById("zoomContainer");
+              const zoomImage = document.getElementById("mainImage");
+              const zoomResult = document.getElementById("zoomResult");
 
-         const data = await res.json();
-         if (data.success) location.reload();
-       }
+              zoomContainer.addEventListener("mouseenter", () => {
+                  zoomResult.style.display = "block";
+                  zoomResult.style.backgroundImage = `url(${zoomImage.src})`;
+              });
+
+              zoomContainer.addEventListener("mousemove", (e) => {
+                  const rect = zoomContainer.getBoundingClientRect();
+                  const x = ((e.clientX - rect.left) / rect.width) * 100;
+                  const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+                  zoomResult.style.backgroundPosition = `${x}% ${y}%`;
+              });
+
+              zoomContainer.addEventListener("mouseleave", () => {
+                  zoomResult.style.display = "none";
+              });
 
 
-                 const addToCartBtn = document.getElementById("addToCartBtn");
 
-                 if (addToCartBtn) {
-                   addToCartBtn.addEventListener("click", async () => {
-                     const productId = addToCartBtn.dataset.productId;
-                     const quantity = parseInt(document.getElementById("quantity").innerText);
 
-                     try {
-                       addToCartBtn.disabled=true;
+              async function removeWishlist(productId) {
+        const res = await fetch("/wishlist/remove", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId })
+        });
 
-                       const res = await fetch("/cart/add", {
-                         method: "POST",
-                         headers: { "Content-Type": "application/json" },
-                         body: JSON.stringify({ productId, quantity })
-                       });
+        const data = await res.json();
+        if (data.success) location.reload();
+      }
 
-                       addToCartBtn.disabled= false;
 
-                       const data = await res.json();
+                const addToCartBtn = document.getElementById("addToCartBtn");
 
-                       if (data.success) {
+                if (addToCartBtn) {
+                  addToCartBtn.addEventListener("click", async () => {
+                    const productId = addToCartBtn.dataset.productId;
+                    const quantity = parseInt(document.getElementById("quantity").innerText);
 
-                            await removeWishlist(productId);
-                              window.location.reload();
-                                
-                              } else {
-                                alert(data.message || "Unable to add");
-                              }
-                     } catch (err) {
-                       console.error(err);
-                       alert("Something went wrong");
-                     }
-                   });
-                 }
+                    try {
+                      addToCartBtn.disabled=true;
+
+                      const res = await fetch("/cart/add", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ productId, quantity })
+                      });
+
+                      addToCartBtn.disabled= false;
+
+                      const data = await res.json();
+
+                      if (data.success) {
+
+                           await removeWishlist(productId);
+                             window.location.reload();
+
+                             } else {
+                               alert(data.message || "Unable to add");
+                             }
+                    } catch (err) {
+                      console.error(err);
+                      alert("Something went wrong");
+                    }
+                  });
+                }
     </script>
   </body>
 </html>

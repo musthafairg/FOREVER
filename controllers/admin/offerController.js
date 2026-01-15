@@ -30,6 +30,7 @@ export const addProductOffer=async(req,res)=>{
         {discount,isActive:true},
         {upsert:true,new:true}
     )
+    
     res.redirect("/admin/offers/product")
 }
 

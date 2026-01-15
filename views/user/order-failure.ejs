@@ -1,24 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Order Success</title>
+  <meta charset="UTF-8" />
+  <title>Payment Failed | Forever</title>
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    .success-box {
+    .failure-wrapper {
+      max-width: 600px;
+      margin: 80px auto;
       text-align: center;
-      padding: 80px 20px;
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid #eee;
     }
-    .success-box h2 {
+    .failure-icon {
+      font-size: 70px;
+      color: #dc3545;
+      margin-bottom: 20px;
+    }
+    .failure-wrapper h2 {
+      font-size: 22px;
       margin-bottom: 10px;
     }
-    .success-actions a {
-      margin: 10px;
+    .failure-wrapper p {
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .failure-actions a {
       display: inline-block;
-      padding: 12px 22px;
-      background: #000;
-      color: #fff;
+      margin: 8px;
+      padding: 12px 20px;
       border-radius: 6px;
       text-decoration: none;
+      font-size: 14px;
+    }
+    .btn-dark {
+      background: #000;
+      color: #fff;
+    }
+    .btn-outline {
+      border: 1px solid #000;
+      color: #000;
     }
   </style>
 </head>
@@ -26,14 +49,16 @@
 <body>
 <%- include('../partials/user/header.ejs') %>
 
-<div class="order-result failure">
+<div class="failure-wrapper">
+  <div class="failure-icon">✖</div>
   <h2>Payment Failed</h2>
-  <p>Your payment could not be completed.</p>
+  <p>Your transaction could not be completed. Please try again.</p>
 
-  <a href="/orders">Order Details</a>
-  <a href="/checkout">Retry Payment</a>
+  <div class="failure-actions">
+    <a href="/orders" class="btn-outline">View Order</a>
+    <a href="/checkout" class="btn-dark">Retry Payment</a>
+  </div>
 </div>
-
 
 <%- include('../partials/user/footer.ejs') %>
 </body>

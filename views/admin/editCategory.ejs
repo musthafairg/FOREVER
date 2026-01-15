@@ -102,17 +102,7 @@
                                 <div id="description_error" class="error-message"></div>
                             </div>
 
-                            <div class="mb-4">
-                                <label class="form-label">Offer</label>
-                                <input
-                                    placeholder="Enter offer in percentage " 
-                                    name="offer" 
-                                    class="form-control" 
-                                    id="offerId"
-                                    value="<%=category.categoryOffer%>" 
-                                />
-                                <div id="offer_error" class="error-message"></div>
-                            </div>
+                           
                             
                             <div class="d-grid">
                                 <button class="btn btn-primary" type="submit">
@@ -140,11 +130,10 @@ const editCategoryForm=document.getElementById("editCategoryForm")
 
 const category_name= document.getElementById("category_name")
 const descriptionId= document.getElementById("descriptionId")
-const offerId= document.getElementById("offerId")
+
 
 const name_error= document.getElementById("name_error")
 const description_error= document.getElementById("description_error")
-const offer_error= document.getElementById("offer_error")
 
 
          function showError(err,msg){
@@ -192,22 +181,7 @@ const offer_error= document.getElementById("offer_error")
          }
 
 
-         function offerValidateChecking(){
-
-            const offerVal= offerId.value.trim()
-            const offerNum= Number(offerVal)
-
-            if(!offerVal){
-                showError(offer_error,"Please enter an offer percentage")
-                return false
-            }else if(offerNum>100){
-                showError(offer_error,"Offer should be lessthan 100")
-                
-            }else{
-                clearError(offer_error)
-                return true
-            }
-         }
+         
 
          editCategoryForm.addEventListener("submit",async(e)=>{
 
@@ -215,8 +189,8 @@ const offer_error= document.getElementById("offer_error")
 
             const isValid=
             nameValidateChecking() &&
-            descriptionValidateChecking() &&
-            offerValidateChecking()
+            descriptionValidateChecking() 
+      
 
 
 
@@ -227,7 +201,7 @@ const offer_error= document.getElementById("offer_error")
             const formData={
                 name:category_name.value.trim(),
                 description:descriptionId.value.trim(),
-                offer:offerId.value.trim()
+    
             }
 
 
