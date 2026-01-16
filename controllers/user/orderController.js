@@ -94,7 +94,10 @@ export const placeOrder = async (req, res) => {
       req.session.appliedCoupon=null;
     }
   
-    for (const i of cart.items) {
+
+    if (paymentMethod === "COD") {
+
+      for (const i of cart.items) {
       await Product.findByIdAndUpdate(i.productId._id, {
         $inc: { quantity: -i.quantity }
       });
@@ -102,7 +105,6 @@ export const placeOrder = async (req, res) => {
 
     await Cart.deleteOne({ userId });
 
-    if (paymentMethod === "COD") {
       return res.json({
         success: true,
         redirect: "/order-success"
@@ -142,6 +144,8 @@ export const verifyPayment = async (req, res) => {
       orderId,
     } = req.body;
 
+     const userId = req.session.user._id;
+     
     const generated = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(razorpay_order_id + "|" + razorpay_payment_id)
@@ -153,6 +157,18 @@ export const verifyPayment = async (req, res) => {
       });
       return res.json({ success: false });
     }
+
+
+     const order = await Order.findById(orderId);
+
+   
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(item.productId, {
+        $inc: { quantity: -item.quantity },
+      });
+    }
+
+     await Cart.deleteOne({ userId });
 
     await Order.findByIdAndUpdate(orderId, {
       paymentStatus: "PAID",
@@ -256,7 +272,7 @@ export const cancelOrder = async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    console.error("Error in Cancel order :", error.message);
+    console.error("Error in Cancel order :", error.message);``
     res.status(500).send("Server Error");
   }
 };
