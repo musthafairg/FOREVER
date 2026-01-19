@@ -170,7 +170,12 @@
       </div>
 
       <span class="status-badge <%= order.orderStatus %>">
+       <% if (order.returnStatus !=="NONE") { %>
+        <%= order.returnStatus %>  
+        <% } %>
+        <% if (order.returnStatus ==="NONE") { %>
         <%= order.orderStatus %>
+        <% } %>
       </span>
     </div>
   </div>
@@ -197,6 +202,7 @@
           <th>Price</th>
           <th>Qty</th>
           <th>Total</th>
+          <th>Status</th>
         </tr>
       </thead>
 
@@ -227,6 +233,7 @@
     <td>₹ <%= item.price %></td>
     <td><%= item.quantity %></td>
     <td>₹ <%= item.itemTotal %></td>
+    <td><%= item.returnStatus %></td>
   </tr>
 <% }) %>
 </tbody>

@@ -67,6 +67,8 @@
             </span>
           </p>
 
+         
+<% if (order.returnStatus == "NONE") { %>
           <!-- STATUS UPDATE -->
           <form action="/admin/orders/<%= order.orderId %>/status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
             <select name="status" class="form-select form-select-sm w-auto">
@@ -79,6 +81,20 @@
             </select>
             <button class="btn btn-sm btn-dark">Update</button>
           </form>
+<% } %>
+
+          <% if (order.returnStatus !== "NONE") { %>
+
+          <form action="/admin/orders/<%= order.orderId %>/return-status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
+            <select name="status" class="form-select form-select-sm w-auto">
+              <option disabled selected>Change Return Status</option>
+              <option value="APPROVED">Approved</option>
+              <option value="REJECTED">Rejected</option>
+            </select>
+            <button class="btn btn-sm btn-dark">Update</button>
+          </form>
+          <% } %>
+
         </div>
       </div>
     </div>
@@ -123,6 +139,7 @@
               <th>Qty</th>
               <th>Total</th>
               <th>Status</th>
+              <th>Return Status</th>
             </tr>
           </thead>
           <tbody>
@@ -144,6 +161,7 @@
                     <span class="badge bg-success">Active</span>
                   <% } %>
                 </td>
+                <td><%= item.returnStatus %></td>
               </tr>
             <% }) %>
           </tbody>

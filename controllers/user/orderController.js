@@ -317,8 +317,12 @@ export const returnOrder = async (req, res) => {
       return res.json({ success: false });
     }
 
-    order.orderStatus = "Returned";
-    order.orderReason = reason;
+    order.returnStatus = "REQUESTED";
+    order.returnReason = reason;
+    order.items.forEach(item => {
+      item.returnStatus = "REQUESTED";
+      item.returnReason = reason;
+    })
 
     await order.save();
 
@@ -328,6 +332,34 @@ export const returnOrder = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+
+
+export const requestItemReturn = async (req, res) => {
+  const { productId, reason } = req.body;
+
+  const order = await Order.findOne({
+    orderId: req.params.id,
+    userId: req.session.user._id,
+    orderStatus: "Delivered"
+  });
+
+  const item = order.items.find(
+    i => i.productId.toString() === productId
+  );
+
+  if (!item || item.returnStatus !== "NONE") {
+    return res.json({ success: false });
+  }
+
+  item.returnStatus = "REQUESTED";
+  item.returnReason = reason;
+
+  await order.save();
+  res.json({ success: true });
+};
+
+
 
 export const downloadInvoice = async (req, res) => {
   try {

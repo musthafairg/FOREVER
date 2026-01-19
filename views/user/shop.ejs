@@ -70,6 +70,21 @@
     font-size: 13px;
   }
 
+.modal-content {
+  border-radius: 14px;
+}
+
+#modalIcon {
+  font-size: 42px;
+}
+
+.modal-success {
+  color: #28a745;
+}
+
+.modal-error {
+  color: #dc3545;
+}
 
   </style>
 </head>
@@ -99,6 +114,24 @@
             </div>
         </form>
     </div>
+            <!-- MESSAGE MODAL -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+
+      <div class="modal-body text-center p-4">
+        <div id="modalIcon" class="mb-3"></div>
+
+        <h5 class="fw-semibold mb-2" id="modalTitle">Success</h5>
+
+        <p class="text-muted mb-0" id="modalMessage">
+          Message here
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
 
      <form method="GET" id="sortForm">
 
@@ -170,7 +203,9 @@
           </div>
         </aside>
 
+
         <main class="product-grid">
+          
           <% for (let i = 0; i < products.length; i++) { %>
             <div class="product-card">
               <button
@@ -213,9 +248,45 @@
     </section>
   </div>
 
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   <%- include('../partials/user/footer.ejs') %>
+
+
    <script>
+
+
+function showMessage(message, type = "success") {
+  const modalTitle = document.getElementById("modalTitle");
+  const modalMessage = document.getElementById("modalMessage");
+  const modalIcon = document.getElementById("modalIcon");
+
+  if (type === "success") {
+    modalTitle.innerText = "Success";
+    modalIcon.innerHTML = `<i class="fas fa-check-circle modal-success"></i>`;
+  } else {
+    modalTitle.innerText = "Error";
+    modalIcon.innerHTML = `<i class="fas fa-times-circle modal-error"></i>`;
+  }
+
+  modalMessage.innerText = message;
+
+  const modalEl = document.getElementById("messageModal");
+  const modal = new bootstrap.Modal(modalEl);
+  modal.show();
+
+  setTimeout(() => {
+    modal.hide();
+  }, 1800);
+}
+
+
   async function toggleWishlist(productId) {
     try {
       const res = await fetch("/wishlist/add", {
@@ -227,12 +298,13 @@
       const data = await res.json();
 
       if (data.success) {
-        alert("Wishlist updated");
+        showMessage("Wishlist updated successfully ❤️");
       } else {
-        alert("Failed");
+        showMessage("Failed to update wishlist", "error");
       }
     } catch (err) {
-      console.error(err);
+          showMessage("Something went wrong", "error");
+
     }
   }
 
@@ -246,10 +318,22 @@
     });
 
     const data = await res.json();
-    if (data.success) location.reload();
+  if (data.success){
+     showMessage("Removed from wishlist");
+     console.log("Removed from wishlist");  
+    location.reload();
+  } else {
+    showMessage("Unable to remove from wishlist", "error"); 
   }
+}
+
 
   async function addToCart(productId) {
+
+
+      const btn = event.target;
+  btn.disabled = true;
+
     const res = await fetch("/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -257,13 +341,18 @@
     });
 
     const data = await res.json();
+    btn.disabled = false;
+
     if (data.success) {
-     // alert("Added to cart");
+     showMessage(data.message || "Product added to cart 🛒");
       
   await removeWishlist(productId);
+
+      setTimeout(() => {
       location.reload();
+    }, 800);
     } else {
-      alert(data.message || "Unable to add");
+       showMessage(data.message || "Unable to add to cart", "error");
     }
   }
 </script>

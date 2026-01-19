@@ -1,6 +1,6 @@
 import Order from '../../models/orderModel.js'
 import User from '../../models/userModel.js'
-
+import Product from '../../models/productModel.js'
 
 
 export const loadAdminOrders=async(req,res)=>{
@@ -102,5 +102,40 @@ export const updateOrderStatus= async(req,res)=>{
         console.error("Update order status error : ",error.message)
         res.status(500).send("Server Error")
         
+    }
+}
+
+export const deleteOrder= async(req,res)=>{
+    try {
+        await Order.deleteOne({orderId:req.params.id})      
+        res.redirect("/admin/orders")
+    } catch (error) {
+        console.error("Delete order error : ",error.message)
+        res.status(500).send("Server Error")
+    }
+}
+
+export const updateReturnStatus= async(req,res)=>{
+    try {
+        const {status}=req.body 
+       
+
+        await Order.updateOne(
+      { orderId: req.params.id },
+      {
+        $set: {
+          returnStatus: status,
+          orderStatus: status==="APPROVED" ? "Returned" : "Return Rejected",
+          "items.$[].returnStatus": status,
+        },
+      },
+      { runValidators: false }
+    );
+        
+        
+        res.redirect(`/admin/orders/${req.params.id}`)
+    } catch (error) {
+        console.error("Update return status error : ",error.message)
+        res.status(500).send("Server Error")
     }
 }

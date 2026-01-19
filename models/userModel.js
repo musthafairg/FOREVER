@@ -5,57 +5,68 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim :true
+      trim: true,
     },
     email: {
       type: String,
       required: true,
-      unique:true,
-      trim:true
+      unique: true,
+      trim: true,
     },
     mobile: {
       type: String,
       required: false,
-      unique:false,
-      sparse:true,
-      default:null
-    }, 
-    googleId:{
-      type:String,
-      unique:true,
-      sparse:true
+      unique: false,
+      sparse: true,
+      default: null,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     password: {
       type: String,
       required: false,
     },
-    profileImage:{
-      type:String,
-      default: "default-profile.avif"
+    profileImage: {
+      type: String,
+      default: "default-profile.avif",
     },
     isBlocked: {
       type: Boolean,
       default: false,
     },
-    isAdmin:{
-      type:Boolean,
-      default:false
-
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
-    referalCode:{
-      type:String,
+    wallet: {
+      balance: { type: Number, default: 0 },
+      transactions: [
+        {
+          amount: Number,
+          type: { type: String, enum: ["CREDIT", "DEBIT"] },
+          reason: String,
+          date: { type: Date, default: Date.now },
+        },
+      ],
     },
-    redeemed:{
-      type:Boolean
+    referalCode: {
+      type: String,
     },
-    redeemedUsers:[{
-      type:Schema.Types.ObjectId,
-      ref:"User"
-    }],
-  },{timestamps:true}
+    redeemed: {
+      type: Boolean,
+    },
+    redeemedUsers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+  },
+  { timestamps: true },
 );
-
-
 
 const User = mongoose.model("User", userSchema);
 export default User;
