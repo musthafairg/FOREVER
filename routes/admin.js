@@ -7,7 +7,7 @@ import { getAddProductPage ,addProducts,productInfo,blockProduct,unblockProduct,
 import {adminAuth}from '../middleware/auth.js'
 import multer from 'multer'
 import { storage } from '../helpers/multer.js'
-import { loadAdminOrderDetail, loadAdminOrders, updateOrderStatus ,updateReturnStatus} from '../controllers/admin/orderController.js'
+import { loadAdminOrderDetail, loadAdminOrders, updateOrderStatus ,updateReturnStatus ,updateReturnItemStatus} from '../controllers/admin/orderController.js'
 import { validate } from '../middleware/validate.js'
 const uploads   =   multer({storage})
 import {loadStockPage,updateStock} from '../controllers/admin/stockController.js'
@@ -52,6 +52,7 @@ router.get("/orders",adminAuth,loadAdminOrders)
 router.get("/orders/:id",adminAuth,loadAdminOrderDetail)
 router.post("/orders/:id/status",adminAuth,updateOrderStatus)
 router.post("/orders/:id/return-status",adminAuth,updateReturnStatus)
+router.post("/orders/:id/:productId/return-item-status",adminAuth,updateReturnItemStatus)
 
 //Stock Management
 

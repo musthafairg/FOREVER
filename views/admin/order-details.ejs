@@ -157,11 +157,26 @@
                 <td>
                   <% if(item.isCancelled){ %>
                     <span class="badge bg-danger">Cancelled</span>
-                  <% } else { %>
+                  <% } %>
+                  
+                  <% if(item.isCancelled===false && item.returnStatus==="NONE"){ %>
                     <span class="badge bg-success">Active</span>
                   <% } %>
                 </td>
-                <td><%= item.returnStatus %></td>
+                <td><%= item.returnStatus %>
+
+                  <% if (order.returnStatus !== "NONE" && item.isCancelled===false) { %>
+
+          <form action="/admin/orders/<%= order.orderId %>/<%= item.productId %>/return-item-status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
+            <select name="status" class="form-select form-select-sm w-auto">
+              <option disabled selected>Change Return Status</option>
+              <option value="APPROVED">Approved</option>
+              <option value="REJECTED">Rejected</option>
+            </select>
+            <button class="btn btn-sm btn-dark">Update</button>
+          </form>
+          <% } %>
+                </td>
               </tr>
             <% }) %>
           </tbody>

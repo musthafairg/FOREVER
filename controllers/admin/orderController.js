@@ -139,3 +139,26 @@ export const updateReturnStatus= async(req,res)=>{
         res.status(500).send("Server Error")
     }
 }
+
+
+export const updateReturnItemStatus= async(req,res)=>{
+    try {
+        const {status}=req.body 
+        const {id, productId}=req.params    
+        await Order.updateOne(
+        { orderId: id, "items.productId": productId },
+        {
+            $set: {
+            "items.$.returnStatus": status,
+            orderStatus: status === "APPROVED" ? "Returned" : "Return Rejected",
+            },
+        },
+        { runValidators: false }
+        );
+        res.redirect(`/admin/orders/${id}`)
+    } catch (error) {
+        console.error("Update return item status error : ",error.message)
+        res.status(500).send("Server Error")
+    }
+}
+

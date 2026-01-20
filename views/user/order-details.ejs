@@ -215,7 +215,7 @@
         <span><%= item.productName %></span>
       </div>
 
-      <% if (!item.isCancelled && order.orderStatus !== "Delivered") { %>
+      <% if (!item.isCancelled && order.orderStatus !== "Delivered" && order.orderStatus !== "Out for Delivery" && item.returnStatus === "NONE") { %>
         <button class="btn btn-outline"
           style="margin-top:6px;padding:4px 10px;font-size:12px"
           onclick="cancelItem('<%= order.orderId %>', '<%= item.productId %>')">
@@ -226,6 +226,22 @@
       <% if (item.isCancelled) { %>
         <div style="color:#d93025;font-size:12px;margin-top:4px;">
           Cancelled
+        </div>
+      <% } %>
+
+      <% if (item.orderStatus === "Delivered" && item.returnStatus === "NONE") { %>
+        <div style="margin-top:4px;">
+          <button class="btn btn-outline"
+            style="padding:4px 10px;font-size:12px"
+            onclick="returnOrderItem('<%= order.orderId %>' , '<%= item.productId %>')">
+            Return Item
+          </button>
+        </div>
+      <% } %>
+
+      <% if (item.returnStatus !== "NONE") { %>
+        <div style="color:#44023e;font-size:12px;margin-top:4px;">
+          <%= item.returnStatus %>
         </div>
       <% } %>
     </td>
