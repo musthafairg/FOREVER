@@ -244,7 +244,14 @@
       <span>₹ <%= total %></span>
     </div>
 
+
+    <h2 style="margin-top:30px;">Select Payment Method</h2>
     <label>
+  <input type="radio" name="paymentMethod" value="WALLET">
+  Wallet (Balance: ₹ <%= user.wallet.balance %>)
+</label>
+
+<label>
   <input type="radio" name="paymentMethod" value="COD" checked>
   Cash on Delivery
 </label>
@@ -289,6 +296,17 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
     window.location.href = data.redirect;
     return;
   }
+  if (payload.paymentMethod === "WALLET") {
+    if(data.success){
+      window.location.href = data.redirect;
+      return;   
+    }else{
+      alert(data.message);
+    }  
+    return; 
+  }
+    
+    
 
 
   const options = {

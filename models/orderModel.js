@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { required } from "zod/mini";
+
 
 const orderItemSchema = new Schema({
   productId: {
@@ -23,7 +23,11 @@ const orderItemSchema = new Schema({
     default: "NONE",
   },
   returnReason: String,
-});
+  refunded: {
+    type: Boolean,
+    default: false,
+  },
+  });
 
 const orderSchema = new Schema(
   {
@@ -57,7 +61,7 @@ const orderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["COD", "ONLINE"],
+      enum: ["COD", "ONLINE","WALLET"],
       required: true,
     },
     paymentStatus: {

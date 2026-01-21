@@ -8,25 +8,29 @@ import razorpay from "../../config/razorpay.js";
 import crypto from "crypto";
 import { applyBestOffer } from "../../utils/applyBestOffer.js";
 import Coupon from "../../models/couponModel.js";
+import {creditWallet,debitWallet} from '../../utils/walletUtils.js';
+
+
 
 const generateOrderId = async () => {
   const count = await Order.countDocuments();
 
   return `FR-${new Date().getDate()}-${String(count + 1).padStart(6, "0")}`;
 };
+
+
 export const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user._id;
+    const user = await User.findById(userId);
     const { addressId, paymentMethod } = req.body;
 
     const couponData = req.session.appliedCoupon;
-    let couponDiscount = 0;
-    if (couponData) {
-      couponDiscount = couponData.discount;
-    }
+    let couponDiscount = couponData ? couponData.discount : 0;
+
     const cart = await Cart.findOne({ userId }).populate({
       path: "items.productId",
-      populate: { path: "category" },
+      populate: { path: "category" }
     });
 
     if (!cart || cart.items.length === 0) {
@@ -35,7 +39,7 @@ export const placeOrder = async (req, res) => {
 
     const addressData = await Address.findOne({ userId });
     const selectedAddress = addressData.address.find(
-      (a) => a._id.toString() === addressId,
+      a => a._id.toString() === addressId
     );
 
     if (!selectedAddress) {
@@ -47,7 +51,6 @@ export const placeOrder = async (req, res) => {
     const items = await Promise.all(
       cart.items.map(async (i) => {
         const offer = await applyBestOffer(i.productId);
-
         const itemTotal = offer.finalPrice * i.quantity;
         subtotal += itemTotal;
 
@@ -58,13 +61,21 @@ export const placeOrder = async (req, res) => {
           price: offer.finalPrice,
           quantity: i.quantity,
           itemTotal,
-          discountPercent: offer.discountPercent,
+          discountPercent: offer.discountPercent
         };
-      }),
+      })
     );
 
     const tax = Math.round(subtotal * 0.05);
     const total = subtotal + tax - couponDiscount;
+
+    
+    if (paymentMethod === "WALLET" && user.wallet.balance < total) {
+      return res.json({
+        success: false,
+        message: "Insufficient wallet balance"
+      });
+    }
 
     const order = new Order({
       orderId: await generateOrderId(),
@@ -76,40 +87,61 @@ export const placeOrder = async (req, res) => {
         tax,
         shipping: 0,
         discount: couponDiscount,
-        total,
+        total
       },
       paymentMethod,
-      paymentStatus: paymentMethod === "COD" ? "PAID" : "PENDING",
+      paymentStatus: paymentMethod === "COD" ? "PAID" : "PENDING"
     });
 
     await order.save();
 
     if (couponData) {
       await Coupon.findByIdAndUpdate(couponData.id, {
-        $inc: { usedCount: 1 },
+        $inc: { usedCount: 1 }
       });
       req.session.appliedCoupon = null;
     }
 
-    if (paymentMethod === "COD") {
+    
+    if (paymentMethod === "WALLET") {
+      await debitWallet(
+        userId,
+        total,
+        `Payment for order ${order.orderId}`
+      );
+
       for (const i of cart.items) {
         await Product.findByIdAndUpdate(i.productId._id, {
-          $inc: { quantity: -i.quantity },
+          $inc: { quantity: -i.quantity }
         });
       }
 
       await Cart.deleteOne({ userId });
 
-      return res.json({
-        success: true,
-        redirect: "/order-success",
-      });
+      order.paymentStatus = "PAID";
+      await order.save();
+
+      return res.json({ success: true, redirect: "/order-success" });
     }
+
+    
+    if (paymentMethod === "COD") {
+      for (const i of cart.items) {
+        await Product.findByIdAndUpdate(i.productId._id, {
+          $inc: { quantity: -i.quantity }
+        });
+      }
+
+      await Cart.deleteOne({ userId });
+
+      return res.json({ success: true, redirect: "/order-success" });
+    }
+
 
     const razorpayOrder = await razorpay.orders.create({
       amount: total * 100,
       currency: "INR",
-      receipt: order.orderId,
+      receipt: order.orderId
     });
 
     order.razorpayOrderId = razorpayOrder.id;
@@ -120,13 +152,16 @@ export const placeOrder = async (req, res) => {
       razorpayOrderId: razorpayOrder.id,
       amount: razorpayOrder.amount,
       key: process.env.RAZORPAY_KEY_ID,
-      dbOrderId: order._id,
+      dbOrderId: order._id
     });
+
   } catch (error) {
     console.error("Place order error:", error.message);
     res.status(500).json({ success: false });
   }
 };
+
+
 
 export const verifyPayment = async (req, res) => {
   try {
@@ -246,28 +281,47 @@ export const cancelOrder = async (req, res) => {
       userId: req.session.user._id,
     });
 
-    if (order.orderStatus === "Delivered") {
+    if (!order || order.orderStatus === "Delivered") {
       return res.json({ success: false });
     }
 
     for (const i of order.items) {
+      if(!i.isCancelled){
+
       await Product.findByIdAndUpdate(i.productId, {
         $inc: { quantity: i.quantity },
+      
       });
+      i.isCancelled = true;
+      i.cancelReason = reason;
     }
+    }
+
+
+   
 
     order.orderStatus = "Cancelled";
     order.cancelReason = reason;
 
     await order.save();
 
+    if(order.paymentMethod !== "COD" && order.paymentStatus === "PAID"){
+      await creditWallet(
+        req.session.user._id,
+         order.priceDetails.total,
+          `Refund for cancelled order ${order.orderId}`
+        );
+    }
+
+
     res.json({ success: true });
   } catch (error) {
     console.error("Error in Cancel order :", error.message);
-    ``;
+    
     res.status(500).send("Server Error");
   }
 };
+
 
 export const cancelOrderItem = async (req, res) => {
   try {
@@ -279,7 +333,7 @@ export const cancelOrderItem = async (req, res) => {
 
     const item = order.items.find((i) => i.productId.toString() === productId);
 
-    if (!item || item.isCancelled) return res.json({ success: false });
+    if (!item || item.isCancelled || item.refunded) return res.json({ success: false });
 
     await Product.findByIdAndUpdate(productId, {
       $inc: { quantity: item.quantity },
@@ -288,7 +342,45 @@ export const cancelOrderItem = async (req, res) => {
     item.isCancelled = true;
     item.cancelReason = reason;
 
+    const oldTotal = order.priceDetails.total;
+
+
+    const activeItems = order.items.filter((i) => !i.isCancelled);
+
+    if (activeItems.length === 0) {
+      order.orderStatus = "Cancelled";
+      order.cancelReason = reason;
+    }
+
+    const subtotal = activeItems.reduce((sum, i) => sum + i.itemTotal, 0);
+    const shipping = 0;
+    const tax = Math.round(subtotal * 0.05);
+    const total = subtotal + tax + shipping - order.priceDetails.discount;
+
+    order.priceDetails.subtotal = subtotal;
+    order.priceDetails.tax = tax;
+    order.priceDetails.shipping = shipping;
+    order.priceDetails.total = total;
     await order.save();
+
+    const refundAmount = oldTotal - total;
+
+
+
+    if(refundAmount > 0 && order.paymentMethod !== "COD" && order.paymentStatus === "PAID"){
+      await creditWallet(
+        req.session.user._id,   
+          refundAmount,
+          `Refund for cancelled item ${item.productName} in order ${order.orderId}`
+        );
+
+        item.refunded = true;
+        await order.save();
+        
+    }
+
+
+ 
 
     res.json({ success: true });
   } catch (error) {
@@ -327,6 +419,34 @@ export const returnOrder = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+export const returnOrderItem = async (req, res) => {
+  try {
+    const { productId, reason } = req.body; 
+    const order = await Order.findOne({
+      orderId: req.params.id,
+      userId: req.session.user._id,
+      orderStatus: "Delivered",
+    });
+
+    const item = order.items.find((i) => i.productId.toString() === productId);
+
+    if (!item || item.returnStatus !== "NONE" || item.isCancelled) {
+      return res.json({ success: false });
+    }
+
+    item.returnStatus = "REQUESTED";
+    item.returnReason = reason;
+    await order.save();
+    res.json({ success: true });
+  }
+  catch (error) {
+    console.error("Error in Return order Item :", error.message);
+    res.status(500).send("Server Error");
+  }
+};
+
+
 
 export const requestItemReturn = async (req, res) => {
   const { productId, reason } = req.body;

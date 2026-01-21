@@ -223,6 +223,13 @@
 
             </div>
 
+            <div class="form-group">
+                <label for="referral">Referral Code (Optional)</label>
+                <input type="text" id="referalCode" name="referalCode" placeholder="Referral Code (Optional)">
+                <div id="error6" class="error-message1"></div>
+
+            </div>
+
             <button type="submit" class="signup-button">Create Account</button>
 
         </form>
@@ -264,12 +271,14 @@
          const mobileid=document.getElementById("mobile")
          const passid=document.getElementById("password")
          const confirmid = document.getElementById("confirmPassword")
+         const referalid=document.getElementById("referalCode") 
 
          const error1=document.getElementById("error1")
          const error2=document.getElementById("error2")
          const error3=document.getElementById("error3")
          const error4=document.getElementById("error4")
          const error5=document.getElementById("error5")
+         const error6=document.getElementById("error6")
 
          const signupForm=document.getElementById("signup-form")
 
@@ -365,7 +374,8 @@
                 error2.innerHTML||
                 error3.innerHTML||
                 error4.innerHTML||
-                error5.innerHTML
+                error5.innerHTML||
+                error6.innerHTML
             ) return
 
 
@@ -374,7 +384,8 @@
                 email:emailid.value,
                 mobile:mobileid.value,
                 password:passid.value,
-                confirmPassword:confirmid.value
+                confirmPassword:confirmid.value,
+                referalCode:referalid.value
             }
 
             try{

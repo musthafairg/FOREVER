@@ -68,7 +68,7 @@
           </p>
 
          
-<% if (order.returnStatus == "NONE") { %>
+<% if (order.orderStatus !== "Delivered" && order.orderStatus !== "Cancelled" && order.returnStatus == "NONE") { %>
           <!-- STATUS UPDATE -->
           <form action="/admin/orders/<%= order.orderId %>/status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
             <select name="status" class="form-select form-select-sm w-auto">
@@ -83,7 +83,7 @@
           </form>
 <% } %>
 
-          <% if (order.returnStatus !== "NONE") { %>
+          <% if (order.returnStatus !== "NONE" && order.orderStatus !== "Returned") { %>
 
           <form action="/admin/orders/<%= order.orderId %>/return-status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
             <select name="status" class="form-select form-select-sm w-auto">
@@ -165,7 +165,7 @@
                 </td>
                 <td><%= item.returnStatus %>
 
-                  <% if (order.returnStatus !== "NONE" && item.isCancelled===false) { %>
+                  <% if (item.returnStatus === "REQUESTED" && item.isCancelled===false && order.orderStatus !== "Returned") { %>
 
           <form action="/admin/orders/<%= order.orderId %>/<%= item.productId %>/return-item-status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
             <select name="status" class="form-select form-select-sm w-auto">

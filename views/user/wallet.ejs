@@ -132,6 +132,22 @@
     border: none;
     cursor: pointer;
   }
+
+  .wallet-balance {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.wallet-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.wallet-list .credit { color: green; }
+.wallet-list .debit { color: red; }
+
 </style>
 
 <%- include('../partials/user/header.ejs') %>
@@ -151,11 +167,12 @@
       </div>
 
       <ul class="profile-menu">
-        <li class="active"><a href="/user-profile">Profile</a></li>
+        <li><a href="/user-profile">Profile</a></li>
         <li><a href="/cart">Cart</a></li>
         <li><a href="/orders">Orders</a></li>
         <li><a href="/address">Addresses</a></li>
-        <li><a href="/wallet">Wallet</a></li>
+        <li class="active"><a href="/wallet">Wallet</a></li>
+
         <li><a href="/edit-profile">Edit Profile</a></li>
         <li><a href="/change-password">Change Password</a></li>
         <li><a href="/change-email">Change Email</a></li>
@@ -163,52 +180,39 @@
       </ul>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <div class="profile-content">
-      <div class="profile-box">
-        <h2>User Details</h2>
-        <div class="info-grid">
-          <div>
-            <label>Name</label>
-            <p><%= user.name%></p>
-          </div>
-          <div>
-            <label>Email</label>
-            <p><%= user.email%></p>
-          </div>
-          <div>
-            <label>Phone</label>
-            <p><%= user.mobile%></p>
-          </div>
 
-           <div class="card">
-        <h5>Your Referral Code</h5>
-        <strong><%= user.referalCode %></strong>
-        <p>Share this code & earn rewards</p>
-      </div>
-        </div>
-      </div>
 
-     
+  <div class="profile-card">
 
-      <div class="profile-box">
-        <h2>Default Address</h2>
+    <h3>My Wallet</h3>
 
-        <% if (defaultAddress) { %>
-        <p>
-          <%= defaultAddress.houseName %><br />
-          <%= defaultAddress.place %>, <%= defaultAddress.city %><br />
-          <%= defaultAddress.district %>, <%= defaultAddress.state %><br />
-          <%= defaultAddress.pincode %><br />
-          Phone: <%= defaultAddress.phone %><br />
-          Alt: <%= defaultAddress.altPhone %>
-        </p>
-        <% } else { %>
-        <p>No default address set.</p>
-        <% } %>
-      </div>
+    <div class="wallet-balance">
+      <h2>₹ <%= user.wallet.balance %></h2>
+      <p>Available Balance</p>
     </div>
+
+    <hr>
+
+    <h4>Transaction History</h4>
+
+    <% if(user.wallet.transactions.length === 0){ %>
+      <p>No wallet transactions yet.</p>
+    <% } else { %>
+      <ul class="wallet-list">
+        <% user.wallet.transactions.reverse().forEach(tx => { %>
+          <li class="<%= tx.type === 'CREDIT' ? 'credit' : 'debit' %>">
+            <span><%= tx.reason %></span>
+            <strong>
+              <%= tx.type === "CREDIT" ? "+" : "-" %>₹<%= tx.amount %>
+            </strong>
+            <small><%= tx.date.toDateString() %></small>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+
   </div>
 </section>
+
 
 <%- include('../partials/user/footer.ejs') %>

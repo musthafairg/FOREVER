@@ -229,7 +229,7 @@
         </div>
       <% } %>
 
-      <% if (item.orderStatus === "Delivered" && item.returnStatus === "NONE") { %>
+      <% if (order.orderStatus === "Delivered" && item.returnStatus === "NONE" && item.isCancelled === false) { %>
         <div style="margin-top:4px;">
           <button class="btn btn-outline"
             style="padding:4px 10px;font-size:12px"
@@ -368,6 +368,26 @@ async function returnOrder(orderId) {
     alert("Unable to return order");
   }
 }
+
+async function returnOrderItem(orderId, productId) {
+  const reason = prompt("Reason for returning this item (required):");
+  if (!reason) return alert("Return reason is required");
+
+  const res = await fetch(`/orders/${orderId}/return-item`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productId, reason })
+  });
+
+  const data = await res.json();
+  if (data.success) {
+    alert("Item returned");
+    location.reload();
+  } else {
+    alert("Unable to return item");
+  }
+}
+
 </script>
 
 

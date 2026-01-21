@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { date } from "zod";
 
 const userSchema = new mongoose.Schema(
   {
@@ -49,14 +50,21 @@ const userSchema = new mongoose.Schema(
           type: { type: String, enum: ["CREDIT", "DEBIT"] },
           reason: String,
           date: { type: Date, default: Date.now },
+       
+       
         },
+         
       ],
     },
     referalCode: {
       type: String,
+      unique: true,
+      index: true,
     },
-    redeemed: {
-      type: Boolean,
+    referredBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
     redeemedUsers: [
       {

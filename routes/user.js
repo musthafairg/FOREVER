@@ -12,12 +12,14 @@ import { loadAddressPage,loadAddAddressPage, addAddress, loadEditAddress, update
 import { addToCart, loadCart, removeFromCart, updateCartQuantity } from '../controllers/user/cartController.js'
 import { loadCheckout } from '../controllers/user/checkoutController.js'
 import { loadWishlist, removeFromWishlist, addToWishlist } from '../controllers/user/wishlistController.js'
-import { cancelOrder, cancelOrderItem, downloadInvoice, loadFailure, loadOrderDetail, loadOrders, loadSuccess, placeOrder, returnOrder, verifyPayment } from '../controllers/user/orderController.js'
+import { cancelOrder, cancelOrderItem, downloadInvoice, loadFailure, loadOrderDetail, loadOrders, loadSuccess, placeOrder, returnOrder,returnOrderItem, verifyPayment } from '../controllers/user/orderController.js'
 const uploads   =   multer({storage})
 
 import { validate } from '../middleware/validate.js'
 import { addressSchema } from '../validations/address.validation.js'
 import { applyCoupon, removeCoupon } from '../controllers/user/couponController.js'
+import { loadWallet } from '../controllers/user/walletController.js'
+
 
 
 
@@ -107,6 +109,7 @@ router.post("/orders/:id/cancel",userAuth,cancelOrder)
 router.post("/orders/:id/cancel-item",userAuth,cancelOrderItem)
 router.get("/orders/:id/invoice",userAuth,downloadInvoice)
 router.post("/orders/:id/return",userAuth,returnOrder)
+router.post("/orders/:id/return-item",userAuth,returnOrderItem)
 router.get("/order-success",userAuth,loadSuccess)
 router.get("/order-failure",userAuth,loadFailure)
 
@@ -121,4 +124,10 @@ router.post("/wishlist/remove",userAuth,removeFromWishlist)
 
 router.post("/coupon/apply",userAuth,applyCoupon)
 router.post("/coupon/remove",userAuth,removeCoupon)
+
+// Wallet Management
+router.get("/wallet",userAuth,loadWallet)
+
+
+
 export default router;
