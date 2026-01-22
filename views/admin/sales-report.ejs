@@ -33,8 +33,7 @@
                 <li >
                     <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
                 </li>
-
-                  <li >
+                <li >
                     <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
                 </li>
 
@@ -56,8 +55,65 @@
         
 
 <main class="dashboard-content">
-    <h2>Dashboard</h2>
 
-    
+  <h2 class="mb-4">Sales Report</h2>
+
+  <form method="GET" class="row g-3 mb-4">
+    <div class="col-md-3">
+      <select name="filter" class="form-select">
+        <option value="today">Today</option>
+        <option value="week">Last 7 Days</option>
+        <option value="month">Last Month</option>
+        <option value="year">Last Year</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <input type="date" name="from" class="form-control">
+    </div>
+
+    <div class="col-md-3">
+      <input type="date" name="to" class="form-control">
+    </div>
+
+    <div class="col-md-3">
+      <button class="btn btn-dark w-100">Apply</button>
+    </div>
+  </form>
+
+  <div class="card p-3 mb-4">
+    <p><strong>Total Orders:</strong> <%= totalOrders %></p>
+    <p><strong>Total Sales:</strong> ₹ <%= totalSales %></p>
+    <p><strong>Total Discount:</strong> ₹ <%= totalDiscount %></p>
+  </div>
+
+  <div class="mb-3">
+    <a href="/admin/sales-report/pdf?<%= new URLSearchParams({filter,from,to}) %>" class="btn btn-danger">PDF</a>
+    <a href="/admin/sales-report/excel?<%= new URLSearchParams({filter,from,to}) %>" class="btn btn-success">Excel</a>
+  </div>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Date</th>
+        <th>Total</th>
+        <th>Discount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% orders.forEach(o => { %>
+        <tr>
+          <td><%= o.orderId %></td>
+          <td><%= o.createdAt.toDateString() %></td>
+          <td>₹ <%= o.priceDetails.total %></td>
+          <td>₹ <%= o.priceDetails.discount || 0 %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
 </main>
+
 

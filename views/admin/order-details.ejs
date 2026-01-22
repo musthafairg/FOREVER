@@ -83,7 +83,7 @@
           </form>
 <% } %>
 
-          <% if (order.returnStatus !== "NONE" && order.orderStatus !== "Returned") { %>
+          <% if (order.returnStatus === "REQUESTED" && order.orderStatus !== "Returned") { %>
 
           <form action="/admin/orders/<%= order.orderId %>/return-status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
             <select name="status" class="form-select form-select-sm w-auto">

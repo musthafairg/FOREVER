@@ -14,6 +14,11 @@ import {loadStockPage,updateStock} from '../controllers/admin/stockController.js
 import {updateStockSchema} from '../validations/stockSchema.js'
 import { addCategoryOffer, addProductOffer, loadCategoryOffers, loadProductOffers, toggleCategoryOffer, toggleProductOffer } from '../controllers/admin/offerController.js'
 import { createCoupon, deleteCoupon, loadCoupons, toggleCoupon } from '../controllers/admin/couponControoller.js'
+import { downloadSalesReportExcel, downloadSalesReportPDF, loadSalesReport } from '../controllers/admin/salesReportController.js'
+
+
+
+
 //Login Management
 router.get("/login",loadLogin)
 router.post("/login",login)
@@ -84,7 +89,11 @@ router.get("/coupons/delete/:id",adminAuth,deleteCoupon)
 
 
 
+// Sales Report Management
 
+router.get("/sales-report", adminAuth, loadSalesReport)
+router.get("/sales-report/pdf", adminAuth, downloadSalesReportPDF)
+router.get("/sales-report/excel", adminAuth, downloadSalesReportExcel)
 
 
 

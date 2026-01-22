@@ -276,13 +276,14 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
+
+  const SUBTOTAL = <%= subtotal %>;
 document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const formData = new FormData(e.target);
   const payload = Object.fromEntries(formData.entries());
 
-  const SUBTOTAL = <%= subtotal %>;
 
   const res = await fetch("/checkout/place-order", {
     method: "POST",

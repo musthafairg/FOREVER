@@ -61,8 +61,32 @@ export const loadCheckout = async (req, res) => {
 
     const shipping = 0;
     const tax = Math.round(subtotal * 0.05);
-    const couponDiscount= couponData ? couponData.discount : 0  
-    const total = subtotal + tax + shipping - couponDiscount;
+
+    let couponDiscount = 0;
+    let coupon = null;
+
+    if (couponData) {
+      const validCoupon = await Coupon.findOne({
+        _id: couponData.id,
+        isActive: true,
+        expiryDate: { $gt: new Date() },
+        minPurchase: { $lte: subtotal } 
+
+      });
+
+      if (validCoupon) {
+        couponDiscount = Math.min(couponData.discount, subtotal);
+
+        coupon = couponData;
+      } else {
+        req.session.appliedCoupon = null;
+      }
+    }
+
+
+ 
+    const total = Math.max(subtotal+tax+shipping - couponDiscount, 0);
+
 
     const addressData = await Address.findOne({ userId });
     const addresses = addressData ? addressData.address : [];
@@ -85,7 +109,7 @@ export const loadCheckout = async (req, res) => {
       shipping,
       tax,
       total,
-      coupon: couponData,
+      coupon,
       couponDiscount,
       coupons
     });
