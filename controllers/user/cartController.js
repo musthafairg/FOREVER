@@ -117,10 +117,17 @@ return res.json({
       if (itemIndex > -1) {
 
         const newQuantity=cart.items[itemIndex].quantity+quantity
-        if (newQuantity >Math.min(product.quantity,Max_QUANTITY_PER_PRODUCT)) {
+        if (newQuantity > Max_QUANTITY_PER_PRODUCT) {
           return res.json({
             success: false,
             message: "Maximum limit reached",
+          });
+        }
+
+        if (newQuantity >product.quantity) {
+          return res.json({
+            success: false,
+            message: "Out of stock for the requested quantity",
           });
         }
         
@@ -174,17 +181,25 @@ export const updateCartQuantity=async(req,res)=>{
     }
 
     if(action==="inc"){
-      if(item.quantity>=product.quantity||item.quantity>=Max_QUANTITY_PER_PRODUCT){
+      if(item.quantity>=Max_QUANTITY_PER_PRODUCT){
         return res.json({
           success:false,
           message:"Limit reached"
         })
       
+      }else if(item.quantity>=product.quantity){
+        return res.json({
+          success:false,
+          message:"Out of stock"
+        })  
       }
+
       item.quantity++;
 
     }
+    
 
+        
     if(action==="dec" && item.quantity >1){
       item.quantity--;
     }

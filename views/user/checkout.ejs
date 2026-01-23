@@ -170,6 +170,7 @@
   >
     Apply
   </button>
+<div id="errorCoupon" class="error-message1"></div>
 </div>
 
 <% if (coupon) { %>
@@ -274,7 +275,7 @@
 <%- include('../partials/user/footer.ejs') %>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 
   const SUBTOTAL = <%= subtotal %>;
@@ -302,7 +303,11 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
       window.location.href = data.redirect;
       return;   
     }else{
-      alert(data.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Insufficient Wallet Balance',
+        text: data.message||'Your wallet balance is insufficient for this order.',
+      });
     }  
     return; 
   }
@@ -350,8 +355,11 @@ async function applyCoupon() {
   const code = document.getElementById("couponCode").value;
 
   if (!code) {
-    alert("Enter coupon code");
+    const errorEl = document.getElementById("errorCoupon");
+    errorEl.innerText = "Please enter a coupon code.";
     return;
+  }else {
+    document.getElementById("errorCoupon").innerText = "";
   }
 
   const res = await fetch("/coupon/apply", {
@@ -367,7 +375,8 @@ async function applyCoupon() {
   if (data.success) {
     location.reload();
   } else {
-    alert(data.message);
+    const errorEl = document.getElementById("errorCoupon");
+    errorEl.innerText = data.message || "Failed to apply coupon.";
   }
 }
 

@@ -200,6 +200,7 @@
         <tr>
           <th>Product</th>
           <th>Price</th>
+          <th>Offer Price</th>
           <th>Qty</th>
           <th>Total</th>
           <th>Status</th>
@@ -247,6 +248,7 @@
     </td>
 
     <td>₹ <%= item.price %></td>
+    <td>₹ <%= item.offerPrice %></td>
     <td><%= item.quantity %></td>
     <td>₹ <%= item.itemTotal %></td>
     <td><%= item.returnStatus %></td>
@@ -311,11 +313,27 @@
 <%- include('../partials/user/footer.ejs') %>
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+
 async function cancelOrder(orderId) {
-  const reason = prompt("Reason for cancellation (optional):");
+  const result = await Swal.fire({
+    title: 'Cancellation Reason',
+    input: 'text',
+    inputLabel: 'Please provide a reason for cancelling the order:',
+    inputPlaceholder: 'Enter cancellation reason',
+    showCancelButton: true,
+    inputValidator: (value) => {
+      if (!value) {
+        return 'Cancellation reason is required';
+      }
+    }
+  });
+
+  if (!result.isConfirmed) return;
+
+  const reason = result.value;
 
   const res = await fetch(`/orders/${orderId}/cancel`, {
     method: "POST",
@@ -324,16 +342,44 @@ async function cancelOrder(orderId) {
   });
 
   const data = await res.json();
+
   if (data.success) {
-    alert("Order cancelled");
+    Swal.fire({
+      icon: 'success',
+      title: 'Order cancelled successfully',
+      timer: 1500,
+      showConfirmButton: false
+    });
     location.reload();
   } else {
-    alert("Unable to cancel order");
+    Swal.fire({
+      icon: 'error',
+      title: 'Unable to cancel order',
+      timer: 1500,
+      showConfirmButton: false
+    });
   }
 }
 
+
+
 async function cancelItem(orderId, productId) {
-  const reason = prompt("Reason for cancelling this item (optional):");
+  const result = await Swal.fire({
+    title: 'Cancellation Reason',
+    input: 'text',
+    inputLabel: 'Please provide a reason for cancelling this item:',
+    inputPlaceholder: 'Enter cancellation reason',
+    showCancelButton: true,
+    inputValidator: (value) => {
+      if (!value) {
+        return 'Cancellation reason is required';
+      }
+    }
+  });
+
+  if (!result.isConfirmed) return;
+
+  const reason = result.value;
 
   const res = await fetch(`/orders/${orderId}/cancel-item`, {
     method: "POST",
@@ -342,17 +388,42 @@ async function cancelItem(orderId, productId) {
   });
 
   const data = await res.json();
+
   if (data.success) {
-    alert("Item cancelled");
+    Swal.fire({
+      icon: 'success',
+      title: 'Item cancelled successfully',
+      timer: 1500,
+      showConfirmButton: false
+    });
     location.reload();
   } else {
-    alert("Unable to cancel item");
+    Swal.fire({
+      icon: 'error',
+      title: 'Unable to cancel item',
+      timer: 1500,
+      showConfirmButton: false
+    });
   }
 }
 
 async function returnOrder(orderId) {
-  const reason = prompt("Reason for return (required):");
-  if (!reason) return alert("Return reason is required");
+  const result = await Swal.fire({
+    title: 'Return Reason',
+    input: 'text',
+    inputLabel: 'Please provide a reason for returning the order:',
+    inputPlaceholder: 'Enter return reason',
+    showCancelButton: true,
+    inputValidator: (value) => {
+      if (!value) {
+        return 'Return reason is required';
+      }
+    }
+  });
+
+  if (!result.isConfirmed) return;
+
+  const reason = result.value;
 
   const res = await fetch(`/orders/${orderId}/return`, {
     method: "POST",
@@ -361,17 +432,44 @@ async function returnOrder(orderId) {
   });
 
   const data = await res.json();
+
   if (data.success) {
-    alert("Order returned");
+    Swal.fire({
+      icon: 'success',
+      title: 'Order return initiated',
+      timer: 1500,
+      showConfirmButton: false
+    });
     location.reload();
   } else {
-    alert("Unable to return order");
+    Swal.fire({
+      icon: 'error',
+      title: 'Unable to return order',
+      timer: 1500,
+      showConfirmButton: false
+    });
   }
 }
 
+
+
 async function returnOrderItem(orderId, productId) {
-  const reason = prompt("Reason for returning this item (required):");
-  if (!reason) return alert("Return reason is required");
+  const result = await Swal.fire({
+    title: 'Return Reason',
+    input: 'text',
+    inputLabel: 'Please provide a reason for returning this item:',
+    inputPlaceholder: 'Enter return reason',
+    showCancelButton: true,
+    inputValidator: (value) => {
+      if (!value) {
+        return 'Return reason is required';
+      }
+    }
+  });
+
+  if (!result.isConfirmed) return;
+
+  const reason = result.value;
 
   const res = await fetch(`/orders/${orderId}/return-item`, {
     method: "POST",
@@ -380,13 +478,26 @@ async function returnOrderItem(orderId, productId) {
   });
 
   const data = await res.json();
+
   if (data.success) {
-    alert("Item returned");
+    Swal.fire({
+      icon: 'success',
+      title: 'Item return initiated',
+      timer: 1500,
+      showConfirmButton: false
+    });
     location.reload();
   } else {
-    alert("Unable to return item");
+    Swal.fire({
+      icon: 'error',
+      title: 'Unable to return item',
+      timer: 1500,
+      showConfirmButton: false
+    });
   }
 }
+
+
 
 </script>
 

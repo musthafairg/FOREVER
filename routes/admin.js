@@ -15,8 +15,8 @@ import {updateStockSchema} from '../validations/stockSchema.js'
 import { addCategoryOffer, addProductOffer, loadCategoryOffers, loadProductOffers, toggleCategoryOffer, toggleProductOffer } from '../controllers/admin/offerController.js'
 import { createCoupon, deleteCoupon, loadCoupons, toggleCoupon } from '../controllers/admin/couponControoller.js'
 import { downloadSalesReportExcel, downloadSalesReportPDF, loadSalesReport } from '../controllers/admin/salesReportController.js'
-
-
+import { productOfferSchema,categoryOfferSchema } from '../validations/offerSchema.js'
+import { couponSchema } from '../validations/couponSchema.js'
 
 
 //Login Management
@@ -68,22 +68,22 @@ router.patch("/stock/:id",adminAuth,validate(updateStockSchema),updateStock)
 //Product Offers 
 
 router.get("/offers/product",adminAuth,loadProductOffers)
-router.post("/offers/product/add",adminAuth,addProductOffer)
-router.get("offers/product/toggle/:id",adminAuth,toggleProductOffer)
+router.post("/offers/product/add",adminAuth,validate(productOfferSchema),addProductOffer)
+router.get("/offers/product/toggle/:id",adminAuth,toggleProductOffer)
 
 
 
 // Category Offers
 
 router.get("/offers/category",adminAuth,loadCategoryOffers)
-router.post("/offers/category/add",adminAuth,addCategoryOffer)
-router.get("offers/category/toggle/:id",adminAuth,toggleCategoryOffer)
+router.post("/offers/category/add",adminAuth,validate(categoryOfferSchema),addCategoryOffer)
+router.get("/offers/category/toggle/:id",adminAuth,toggleCategoryOffer)
 
 
 // Coupon Management
 
 router.get("/coupons",adminAuth,loadCoupons)
-router.post("/coupons/add",adminAuth,createCoupon)
+router.post("/coupons/add",adminAuth,validate(couponSchema),createCoupon)
 router.get("/coupons/toggle/:id",adminAuth,toggleCoupon)
 router.get("/coupons/delete/:id",adminAuth,deleteCoupon)
 

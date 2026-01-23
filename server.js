@@ -44,6 +44,16 @@ app.use(passport.session())
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
 
+app.use((req, res, next) => {
+  res.locals.formErrors = req.session.formErrors || {};
+  res.locals.formData = req.session.formData || {};
+
+  req.session.formErrors = null;
+  req.session.formData = null;
+
+  next();
+});
+
 
 app.listen(port,()=>{
     console.log(`Server started on port ${port}`);

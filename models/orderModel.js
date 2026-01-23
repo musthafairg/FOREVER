@@ -10,6 +10,7 @@ const orderItemSchema = new Schema({
   productName: String,
   productImage: String,
   price: Number,
+  offerPrice: Number,
   quantity: Number,
   itemTotal: Number,
   isCancelled: {

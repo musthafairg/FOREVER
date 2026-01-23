@@ -58,7 +58,8 @@ export const placeOrder = async (req, res) => {
           productId: i.productId._id,
           productName: i.productId.productName,
           productImage: i.productId.productImage[0],
-          price: offer.finalPrice,
+          price: i.productId.regularPrice,
+          offerPrice: offer.finalPrice,
           quantity: i.quantity,
           itemTotal,
           discountPercent: offer.discountPercent
@@ -528,6 +529,7 @@ export const downloadInvoice = async (req, res) => {
     doc.text("Product", colProduct, y);
     doc.text("Qty", colQty, y, { width: 40, align: "right" });
     doc.text("Price", colPrice, y, { width: 60, align: "right" });
+    doc.text("Offer Price", colPrice + 80, y, { width: 60, align: "right" });
     doc.text("Total", colTotal, y, { width: 70, align: "right" });
 
     y += 10;
@@ -543,6 +545,7 @@ export const downloadInvoice = async (req, res) => {
         align: "right",
       });
       doc.text(`${item.price}`, colPrice, y, { width: 60, align: "right" });
+      doc.text(`${item.offerPrice}`, colPrice + 80, y, { width: 60, align: "right" });
       doc.text(`${item.itemTotal}`, colTotal, y, { width: 70, align: "right" });
       y += 18;
     });

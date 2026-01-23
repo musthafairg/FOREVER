@@ -25,9 +25,22 @@
         <li><a href="/admin"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
         <li><a href="/admin/users"><i class="fas fa-users"></i>Users</a></li>
         <li><a href="/admin/products"><i class="fas fa-list"></i>Products</a></li>
+        <li class="<%= locals.page === 'category' ? 'active' : '' %>">
+                        <a href="/admin/category" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
+                            <i class="fas fa-folder-open"></i>
+                            Category
+                        </a>
+                    </li>
         <li class="active"><a href="/admin/orders"><i class="fas fa-box"></i>Orders</a></li>
          <li  >
                     <a href="/admin/offers/product"><i class="fa-solid fa-tags"></i>Product Offer</a>
+                </li>
+                <li  >
+                    <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
+                </li>
+
+                <li >
+                    <a href="/admin/stock"><i class="fa-solid fa-boxes-stacked"></i>Stock</a>
                 </li>
                    <li  >
                     <a href="/admin/offers/category"><i class="fa-solid fa-tags"></i>Category Offer</a>
@@ -136,6 +149,7 @@
             <tr>
               <th>Product</th>
               <th>Price</th>
+              <th>Offer Price</th>
               <th>Qty</th>
               <th>Total</th>
               <th>Status</th>
@@ -152,6 +166,7 @@
                   </div>
                 </td>
                 <td>₹ <%= item.price %></td>
+                <td>₹ <%= item.offerPrice %></td>
                 <td><%= item.quantity %></td>
                 <td>₹ <%= item.itemTotal %></td>
                 <td>

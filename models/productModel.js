@@ -45,7 +45,7 @@ const productSchema = new mongoose.Schema(
         },
         salePrice: {
             type: Number,
-            required: true,
+            required: false,
         },
         productOffer: {
             type: Number,

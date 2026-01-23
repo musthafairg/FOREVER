@@ -49,6 +49,9 @@
                     <li >
                     <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
                 </li>
+                <li >
+                    <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
+                </li>
                  <li  >
                     <a href="/admin/stock"><i class="fa-solid fa-boxes-stacked"></i>Stock</a>
                 </li>
@@ -118,7 +121,7 @@
         </main>
         
     </div> 
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 
 
@@ -214,7 +217,14 @@ const description_error= document.getElementById("description_error")
 
 
             if(!result.success){
-                alert(result.message)
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error',
+                    text: result.message || 'An error occurred',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
             }else{
                 window.location.href=result.redirect
             }

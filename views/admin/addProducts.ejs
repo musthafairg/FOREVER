@@ -104,6 +104,9 @@
                      <li >
                     <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
                 </li>
+                <li >
+                    <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
+                </li>
                  <li  >
                     <a href="/admin/stock"><i class="fa-solid fa-boxes-stacked"></i>Stock</a>
                 </li>
@@ -285,7 +288,7 @@
         </div>
    </section>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
    <script>
     //Form Validation
@@ -311,14 +314,28 @@
 
 
             if(!result.success){
-                alert(result.message||"Failed to add product")
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error',
+                    text: result.message || 'An error occurred',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
             }else{
                 window.location.href=result.redirect
             }
         } catch (error) {
             console.error("Add product error: ",error.message);
 
-            alert("something went wrong. Please try again")
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while adding the product.',
+                showConfirmButton: false,
+                timer: 1500
+              })
             
         }
     }
@@ -446,7 +463,7 @@
                 cropBtn.style.display = 'inline-block';
 
                  mainImage.onload = function() {
-                    // Simple default crop box
+                    
                     cropArea.style.left = "50px";
                     cropArea.style.top = "50px";
                     cropArea.style.width = "150px";

@@ -104,6 +104,9 @@
                      <li >
                     <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
                 </li>
+                <li >
+                    <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
+                </li>
                  <li  >
                     <a href="/admin/stock"><i class="fa-solid fa-boxes-stacked"></i>Stock</a>
                 </li>
@@ -333,7 +336,7 @@
         </div>
    </section>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
    <script>
     //Form Validation
@@ -358,11 +361,25 @@
             
             window.location.href=result.redirect
         }else{
-            alert(result.message||"Update failed")
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error',
+                text: result.message || 'Update failed',
+                showConfirmButton: false,
+                timer: 1500
+              })
         }
     } catch (error) {
         console.error("Edit product error:",error.message);
-        alert("Something went wrong")
+        Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while updating the product.',
+            showConfirmButton: false,
+            timer: 1500
+          })
         
     }
   }
@@ -626,7 +643,14 @@
             if(data.status===true){
                 window.location.reload()
             }else{
-                alert(data.message||"Failed to delete image")
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || 'Error deleting image',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
 
             }
             
@@ -636,7 +660,14 @@
             
             console.error("Error in calling delete image");
             
-            alert("Error deleting image")
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while deleting the image.',
+                showConfirmButton: false,
+                timer: 1500
+              })    
         }
     }
 

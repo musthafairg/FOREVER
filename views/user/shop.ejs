@@ -114,24 +114,7 @@
             </div>
         </form>
     </div>
-            <!-- MESSAGE MODAL -->
-<div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
 
-      <div class="modal-body text-center p-4">
-        <div id="modalIcon" class="mb-3"></div>
-
-        <h5 class="fw-semibold mb-2" id="modalTitle">Success</h5>
-
-        <p class="text-muted mb-0" id="modalMessage">
-          Message here
-        </p>
-      </div>
-
-    </div>
-  </div>
-</div>
 
      <form method="GET" id="sortForm">
 
@@ -252,7 +235,7 @@
 
 
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
@@ -298,12 +281,35 @@ function showMessage(message, type = "success") {
       const data = await res.json();
 
       if (data.success) {
-        showMessage("Wishlist updated successfully ❤️");
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Wishlist Updated",
+          text: "Product added to wishlist",
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
-        showMessage("Failed to update wishlist", "error");
+        Swal.fire({
+          position: "top-end",
+          icon: "error",
+          title: "Failed",
+          text: "Unable to update wishlist",
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
     } catch (err) {
-          showMessage("Something went wrong", "error");
+          Swal.fire({
+        position: "top-end",  
+        icon: "error",
+        title: "Error",
+        text: "An error occurred",
+        showConfirmButton: false,
+        timer: 1500
+      });
+      console.error(err);
+
 
     }
   }
@@ -319,11 +325,21 @@ function showMessage(message, type = "success") {
 
     const data = await res.json();
   if (data.success){
-     showMessage("Removed from wishlist");
-     console.log("Removed from wishlist");  
-    location.reload();
+ 
+     console.log("Removed from wishlist");
+     setTimeout(() => {
+      location.reload();
+    
+    }, 1500);
+
   } else {
-    showMessage("Unable to remove from wishlist", "error"); 
+    Swal.fire({
+      position: "top-end",
+      icon: "error",
+      title: "Failed to Remove",
+      showConfirmButton: false,
+      timer: 1500 
+    });
   }
 }
 
@@ -344,15 +360,29 @@ function showMessage(message, type = "success") {
     btn.disabled = false;
 
     if (data.success) {
-     showMessage(data.message || "Product added to cart 🛒");
+     Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: data.message || "Added to Cart",
+      showConfirmButton: false,
+      timer: 1500 
+    });
       
   await removeWishlist(productId);
 
       setTimeout(() => {
       location.reload();
-    }, 800);
+    }, 2000);
+
     } else {
-       showMessage(data.message || "Unable to add to cart", "error");
+     Swal.fire({
+      position: "top-end",
+      icon: "error",
+      title: "Failed to Add",
+      text: data.message || "Please try again",
+      showConfirmButton: false,
+      timer: 1500 
+    });
     }
   }
 </script>

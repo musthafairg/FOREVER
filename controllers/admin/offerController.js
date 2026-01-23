@@ -5,88 +5,72 @@ import CategoryOffer from "../../models/categoryofferModel.js";
 
 
 
-export const loadProductOffers=async(req,res)=>{
+export const loadProductOffers = async (req, res) => {
+  const products = await Product.find({ isBlocked: false });
+  const offers = await ProductOffer.find().populate("productId");
 
-    const products=await Product.find({isBlocked:false})
-    const offers=await ProductOffer.find().populate("productId")
+  res.render("admin/product-offers", {
+    page: "offers",
+    products,
+    offers,
+  });
+};
 
-    res.render("admin/product-offers",{
-        page:"offers",
-        products,
-        offers
-    })
-}
+export const addProductOffer = async (req, res) => {
+  const { productId, discount } = req.body;
 
+  await ProductOffer.findOneAndUpdate(
+    { productId },
+    { discount, isActive: true },
+    { upsert: true, new: true }
+  );
 
-export const addProductOffer=async(req,res)=>{
-    let {productId,discount}=req.body
+  res.redirect("/admin/offers/product");
+};
 
-    console.log("req.body",req.body)
+export const toggleProductOffer = async (req, res) => {
+  const offer = await ProductOffer.findById(req.params.id);
+  if (!offer) return res.redirect("/admin/offers/product");
 
+  offer.isActive = !offer.isActive;
+  await offer.save();
 
-    
-    await ProductOffer.findOneAndUpdate(
-        {productId},
-        {discount,isActive:true},
-        {upsert:true,new:true}
-    )
-    
-    res.redirect("/admin/offers/product")
-}
-
-
-export const toggleProductOffer=async(req,res)=>{
-    const offer= await ProductOffer.findById(req.params.id)
-    offer.isActive= !offer.isActive
-
-    await offer.save()
-
-
-    res.redirect("/admin/offers/product")
-}
-
-
-
-export const loadCategoryOffers=async(req,res)=>{
-
-    const categories= await Category.find()
-    const offers= await CategoryOffer.find().populate("categoryId")
-
-
-    res.render("admin/category-offers",{
-        page:"offers",
-        categories,
-        offers
-    })
-}
+  res.redirect("/admin/offers/product");
+};
 
 
 
 
-export const addCategoryOffer=async(req,res)=>{
-    const {categoryId,discount}=req.body
 
-    console.log("req.body",req.body)
+export const loadCategoryOffers = async (req, res) => {
+  const categories = await Category.find({ isListed: true });
+  const offers = await CategoryOffer.find().populate("categoryId");
 
-    await CategoryOffer.findOneAndUpdate(
-        {categoryId},
-        {discount,isActive:true},
-        {upsert:true,new:true}
-    )
-    res.redirect("/admin/offers/category")
-}
+  res.render("admin/category-offers", {
+    page: "offers",
+    categories,
+    offers,
+  });
+};
 
+export const addCategoryOffer = async (req, res) => {
+  const { categoryId, discount } = req.body;
 
-export const toggleCategoryOffer=async(req,res)=>{
-    const offer= await CategoryOffer.findById(req.params.id)
-    offer.isActive= !offer.isActive
+  await CategoryOffer.findOneAndUpdate(
+    { categoryId },
+    { discount, isActive: true },
+    { upsert: true, new: true }
+  );
 
-    await offer.save()
+  res.redirect("/admin/offers/category");
+};
 
+export const toggleCategoryOffer = async (req, res) => {
+  const offer = await CategoryOffer.findById(req.params.id);
+  if (!offer) return res.redirect("/admin/offers/category");
 
-    res.redirect("/admin/offers/category")
-}
+  offer.isActive = !offer.isActive;
+  await offer.save();
 
-
-
-
+  res.redirect("/admin/offers/category");
+};

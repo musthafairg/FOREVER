@@ -19,55 +19,43 @@ export const loadCoupons=async(req,res)=>{
     
    }
 }
+export const createCoupon = async (req, res) => {
+  try {
+    let {
+      code,
+      discountType,
+      discountValue,
+      minPurchase,
+      maxDiscount,
+      expiryDate,
+      usageLimit,
+    } = req.body;
 
-export const createCoupon=async(req,res)=>{
-    try {
-        
-        let {
-            code,
-            discountType,
-            discountValue,
-            minPurchase,
-            maxDiscount,
-            expiryDate,
-            usageLimit
-        }=req.body
+    code = code.toUpperCase();
 
-        code=code.toUpperCase()
-
-        if(!code||!discountType||!discountValue||!expiryDate){
-            return res.status(400).send("All required fields must be filled")
-
-        }
-
-        if(discountValue<=0){
-            return res.status(400).send("Invalid discount value")
-
-        }
-
-        const existingCoupon= await Coupon.findOne({code})
-
-        if(existingCoupon){
-            return res.status(400).send("Coupon already exists")
-        }
-
-        await Coupon.create({
-            code,
-            discountType,
-            discountValue,
-            minPurchase,
-            maxDiscount,
-            expiryDate,
-            usageLimit
-        })
-
-        res.redirect("/admin/coupons")
-
-    } catch (error) {
-        console.error("Create Coupon Error:", error.message)
-        res.status(500).send("Server Error")
+    const exists = await Coupon.findOne({ code });
+    if (exists) {
+      req.session.formErrors = { code: "Coupon already exists" };
+      req.session.formData = req.body;
+      return res.redirect("/admin/coupons");
     }
-}
+
+    await Coupon.create({
+      code,
+      discountType,
+      discountValue,
+      minPurchase,
+      maxDiscount,
+      expiryDate,
+      usageLimit,
+    });
+
+    res.redirect("/admin/coupons");
+  } catch (error) {
+    console.error("Create Coupon Error:", error.message);
+    res.status(500).send("Server Error");
+  }
+};
 
 
 export const toggleCoupon= async(req,res)=>{

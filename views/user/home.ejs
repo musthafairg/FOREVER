@@ -26,16 +26,15 @@
           padding-right: 0;
         }
       }
-       .add-cart {
-    background: #000;
-    color: #fff;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-  }
-
+      .add-cart {
+        background: #000;
+        color: #fff;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+      }
     </style>
     <script src="/js/header.js" defer></script>
   </head>
@@ -78,10 +77,12 @@
               <div class="product-content-wrap">
                 <h6><%= products[i].productName %></h6>
                 <h5>₹ <%= products[i].finalPrice %></h5>
-                <button class="add-to-cart-btn"
-                      onclick="addToCart('<%= products[i]._id %>')">
-                Add to Cart
-              </button>
+                <button
+                  class="add-to-cart-btn"
+                  onclick="addToCart('<%= products[i]._id %>')"
+                >
+                  Add to Cart
+                </button>
               </div>
             </div>
           </div>
@@ -92,58 +93,100 @@
 
     <%- include('../partials/user/footer.ejs') %>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-  async function toggleWishlist(productId) {
-    try {
-      const res = await fetch("/wishlist/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId })
-      });
+      async function toggleWishlist(productId) {
+        try {
+          const res = await fetch('/wishlist/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId })
+          })
 
-      const data = await res.json();
+          const data = await res.json()
 
-      if (data.success) {
-        alert("Wishlist updated");
-      } else {
-        alert("Failed");
+          if (data.success) {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Wishlist Updated',
+              text: 'Product added to wishlist',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          } else {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'Failed',
+              text: 'Unable to update wishlist',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          }
+        } catch (err) {
+          console.error(err)
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        }
       }
-    } catch (err) {
-      console.error(err);
-    }
-  }
 
-  
-  async function removeWishlist(productId) {
-    const res = await fetch("/wishlist/remove", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId })
-    });
+      async function removeWishlist(productId) {
+        const res = await fetch('/wishlist/remove', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId })
+        })
 
-    const data = await res.json();
-    if (data.success) location.reload();
-  }
+        const data = await res.json()
+        setTimeout(() => {
+           if (data.success) location.reload()
+        }, 1500)
+       
+      }
 
-  async function addToCart(productId) {
-    const res = await fetch("/cart/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId, quantity: 1 })
-    });
 
-    const data = await res.json();
-    if (data.success) {
-      //alert("Added to cart");
-      
-  await removeWishlist(productId);
-      location.reload();
-    } else {
-      alert(data.message || "Unable to add");
-    }
-  }
-</script>
 
+      async function addToCart(productId) {
+        const res = await fetch('/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId, quantity: 1 })
+        })
+
+        const data = await res.json()
+
+
+        if (data.success) {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Added to Cart',
+            showConfirmButton: false,
+            timer: 1500
+          })
+
+          await removeWishlist(productId)
+          setTimeout(() => {
+            location.reload()
+          }, 1500)
+        } else {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Failed to Add',
+            text: data.message || 'Please try again'
+            
+          })
+        }
+      }
+    </script>
   </body>
 </html>
