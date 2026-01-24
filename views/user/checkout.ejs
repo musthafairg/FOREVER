@@ -252,10 +252,13 @@
   Wallet (Balance: ₹ <%= user.wallet.balance %>)
 </label>
 
+<% if (total<1000) { %>
+
 <label>
   <input type="radio" name="paymentMethod" value="COD" checked>
   Cash on Delivery
 </label>
+<% } %>
 
 <label>
   <input type="radio" name="paymentMethod" value="ONLINE">
