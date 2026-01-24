@@ -65,15 +65,15 @@ export const loadDashboard = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    req.session.destroy((err) => {
-      if (err) {
-        console.error("Error during session destroy in admin");
-        res.status(500).send("server error");
-      }
-      return res.redirect("/admin/login");
-    });
+    
+    delete req.session.admin;
+
+    console.log("Admin logged out. Admin session cleared only.");
+
+    return res.redirect("/admin/login");
+
   } catch (error) {
-    console.error("Error in admin logout : ", error.message);
+    console.error("Error in admin logout:", error.message);
     return res.status(500).send("Server Error");
   }
 };

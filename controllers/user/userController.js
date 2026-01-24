@@ -558,18 +558,19 @@ export const logout = async (req, res) => {
   try {
     console.log(req.path);
 
-    req.session.destroy((err) => {
-      if (err) {
-        console.error("Session destroy error :", err.message);
-        res.redirect("");
-      }
-      res.redirect("/login");
-    });
+
+    delete req.session.user;
+
+    console.log("User logged out. User session cleared only.");
+
+    return res.redirect("/login");
+
   } catch (error) {
-    console.error("Error in logout :", error.message);
-    res.redirect("");
+    console.error("Error in logout:", error.message);
+    return res.redirect("/login");
   }
 };
+
 
 export const demoLogin = async (req, res) => {
   try {
