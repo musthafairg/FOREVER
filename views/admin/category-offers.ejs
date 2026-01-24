@@ -1,82 +1,131 @@
 <%- include("../../views/partials/admin/header") %>
 
+<div class="main-layout" style="gap: 2%">
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="<%= locals.page === 'dashboard' ? 'active' : '' %>">
+          <a
+            href="/admin"
+            style="
+              color: inherit;
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 100%;
+            "
+          >
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+          </a>
+        </li>
 
+        <li class="<%= locals.page === 'users' ? 'active' : '' %>">
+          <a
+            href="/admin/users"
+            style="
+              color: inherit;
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 100%;
+            "
+          >
+            <i class="fas fa-users"></i>
+            Users
+          </a>
+        </li>
 
+        <li class="<%= locals.page === 'category' ? 'active' : '' %>">
+          <a
+            href="/admin/category"
+            style="
+              color: inherit;
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 100%;
+            "
+          >
+            <i class="fas fa-folder-open"></i>
+            Category
+          </a>
+        </li>
 
-<div class="main-layout" style="gap: 2%;">
-        
-    <aside class="sidebar">
-        <nav class="sidebar-nav">
-            <ul>
-                <li class="<%= locals.page === 'dashboard' ? 'active' : '' %>">
-                    <a href="/admin" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
-                        <i class="fas fa-tachometer-alt"></i>
-                        Dashboard
-                    </a>
-                </li>
-               
-                
-                <li class="<%= locals.page === 'users' ? 'active' : '' %>">
-                    <a href="/admin/users" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
-                        <i class="fas fa-users"></i>
-                        Users
-                    </a>
-                </li>
-                
-                <li class="<%= locals.page === 'category' ? 'active' : '' %>">
-                    <a href="/admin/category" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
-                        <i class="fas fa-folder-open"></i>
-                        Category
-                    </a>
-                </li>
-                 
-                <li class="<%= locals.page === 'products' ? 'active' : '' %>">
-                        <a href="/admin/products" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
-                            <i class="fas fa-list"></i>
-                            Products
-                        </a>
-                    </li>
-                     <li >
-                    <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
-                </li>
-                <li >
-                    <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
-                </li>
-                 <li  >
-                    <a href="/admin/stock"><i class="fa-solid fa-boxes-stacked"></i>Stock</a>
-                </li>
-                   <li  >
-                    <a href="/admin/offers/product"><i class="fa-solid fa-tags"></i>Product Offer</a>
-                </li>
-                   <li class="active"  >
-                    <a href="/admin/offers/category"><i class="fa-solid fa-tags"></i>Category Offer</a>
-                </li>
-                   <li >
+        <li class="<%= locals.page === 'products' ? 'active' : '' %>">
+          <a
+            href="/admin/products"
+            style="
+              color: inherit;
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 100%;
+            "
+          >
+            <i class="fas fa-list"></i>
+            Products
+          </a>
+        </li>
+        <li>
+          <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
+        </li>
+        <li>
+          <a href="/admin/sales-report"
+            ><i class="fas fa-chart-line"></i>Sales Report</a
+          >
+        </li>
+        <li>
+          <a href="/admin/stock"
+            ><i class="fa-solid fa-boxes-stacked"></i>Stock</a
+          >
+        </li>
+        <li>
+          <a href="/admin/offers/product"
+            ><i class="fa-solid fa-tags"></i>Product Offer</a
+          >
+        </li>
+        <li class="active">
+          <a href="/admin/offers/category"
+            ><i class="fa-solid fa-tags"></i>Category Offer</a
+          >
+        </li>
+        <li>
           <a href="/admin/coupons"><i class="fa-solid fa-ticket"></i>Coupons</a>
         </li>
-            </ul>
-        </nav>
-    </aside>
+      </ul>
+    </nav>
+  </aside>
 
-
-<main class="dashboard-content">
-
-<div class="content-header d-flex justify-content-between mb-4">
-  <h2>Category Offers</h2>
-</div>
-
+  <main class="dashboard-content">
+    <div class="content-header d-flex justify-content-between mb-4">
+      <h2>Category Offers</h2>
+    </div>
 <div class="card p-3 mb-4">
-  <form action="/admin/offers/category/add" method="POST" class="row g-2">
+  <form id="offerForm" class="row g-2">
     <div class="col-md-6">
-      <select name="categoryId" class="form-select" required>
+      <select name="categoryId" class="form-select">
         <% categories.forEach(c => { %>
           <option value="<%= c._id %>"><%= c.name %></option>
         <% }) %>
       </select>
+      <small class="text-danger" id="error-categoryId"></small>
     </div>
+
     <div class="col-md-3">
-      <input type="number" name="discount" class="form-control" placeholder="Discount %" required>
+      <input
+        type="number"
+        name="discount"
+        class="form-control"
+        placeholder="Discount %"
+      />
+      <small class="text-danger" id="error-discount"></small>
     </div>
+
     <div class="col-md-3">
       <button class="btn btn-dark w-100">Add / Update</button>
     </div>
@@ -93,21 +142,27 @@
         <th>Action</th>
       </tr>
     </thead>
-    <tbody>
+
+    <tbody id="offerTable">
       <% offers.forEach(o => { %>
-        <tr>
+        <tr id="row-<%= o._id %>">
           <td><%= o.categoryId.name %></td>
           <td><%= o.discount %>%</td>
           <td>
-            <span class="badge <%= o.isActive ? 'bg-success' : 'bg-secondary' %>">
+            <span
+              id="status-<%= o._id %>"
+              class="badge <%= o.isActive ? 'bg-success' : 'bg-secondary' %>"
+            >
               <%= o.isActive ? 'Active' : 'Disabled' %>
             </span>
           </td>
           <td>
-            <a href="/admin/offers/category/toggle/<%= o._id %>"
-               class="btn btn-sm btn-outline-dark">
-               Toggle
-            </a>
+            <button
+              class="btn btn-sm btn-outline-dark"
+              onclick="toggleOffer('<%= o._id %>')"
+            >
+              Toggle
+            </button>
           </td>
         </tr>
       <% }) %>
@@ -115,5 +170,57 @@
   </table>
 </div>
 
-</main>
+
+
+  </main>
 </div>
+
+
+<script>
+  const form = document.getElementById("offerForm");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    document.getElementById("error-categoryId").innerText = "";
+    document.getElementById("error-discount").innerText = "";
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    const res = await fetch("/admin/offers/category/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      if (data.errors) {
+        for (const field in data.errors) {
+          document.getElementById(`error-${field}`).innerText =
+            data.errors[field];
+        }
+      }
+      return;
+    }
+
+    location.reload();
+  });
+
+  async function toggleOffer(id) {
+    const res = await fetch(`/admin/offers/category/toggle/${id}`, {
+      method: "PATCH",
+    });
+
+    const data = await res.json();
+    if (!data.success) return;
+
+    const badge = document.getElementById(`status-${id}`);
+    badge.innerText = data.isActive ? "Active" : "Disabled";
+    badge.className =
+      "badge " + (data.isActive ? "bg-success" : "bg-secondary");
+  }
+</script>
+

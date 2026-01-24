@@ -60,19 +60,27 @@
 <div class="content-header d-flex justify-content-between mb-4">
   <h2>Product Offers</h2>
 </div>
-
 <div class="card p-3 mb-4">
-  <form action="/admin/offers/product/add" method="POST" class="row g-2">
+  <form id="productOfferForm" class="row g-2">
     <div class="col-md-6">
-      <select name="productId" class="form-select" required>
+      <select name="productId" class="form-select">
         <% products.forEach(p => { %>
-          <option value="<%= p._id.toString() %>"><%= p.productName %></option>
+          <option value="<%= p._id %>"><%= p.productName %></option>
         <% }) %>
       </select>
+      <small class="text-danger" id="error-productId"></small>
     </div>
+
     <div class="col-md-3">
-      <input type="number" name="discount" class="form-control" placeholder="Discount %" required>
+      <input
+        type="number"
+        name="discount"
+        class="form-control"
+        placeholder="Discount %"
+      />
+      <small class="text-danger" id="error-discount"></small>
     </div>
+
     <div class="col-md-3">
       <button class="btn btn-dark w-100">Add / Update</button>
     </div>
@@ -89,21 +97,27 @@
         <th>Action</th>
       </tr>
     </thead>
-    <tbody>
+
+    <tbody id="productOfferTable">
       <% offers.forEach(o => { %>
-        <tr>
+        <tr id="row-<%= o._id %>">
           <td><%= o.productId.productName %></td>
           <td><%= o.discount %>%</td>
           <td>
-            <span class="badge <%= o.isActive ? 'bg-success' : 'bg-secondary' %>">
+            <span
+              id="status-<%= o._id %>"
+              class="badge <%= o.isActive ? 'bg-success' : 'bg-secondary' %>"
+            >
               <%= o.isActive ? 'Active' : 'Disabled' %>
             </span>
           </td>
           <td>
-            <a href="/admin/offers/product/toggle/<%= o._id %>"
-               class="btn btn-sm btn-outline-dark">
-               Toggle
-            </a>
+            <button
+              class="btn btn-sm btn-outline-dark"
+              onclick="toggleProductOffer('<%= o._id %>')"
+            >
+              Toggle
+            </button>
           </td>
         </tr>
       <% }) %>
@@ -113,3 +127,54 @@
 
 </main>
 </div>
+
+
+
+
+<script>
+  const form = document.getElementById("productOfferForm");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    document.getElementById("error-productId").innerText = "";
+    document.getElementById("error-discount").innerText = "";
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    const res = await fetch("/admin/offers/product/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      if (data.errors) {
+        for (const field in data.errors) {
+          const el = document.getElementById(`error-${field}`);
+          if (el) el.innerText = data.errors[field];
+        }
+      }
+      return;
+    }
+
+    location.reload();
+  });
+
+  async function toggleProductOffer(id) {
+    const res = await fetch(`/admin/offers/product/toggle/${id}`, {
+      method: "PATCH",
+    });
+
+    const data = await res.json();
+    if (!data.success) return;
+
+    const badge = document.getElementById(`status-${id}`);
+    badge.innerText = data.isActive ? "Active" : "Disabled";
+    badge.className =
+      "badge " + (data.isActive ? "bg-success" : "bg-secondary");
+  }
+</script>

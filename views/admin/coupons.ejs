@@ -58,72 +58,153 @@
       <h2>Coupon Management</h2>
     </div>
 
-    <!-- ADD COUPON -->
-    <div class="card p-3 mb-4">
-      <form action="/admin/coupons/add" method="POST" class="row g-2">
-        <div class="col-md-3">
-          <input name="code" class="form-control" placeholder="COUPON CODE" required>
-        </div>
-
-        <div class="col-md-2">
-          <select name="discountType" class="form-select" required>
-            <option value="PERCENT">Percentage</option>
-            <option value="FLAT">Flat</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <input type="number" name="discountValue" class="form-control" placeholder="Discount" required>
-        </div>
-
-        <div class="col-md-2">
-          <input type="number" name="minPurchase" class="form-control" placeholder="Min Purchase">
-        </div>
-
-        <div class="col-md-2">
-          <input type="date" name="expiryDate" class="form-control" required>
-        </div>
-
-        <div class="col-md-1">
-          <button class="btn btn-dark w-100">Add</button>
-        </div>
-      </form>
+<div class="card p-3 mb-4">
+  <form id="couponForm" class="row g-2">
+    <div class="col-md-3">
+      <input name="code" class="form-control" placeholder="COUPON CODE">
+      <small class="text-danger" id="error-code"></small>
     </div>
 
-    <!-- COUPON LIST -->
-    <div class="table-container bg-white p-3 rounded shadow-sm">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Discount</th>
-            <th>Expiry</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% coupons.forEach(c => { %>
-            <tr>
-              <td><strong><%= c.code %></strong></td>
-              <td>
-                <%= c.discountType === "PERCENT" ? c.discountValue + "%" : "₹" + c.discountValue %>
-              </td>
-              <td><%= c.expiryDate.toDateString() %></td>
-              <td>
-                <span class="badge <%= c.isActive ? 'bg-success' : 'bg-secondary' %>">
-                  <%= c.isActive ? 'Active' : 'Disabled' %>
-                </span>
-              </td>
-              <td>
-                <a href="/admin/coupons/toggle/<%= c._id %>" class="btn btn-sm btn-outline-dark">Toggle</a>
-                <a href="/admin/coupons/delete/<%= c._id %>" class="btn btn-sm btn-outline-danger">Delete</a>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
+    <div class="col-md-2">
+      <select name="discountType" class="form-select">
+        <option value="PERCENT">Percentage</option>
+        <option value="FLAT">Flat</option>
+      </select>
     </div>
+
+    <div class="col-md-2">
+      <input type="number" name="discountValue" class="form-control" placeholder="Discount">
+      <small class="text-danger" id="error-discountValue"></small>
+    </div>
+
+    <div class="col-md-2">
+      <input type="number" name="minPurchase" class="form-control" placeholder="Min Purchase">
+    </div>
+
+    <div class="col-md-2">
+      <input type="date" name="expiryDate" class="form-control">
+      <small class="text-danger" id="error-expiryDate"></small>
+    </div>
+
+    <div class="col-md-1">
+      <button class="btn btn-dark w-100">Add</button>
+    </div>
+  </form>
+</div>
+
+
+<div class="table-container bg-white p-3 rounded shadow-sm">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Discount</th>
+        <th>Expiry</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="couponTable">
+      <% coupons.forEach(c => { %>
+        <tr id="row-<%= c._id %>">
+          <td><strong><%= c.code %></strong></td>
+          <td>
+            <%= c.discountType === "PERCENT" ? c.discountValue + "%" : "₹" + c.discountValue %>
+          </td>
+          <td><%= c.expiryDate.toDateString() %></td>
+          <td>
+            <span id="status-<%= c._id %>" class="badge <%= c.isActive ? 'bg-success' : 'bg-secondary' %>">
+              <%= c.isActive ? 'Active' : 'Disabled' %>
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-dark"
+              onclick="toggleCoupon('<%= c._id %>')">Toggle</button>
+            <button class="btn btn-sm btn-outline-danger"
+              onclick="deleteCoupon('<%= c._id %>')">Delete</button>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
 
   </main>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+const form = document.getElementById("couponForm");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
+
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  const res = await fetch("/admin/coupons/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+
+  if (!result.success) {
+    for (const field in result.errors) {
+      document.getElementById(`error-${field}`).innerText = result.errors[field];
+    }
+    return;
+  }
+
+  location.reload();
+});
+
+async function toggleCoupon(id) {
+  const res = await fetch(`/admin/coupons/toggle/${id}`, { method: "PATCH" });
+  const data = await res.json();
+
+  if (!data.success) return;
+
+  const badge = document.getElementById(`status-${id}`);
+  badge.innerText = data.isActive ? "Active" : "Disabled";
+  badge.className = "badge " + (data.isActive ? "bg-success" : "bg-secondary");
+}
+
+async function deleteCoupon(id) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "This action cannot be undone.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      await performDelete(id);
+      Swal.fire(
+        'Deleted!',
+        'The coupon has been deleted.',
+        'success'
+      )
+    }
+  })
+
+  async function performDelete(id) {
+
+
+  const res = await fetch(`/admin/coupons/delete/${id}`, { method: "DELETE" });
+  const data = await res.json();
+
+  if (data.success) {
+    document.getElementById(`row-${id}`).remove();
+  }
+
+  }
+}
+
+
+  </script>

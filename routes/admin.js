@@ -69,7 +69,7 @@ router.patch("/stock/:id",adminAuth,validate(updateStockSchema),updateStock)
 
 router.get("/offers/product",adminAuth,loadProductOffers)
 router.post("/offers/product/add",adminAuth,validate(productOfferSchema),addProductOffer)
-router.get("/offers/product/toggle/:id",adminAuth,toggleProductOffer)
+router.patch("/offers/product/toggle/:id",adminAuth,toggleProductOffer)
 
 
 
@@ -77,15 +77,15 @@ router.get("/offers/product/toggle/:id",adminAuth,toggleProductOffer)
 
 router.get("/offers/category",adminAuth,loadCategoryOffers)
 router.post("/offers/category/add",adminAuth,validate(categoryOfferSchema),addCategoryOffer)
-router.get("/offers/category/toggle/:id",adminAuth,toggleCategoryOffer)
+router.patch("/offers/category/toggle/:id",adminAuth,toggleCategoryOffer);
 
 
 // Coupon Management
 
 router.get("/coupons",adminAuth,loadCoupons)
 router.post("/coupons/add",adminAuth,validate(couponSchema),createCoupon)
-router.get("/coupons/toggle/:id",adminAuth,toggleCoupon)
-router.get("/coupons/delete/:id",adminAuth,deleteCoupon)
+router.patch("/coupons/toggle/:id",adminAuth,toggleCoupon)
+router.delete("/coupons/delete/:id",adminAuth,deleteCoupon)
 
 
 
