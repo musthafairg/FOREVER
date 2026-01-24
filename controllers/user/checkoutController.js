@@ -96,7 +96,9 @@ export const loadCheckout = async (req, res) => {
     const coupons= await Coupon.find({
       isActive:true,
       expiryDate:{$gt:new Date},
-      minPurchase:{$lte:subtotal}
+      minPurchase:{$lte:subtotal},
+      $or:[{createdFor:null},{createdFor:userId}]
+      
     })
 
     res.render("user/checkout", {

@@ -370,6 +370,7 @@ export const verifyOtp = async (req, res) => {
             maxDiscount: 200,
             expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             usageLimit: 1,
+            createdFor: referringUser._id,
           });
 
           await rewardCoupon.save();

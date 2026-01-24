@@ -40,7 +40,13 @@ const couponSchema = new Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+    createdFor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false
     }
+    
   },
   { timestamps: true }
 );
