@@ -26,10 +26,16 @@ export const applyBestOffer= async(product)=>{
         categoryDiscount=categoryoffer.discount
     }
 
+    console.log("product discount:",productDiscount);
+    console.log("category discount:",categoryDiscount);
+
     const finalDiscount= Math.max(productDiscount,categoryDiscount)
+
+    console.log("final discount:",finalDiscount);
 
     const discountedPrice= finalDiscount>0 ? Math.round(product.regularPrice-(product.regularPrice*finalDiscount/100)) : product.regularPrice
     
+    console.log("discounted price:",discountedPrice);
     
     return {
         originalPrice:product.regularPrice,
