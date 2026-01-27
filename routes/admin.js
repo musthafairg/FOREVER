@@ -17,7 +17,7 @@ import { createCoupon, deleteCoupon, loadCoupons, toggleCoupon } from '../contro
 import { downloadSalesReportExcel, downloadSalesReportPDF, loadSalesReport } from '../controllers/admin/salesReportController.js'
 import { productOfferSchema,categoryOfferSchema } from '../validations/offerSchema.js'
 import { couponSchema } from '../validations/couponSchema.js'
-
+import { salesReportSchema } from '../validations/salesReportSchema.js'
 
 //Login Management
 router.get("/login",loadLogin)
@@ -91,11 +91,8 @@ router.delete("/coupons/delete/:id",adminAuth,deleteCoupon)
 
 // Sales Report Management
 
-router.get("/sales-report", adminAuth, loadSalesReport)
-router.get("/sales-report/pdf", adminAuth, downloadSalesReportPDF)
-router.get("/sales-report/excel", adminAuth, downloadSalesReportExcel)
-
-
-
+router.get("/sales-report", adminAuth,validate(salesReportSchema), loadSalesReport)
+router.get("/sales-report/pdf", adminAuth,validate(salesReportSchema), downloadSalesReportPDF)
+router.get("/sales-report/excel", adminAuth, validate(salesReportSchema), downloadSalesReportExcel)
 
 export default router;
