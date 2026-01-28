@@ -209,8 +209,6 @@ export const login = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
 
-    console.log("exist................", existingUser);
-
     if (!existingUser) {
       return res.json({
         success: false,
@@ -238,8 +236,6 @@ export const login = async (req, res) => {
     }
 
     req.session.user = existingUser;
-
-    console.log("user..........", req.session.user);
 
     return res.json({ success: true });
   } catch (error) {
@@ -331,7 +327,6 @@ export const signupUser = async (req, res) => {
 export const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
-    console.log("otp from req.body ", otp);
 
     if (Date.now() > req.session.otpExpires) {
       return res.status(400).json({
@@ -374,7 +369,6 @@ export const verifyOtp = async (req, res) => {
           });
 
           await rewardCoupon.save();
-          console.log("Reward coupon created for referring user" , rewardCoupon.code);
 
           await User.findByIdAndUpdate(referringUser._id, {
             $push: { redeemedUsers: saveUserData._id },
@@ -531,7 +525,6 @@ export const resetPassword = async (req, res) => {
   try {
     const { password, confirmPassword } = req.body;
     const userEmail = req.session.userData.email;
-    console.log("User mail", userEmail);
 
     if (!password == confirmPassword) {
       res.render("user/reset-password", { error: "Password didn't match" });
@@ -544,7 +537,6 @@ export const resetPassword = async (req, res) => {
       { password: passwordHash },
       { new: true },
     );
-    console.log("Updated UserData :", updatedUserData);
 
     return res.redirect("/login");
   } catch (error) {
@@ -558,19 +550,14 @@ export const logout = async (req, res) => {
   try {
     console.log(req.path);
 
-
     delete req.session.user;
 
-    console.log("User logged out. User session cleared only.");
-
     return res.redirect("/login");
-
   } catch (error) {
     console.error("Error in logout:", error.message);
     return res.redirect("/login");
   }
 };
-
 
 export const demoLogin = async (req, res) => {
   try {

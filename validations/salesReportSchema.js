@@ -3,19 +3,21 @@ import { z } from "zod";
 export const salesReportSchema = z.object({
   query: z
     .object({
-      filter: z.enum(["today", "week", "month", "year", "custom"]).default("today"),
+      filter: z
+        .enum(["today", "week", "month", "year", "custom"])
+        .default("today"),
 
       from: z
         .string()
         .optional()
-        .refine(val => !val || !isNaN(Date.parse(val)), {
+        .refine((val) => !val || !isNaN(Date.parse(val)), {
           message: "Invalid start date",
         }),
 
       to: z
         .string()
         .optional()
-        .refine(val => !val || !isNaN(Date.parse(val)), {
+        .refine((val) => !val || !isNaN(Date.parse(val)), {
           message: "Invalid end date",
         }),
     })

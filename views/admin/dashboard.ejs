@@ -53,11 +53,59 @@
                 </ul> 
             </nav>
         </aside>
-        
+  
 
-<main class="dashboard-content">
-    <h2>Dashboard</h2>
+<div class="dashboard-content">
+  <h2>Dashboard</h2>
 
-    
-</main>
+  <!-- STAT CARDS -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:30px;">
+    <div class="card text-center p-3">
+      <h3><%= stats.totalProducts %></h3>
+      <p>Total Products</p>
+    </div>
+    <div class="card text-center p-3">
+      <h3><%= stats.totalCustomers %></h3>
+      <p>Total Customers</p>
+    </div>
+    <div class="card text-center p-3">
+      <h3><%= stats.totalOrders %></h3>
+      <p>Total Orders</p>
+    </div>
+    <div class="card text-center p-3">
+      <h3>₹ <%= stats.totalRevenue.toLocaleString("en-IN") %></h3>
+      <p>Total Revenue</p>
+    </div>
+  </div>
 
+  <!-- GRAPH + BEST SELLERS -->
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;">
+    <div class="card p-3">
+      <div class="d-flex justify-content-between mb-2">
+        <h5>Sales Graph</h5>
+        <div>
+          <button onclick="loadDashboardData('weekly')">Weekly</button>
+          <button onclick="loadDashboardData('monthly')">Monthly</button>
+          <button onclick="loadDashboardData('yearly')">Yearly</button>
+        </div>
+      </div>
+      <canvas id="salesChart"></canvas>
+    </div>
+
+    <div class="card p-3">
+      <h5>Best Sellers</h5>
+      <ul id="bestProducts"></ul>
+    </div>
+  </div>
+
+  <!-- RECENT ORDERS -->
+  <div class="card p-3 mt-4">
+    <h5>Recent Orders</h5>
+    <div id="recentOrders"></div>
+  </div>
+</div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/adminDashboard.js"></script>

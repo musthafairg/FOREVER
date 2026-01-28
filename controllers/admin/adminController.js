@@ -16,10 +16,7 @@ export const loadLogin = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    // console.log("aaaaassss",req.session.user);
-
     const { email, password } = req.body;
-    console.log("admin :", email, password);
 
     const admin = await User.findOne({ email, isAdmin: true });
 
@@ -27,19 +24,15 @@ export const login = async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, admin.password);
 
       if (passwordMatch) {
-        console.log("Password matched in admin login");
-
         req.session.admin = admin._id;
         return res.json({ success: true });
       } else {
-        console.log("password didn't match in admin login ");
         return res.json({
           success: false,
           message: "Password do not match",
         });
       }
     } else {
-      console.log("admin not found");
       return res.json({
         success: false,
         message: "Email not found",
@@ -54,24 +47,11 @@ export const login = async (req, res) => {
   }
 };
 
-export const loadDashboard = async (req, res) => {
-  try {
-    return res.render("admin/dashboard", { page: "dashboard" });
-  } catch (error) {
-    console.error("Admin Dashboard page not loading : ", error.message);
-    return res.status(500).send("Server Error");
-  }
-};
-
 export const logout = async (req, res) => {
   try {
-    
     delete req.session.admin;
 
-    console.log("Admin logged out. Admin session cleared only.");
-
     return res.redirect("/admin/login");
-
   } catch (error) {
     console.error("Error in admin logout:", error.message);
     return res.status(500).send("Server Error");

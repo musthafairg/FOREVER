@@ -8,16 +8,13 @@ import razorpay from "../../config/razorpay.js";
 import crypto from "crypto";
 import { applyBestOffer } from "../../utils/applyBestOffer.js";
 import Coupon from "../../models/couponModel.js";
-import {creditWallet,debitWallet} from '../../utils/walletUtils.js';
-
-
+import { creditWallet, debitWallet } from "../../utils/walletUtils.js";
 
 const generateOrderId = async () => {
   const count = await Order.countDocuments();
 
   return `FR-${new Date().getDate()}-${String(count + 1).padStart(6, "0")}`;
 };
-
 
 export const placeOrder = async (req, res) => {
   try {
@@ -30,7 +27,7 @@ export const placeOrder = async (req, res) => {
 
     const cart = await Cart.findOne({ userId }).populate({
       path: "items.productId",
-      populate: { path: "category" }
+      populate: { path: "category" },
     });
 
     if (!cart || cart.items.length === 0) {
@@ -39,7 +36,7 @@ export const placeOrder = async (req, res) => {
 
     const addressData = await Address.findOne({ userId });
     const selectedAddress = addressData.address.find(
-      a => a._id.toString() === addressId
+      (a) => a._id.toString() === addressId,
     );
 
     if (!selectedAddress) {
@@ -62,19 +59,18 @@ export const placeOrder = async (req, res) => {
           offerPrice: offer.finalPrice,
           quantity: i.quantity,
           itemTotal,
-          discountPercent: offer.discountPercent
+          discountPercent: offer.discountPercent,
         };
-      })
+      }),
     );
 
     const tax = Math.round(subtotal * 0.05);
     const total = subtotal + tax - couponDiscount;
 
-    
     if (paymentMethod === "WALLET" && user.wallet.balance < total) {
       return res.json({
         success: false,
-        message: "Insufficient wallet balance"
+        message: "Insufficient wallet balance",
       });
     }
 
@@ -88,32 +84,27 @@ export const placeOrder = async (req, res) => {
         tax,
         shipping: 0,
         discount: couponDiscount,
-        total
+        total,
       },
       paymentMethod,
-      paymentStatus: paymentMethod === "COD" ? "PAID" : "PENDING"
+      paymentStatus: paymentMethod === "COD" ? "PAID" : "PENDING",
     });
 
     await order.save();
 
     if (couponData) {
       await Coupon.findByIdAndUpdate(couponData.id, {
-        $inc: { usedCount: 1 }
+        $inc: { usedCount: 1 },
       });
       req.session.appliedCoupon = null;
     }
 
-    
     if (paymentMethod === "WALLET") {
-      await debitWallet(
-        userId,
-        total,
-        `Payment for order ${order.orderId}`
-      );
+      await debitWallet(userId, total, `Payment for order ${order.orderId}`);
 
       for (const i of cart.items) {
         await Product.findByIdAndUpdate(i.productId._id, {
-          $inc: { quantity: -i.quantity }
+          $inc: { quantity: -i.quantity },
         });
       }
 
@@ -125,11 +116,10 @@ export const placeOrder = async (req, res) => {
       return res.json({ success: true, redirect: "/order-success" });
     }
 
-    
     if (paymentMethod === "COD") {
       for (const i of cart.items) {
         await Product.findByIdAndUpdate(i.productId._id, {
-          $inc: { quantity: -i.quantity }
+          $inc: { quantity: -i.quantity },
         });
       }
 
@@ -138,11 +128,10 @@ export const placeOrder = async (req, res) => {
       return res.json({ success: true, redirect: "/order-success" });
     }
 
-
     const razorpayOrder = await razorpay.orders.create({
       amount: total * 100,
       currency: "INR",
-      receipt: order.orderId
+      receipt: order.orderId,
     });
 
     order.razorpayOrderId = razorpayOrder.id;
@@ -153,16 +142,13 @@ export const placeOrder = async (req, res) => {
       razorpayOrderId: razorpayOrder.id,
       amount: razorpayOrder.amount,
       key: process.env.RAZORPAY_KEY_ID,
-      dbOrderId: order._id
+      dbOrderId: order._id,
     });
-
   } catch (error) {
     console.error("Place order error:", error.message);
     res.status(500).json({ success: false });
   }
 };
-
-
 
 export const verifyPayment = async (req, res) => {
   try {
@@ -287,42 +273,35 @@ export const cancelOrder = async (req, res) => {
     }
 
     for (const i of order.items) {
-      if(!i.isCancelled){
-
-      await Product.findByIdAndUpdate(i.productId, {
-        $inc: { quantity: i.quantity },
-      
-      });
-      i.isCancelled = true;
-      i.cancelReason = reason;
+      if (!i.isCancelled) {
+        await Product.findByIdAndUpdate(i.productId, {
+          $inc: { quantity: i.quantity },
+        });
+        i.isCancelled = true;
+        i.cancelReason = reason;
+      }
     }
-    }
-
-
-   
 
     order.orderStatus = "Cancelled";
     order.cancelReason = reason;
 
     await order.save();
 
-    if(order.paymentMethod !== "COD" && order.paymentStatus === "PAID"){
+    if (order.paymentMethod !== "COD" && order.paymentStatus === "PAID") {
       await creditWallet(
         req.session.user._id,
-         order.priceDetails.total,
-          `Refund for cancelled order ${order.orderId}`
-        );
+        order.priceDetails.total,
+        `Refund for cancelled order ${order.orderId}`,
+      );
     }
-
 
     res.json({ success: true });
   } catch (error) {
     console.error("Error in Cancel order :", error.message);
-    
+
     res.status(500).send("Server Error");
   }
 };
-
 
 export const cancelOrderItem = async (req, res) => {
   try {
@@ -334,7 +313,8 @@ export const cancelOrderItem = async (req, res) => {
 
     const item = order.items.find((i) => i.productId.toString() === productId);
 
-    if (!item || item.isCancelled || item.refunded) return res.json({ success: false });
+    if (!item || item.isCancelled || item.refunded)
+      return res.json({ success: false });
 
     await Product.findByIdAndUpdate(productId, {
       $inc: { quantity: item.quantity },
@@ -344,7 +324,6 @@ export const cancelOrderItem = async (req, res) => {
     item.cancelReason = reason;
 
     const oldTotal = order.priceDetails.total;
-
 
     const activeItems = order.items.filter((i) => !i.isCancelled);
 
@@ -366,22 +345,20 @@ export const cancelOrderItem = async (req, res) => {
 
     const refundAmount = oldTotal - total;
 
-
-
-    if(refundAmount > 0 && order.paymentMethod !== "COD" && order.paymentStatus === "PAID"){
+    if (
+      refundAmount > 0 &&
+      order.paymentMethod !== "COD" &&
+      order.paymentStatus === "PAID"
+    ) {
       await creditWallet(
-        req.session.user._id,   
-          refundAmount,
-          `Refund for cancelled item ${item.productName} in order ${order.orderId}`
-        );
+        req.session.user._id,
+        refundAmount,
+        `Refund for cancelled item ${item.productName} in order ${order.orderId}`,
+      );
 
-        item.refunded = true;
-        await order.save();
-        
+      item.refunded = true;
+      await order.save();
     }
-
-
- 
 
     res.json({ success: true });
   } catch (error) {
@@ -423,7 +400,7 @@ export const returnOrder = async (req, res) => {
 
 export const returnOrderItem = async (req, res) => {
   try {
-    const { productId, reason } = req.body; 
+    const { productId, reason } = req.body;
     const order = await Order.findOne({
       orderId: req.params.id,
       userId: req.session.user._id,
@@ -440,14 +417,11 @@ export const returnOrderItem = async (req, res) => {
     item.returnReason = reason;
     await order.save();
     res.json({ success: true });
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error in Return order Item :", error.message);
     res.status(500).send("Server Error");
   }
 };
-
-
 
 export const requestItemReturn = async (req, res) => {
   const { productId, reason } = req.body;
@@ -545,7 +519,10 @@ export const downloadInvoice = async (req, res) => {
         align: "right",
       });
       doc.text(`${item.price}`, colPrice, y, { width: 60, align: "right" });
-      doc.text(`${item.offerPrice}`, colPrice + 80, y, { width: 60, align: "right" });
+      doc.text(`${item.offerPrice}`, colPrice + 80, y, {
+        width: 60,
+        align: "right",
+      });
       doc.text(`${item.itemTotal}`, colTotal, y, { width: 70, align: "right" });
       y += 18;
     });

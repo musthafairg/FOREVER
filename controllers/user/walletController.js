@@ -1,15 +1,12 @@
 import User from "../../models/userModel.js";
 
-
-
 export const loadWallet = async (req, res) => {
   try {
-    const userId = req.session.user._id;    
+    const userId = req.session.user._id;
     const user = await User.findById(userId);
     res.render("user/wallet", { user });
-    } catch (error) {
+  } catch (error) {
     console.error("Load Wallet Error :", error.message);
     res.status(500).send("Server Error");
-    }
+  }
 };
-

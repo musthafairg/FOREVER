@@ -1,12 +1,8 @@
 import User from "../../models/userModel.js";
 import Product from "../../models/productModel.js";
 import Category from "../../models/categoryModel.js";
-import { populate } from "dotenv";
 
 import { applyBestOffer } from "../../utils/applyBestOffer.js";
-
-import ProductOffer from "../../models/productofferModel.js";
-import CategoryOffer from "../../models/categoryofferModel.js";
 
 export const getProductDetailsPage = async (req, res) => {
   try {
@@ -34,8 +30,6 @@ export const getProductDetailsPage = async (req, res) => {
       isBlocked: false,
       status: "Available",
     }).limit(5);
-
-    console.log("related", relatedProducts);
 
     res.render("user/productDetails", {
       product,
@@ -127,11 +121,11 @@ export const filterByPrice = async (req, res) => {
           finalPrice: offer.finalPrice,
           discountPercent: offer.discountPercent,
         };
-      })
+      }),
     );
 
     const filtered = productsWithOffer.filter(
-      (p) => p.finalPrice >= gt && p.finalPrice <= lt
+      (p) => p.finalPrice >= gt && p.finalPrice <= lt,
     );
 
     if (sort === "priceLow")
@@ -211,7 +205,7 @@ export const filter = async (req, res) => {
           finalPrice: offer.finalPrice,
           discountPercent: offer.discountPercent,
         };
-      })
+      }),
     );
 
     if (sort === "priceLow")
@@ -220,11 +214,11 @@ export const filter = async (req, res) => {
       productsWithOffer.sort((a, b) => b.finalPrice - a.finalPrice);
     if (sort === "az")
       productsWithOffer.sort((a, b) =>
-        a.productName.localeCompare(b.productName)
+        a.productName.localeCompare(b.productName),
       );
     if (sort === "za")
       productsWithOffer.sort((a, b) =>
-        b.productName.localeCompare(a.productName)
+        b.productName.localeCompare(a.productName),
       );
 
     const totalProducts = productsWithOffer.length;
@@ -235,7 +229,7 @@ export const filter = async (req, res) => {
     const category = await Category.find({ isListed: true });
 
     res.render("user/shop", {
-      products:paginated,
+      products: paginated,
       currentPage: page,
       totalPages,
       category,

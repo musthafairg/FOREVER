@@ -22,11 +22,11 @@ export const loadAddAddressPage = async (req, res) => {
 
     const user = await User.findById(userId);
 
-    res.render("user/add-address", { 
+    res.render("user/add-address", {
       user,
-      errors:{},
-      FormData:{}
-     });
+      errors: {},
+      FormData: {},
+    });
   } catch (error) {
     console.error("Error in load Add Address page", error.message);
   }
@@ -80,16 +80,15 @@ export const addAddress = async (req, res) => {
     await userAddress.save();
 
     return res.json({
-      success:true,
-      message:"Address added successfully"
-    })
-
+      success: true,
+      message: "Address added successfully",
+    });
   } catch (error) {
     console.error("Add Address Error", error.message);
     res.status(500).json({
-      success:false,
-      message:"Server error"
-    })
+      success: false,
+      message: "Server error",
+    });
   }
 };
 
@@ -124,7 +123,7 @@ export const updateAddress = async (req, res) => {
     const addressData = await Address.findOne({ userId });
 
     if (!addressData || !addressData.address[index]) {
-      return res.status(404).json({success:false})
+      return res.status(404).json({ success: false });
     }
 
     addressData.address[index] = {
@@ -132,13 +131,12 @@ export const updateAddress = async (req, res) => {
       ...req.body,
     };
 
-    await addressData.save()
+    await addressData.save();
 
-    res.json({success:true})
-
+    res.json({ success: true });
   } catch (error) {
     console.error("Update Address Error :", error.message);
-    res.status(500).json({success:false})
+    res.status(500).json({ success: false });
   }
 };
 

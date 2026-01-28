@@ -1,6 +1,6 @@
 import express from 'express'
 const router=express.Router()
-import {loadLogin,login,loadDashboard,logout} from '../controllers/admin/adminController.js'
+import {loadLogin,login,logout} from '../controllers/admin/adminController.js'
 import {userInfo,blockCustomer,unblockCustomer} from '../controllers/admin/userController.js'
 import {categoryInfo,getAddCategoryPage,addCategory,listCategory,unlistCategory,geteditCategoryPage,editCategory} from '../controllers/admin/categoryController.js'
 import { getAddProductPage ,addProducts,productInfo,blockProduct,unblockProduct,getEditProduct,editProduct,deleteSingleImage} from '../controllers/admin/productController.js'
@@ -18,6 +18,8 @@ import { downloadSalesReportExcel, downloadSalesReportPDF, loadSalesReport } fro
 import { productOfferSchema,categoryOfferSchema } from '../validations/offerSchema.js'
 import { couponSchema } from '../validations/couponSchema.js'
 import { salesReportSchema } from '../validations/salesReportSchema.js'
+import { getDashboardData,loadDashboard } from '../controllers/admin/dashboardController.js'
+
 
 //Login Management
 router.get("/login",loadLogin)
@@ -25,6 +27,7 @@ router.post("/login",login)
 router.get("/logout",logout)
 
 router.get("/",adminAuth,loadDashboard)
+router.get("/dashboard/data", adminAuth, getDashboardData);
 
 //User Management
 router.get("/users",adminAuth,userInfo)

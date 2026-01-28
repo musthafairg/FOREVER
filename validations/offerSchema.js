@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 export const productOfferSchema = z.object({
   body: z.object({
     productId: z.string().min(1, "Product is required"),
@@ -11,8 +10,6 @@ export const productOfferSchema = z.object({
       .max(90, "Maximum discount is 90%"),
   }),
 });
-
-
 
 export const categoryOfferSchema = z.object({
   body: z.object({

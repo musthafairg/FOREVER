@@ -3,7 +3,6 @@ import Category from "../../models/categoryModel.js";
 import ProductOffer from "../../models/productofferModel.js";
 import CategoryOffer from "../../models/categoryofferModel.js";
 
-
 export const loadProductOffers = async (req, res) => {
   try {
     const products = await Product.find({ isBlocked: false });
@@ -20,7 +19,6 @@ export const loadProductOffers = async (req, res) => {
   }
 };
 
-
 export const addProductOffer = async (req, res) => {
   try {
     const { productId, discount } = req.body;
@@ -28,7 +26,7 @@ export const addProductOffer = async (req, res) => {
     const offer = await ProductOffer.findOneAndUpdate(
       { productId },
       { discount, isActive: true },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     ).populate("productId");
 
     return res.json({
@@ -67,7 +65,6 @@ export const toggleProductOffer = async (req, res) => {
   }
 };
 
-
 export const loadCategoryOffers = async (req, res) => {
   try {
     const categories = await Category.find({ isListed: true });
@@ -84,7 +81,6 @@ export const loadCategoryOffers = async (req, res) => {
   }
 };
 
-
 export const addCategoryOffer = async (req, res) => {
   try {
     const { categoryId, discount } = req.body;
@@ -92,7 +88,7 @@ export const addCategoryOffer = async (req, res) => {
     const offer = await CategoryOffer.findOneAndUpdate(
       { categoryId },
       { discount, isActive: true },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     ).populate("categoryId");
 
     res.json({
@@ -109,7 +105,6 @@ export const addCategoryOffer = async (req, res) => {
     res.status(500).json({ success: false });
   }
 };
-
 
 export const toggleCategoryOffer = async (req, res) => {
   try {

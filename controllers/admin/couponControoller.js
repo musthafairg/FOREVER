@@ -1,6 +1,5 @@
 import Coupon from "../../models/couponModel.js";
 
-
 export const loadCoupons = async (req, res) => {
   try {
     const coupons = await Coupon.find().sort({ createdAt: -1 });
@@ -14,7 +13,6 @@ export const loadCoupons = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
-
 
 export const createCoupon = async (req, res) => {
   try {
@@ -58,7 +56,6 @@ export const createCoupon = async (req, res) => {
   }
 };
 
-
 export const toggleCoupon = async (req, res) => {
   try {
     const coupon = await Coupon.findById(req.params.id);
@@ -76,7 +73,6 @@ export const toggleCoupon = async (req, res) => {
     res.status(500).json({ success: false });
   }
 };
-
 
 export const deleteCoupon = async (req, res) => {
   try {

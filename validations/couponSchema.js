@@ -26,10 +26,12 @@ export const couponSchema = z.object({
       .min(0, "Maximum discount cannot be negative")
       .optional(),
 
-    expiryDate: z.string().refine(
-      (date) => new Date(date) > new Date(),
-      "Expiry date must be in the future"
-    ),
+    expiryDate: z
+      .string()
+      .refine(
+        (date) => new Date(date) > new Date(),
+        "Expiry date must be in the future",
+      ),
 
     usageLimit: z.coerce
       .number()

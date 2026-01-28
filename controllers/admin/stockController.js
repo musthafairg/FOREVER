@@ -1,37 +1,34 @@
 import Product from "../../models/productModel.js";
 
-
 export const loadStockPage = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1
+    const page = Number(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    const search = req.query.search || ""
+    const search = req.query.search || "";
 
     const query = {
-      productName: { $regex: search, $options: "i" }
+      productName: { $regex: search, $options: "i" },
     };
 
-    const total = await Product.countDocuments(query)
+    const total = await Product.countDocuments(query);
     const products = await Product.find(query)
       .sort({ updatedAt: -1 })
       .skip(skip)
-      .limit(limit)
+      .limit(limit);
 
     res.render("admin/stock", {
       products,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
       search,
-      page: "stock"
+      page: "stock",
     });
-
   } catch (error) {
-    console.error("Load stock error:", error.message)
-    res.status(500).send("Server Error")
+    console.error("Load stock error:", error.message);
+    res.status(500).send("Server Error");
   }
 };
-
 
 export const updateStock = async (req, res) => {
   try {
@@ -42,7 +39,7 @@ export const updateStock = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: "Product not found"
+        message: "Product not found",
       });
     }
 
@@ -54,11 +51,10 @@ export const updateStock = async (req, res) => {
     res.json({
       success: true,
       quantity: product.quantity,
-      status: product.status
+      status: product.status,
     });
-
   } catch (error) {
-    console.error("Update stock error:", error.message)
-    res.status(500).json({ success: false })
+    console.error("Update stock error:", error.message);
+    res.status(500).json({ success: false });
   }
 };

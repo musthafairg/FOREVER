@@ -28,11 +28,11 @@ export const getAddProductPage = async (req, res) => {
 export const addProducts = async (req, res) => {
   const originalFilePaths = req.files ? req.files.map((file) => file.path) : [];
 
-  console.log(originalFilePaths);
+
 
   try {
     const products = req.body;
-    console.log("products Data", products);
+   
 
     const productExists = await Product.findOne({
       productName: products.productName,
@@ -295,10 +295,12 @@ export const deleteSingleImage = async (req, res) => {
     );
 
     if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-      console.log("Deleted image file", imagePath);
+      fs.unlinkSync(imagePath)
+
+      
     } else {
       console.log("Image file not found :", imagePath);
+      
     }
 
     return res.json({ status: true });

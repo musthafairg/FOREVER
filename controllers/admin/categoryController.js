@@ -53,27 +53,45 @@ export const getAddCategoryPage = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
-
 export const addCategory = async (req, res) => {
   try {
-    const { name, description, offer } = req.body;
+    let { name, description, offer } = req.body;
+
+   
+    name = name.trim();
+
+   
+    const existingCategory = await Category.findOne({
+      name: { $regex: `^${name}$`, $options: "i" }
+    });
+
+    if (existingCategory) {
+      return res.status(400).json({
+        success: false,
+        message: "Category already exists"
+      });
+    }
 
     const categoryData = new Category({
-      name: name,
-      description: description,
-      categoryOffer: offer,
+      name,
+      description,
+      categoryOffer: offer
     });
 
     await categoryData.save();
-    console.log("New Category Saved Successfully : ", categoryData);
 
     return res.status(200).json({
       success: true,
-      message: "add new category successfully",
-      redirect: "/admin/category",
+      message: "Add new category successfully",
+      redirect: "/admin/category"
     });
+
   } catch (error) {
-    console.error("Internal Server Error");
+    console.error("Error in addCategory:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    });
   }
 };
 
@@ -126,9 +144,8 @@ export const editCategory = async (req, res) => {
 
     await Category.updateOne(
       { _id: id },
-      { $set: { name, description, categoryOffer: offer } }
+      { $set: { name, description, categoryOffer: offer } },
     );
-    console.log("Category updatedd Successfully ");
 
     return res.status(200).json({
       success: true,

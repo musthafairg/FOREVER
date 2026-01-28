@@ -100,43 +100,39 @@ export const updateReturnStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
-  const order = await Order.findOne({ orderId: req.params.id });
+    const order = await Order.findOne({ orderId: req.params.id });
 
-  if(!order) {
-    return res.redirect("/admin/orders");
-  }
-
-  if(status === "APPROVED") {
-
-    if(order.paymentMethod==="COD" || order.paymentStatus !== "PAID") { 
-
-
-    return res.redirect(`/admin/orders/${req.params.id}`);
-  } 
-
-  let alreadyRefunded = order.items.every(item => item.refunded);
-
-  if(alreadyRefunded) {
-    return res.redirect(`/admin/orders/${req.params.id}`);
-  }
-
-  for(const item of order.items) {
-    if(!item.refunded&& !item.isCancelled) {
-        await Product.findByIdAndUpdate(item.productId, {
-          $inc: { quantity: item.quantity },
-        });
-
-        item.refunded = true;
-        item.returnStatus = "APPROVED";
-    }
+    if (!order) {
+      return res.redirect("/admin/orders");
     }
 
-        await creditWallet( 
+    if (status === "APPROVED") {
+      if (order.paymentMethod === "COD" || order.paymentStatus !== "PAID") {
+        return res.redirect(`/admin/orders/${req.params.id}`);
+      }
+
+      let alreadyRefunded = order.items.every((item) => item.refunded);
+
+      if (alreadyRefunded) {
+        return res.redirect(`/admin/orders/${req.params.id}`);
+      }
+
+      for (const item of order.items) {
+        if (!item.refunded && !item.isCancelled) {
+          await Product.findByIdAndUpdate(item.productId, {
+            $inc: { quantity: item.quantity },
+          });
+
+          item.refunded = true;
+          item.returnStatus = "APPROVED";
+        }
+      }
+
+      await creditWallet(
         order.userId,
         order.priceDetails.total,
         `Refund for returned Order ${order.orderId}`,
       );
-
 
       order.orderStatus = "Returned";
       await order.save();
@@ -149,7 +145,6 @@ export const updateReturnStatus = async (req, res) => {
   }
 };
 
-
 export const updateReturnItemStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -158,9 +153,7 @@ export const updateReturnItemStatus = async (req, res) => {
     const order = await Order.findOne({ orderId: id });
     if (!order) return res.redirect("/admin/orders");
 
-    const item = order.items.find(
-      (i) => i.productId.toString() === productId
-    );
+    const item = order.items.find((i) => i.productId.toString() === productId);
 
     if (
       !item ||
@@ -184,7 +177,7 @@ export const updateReturnItemStatus = async (req, res) => {
       item.returnStatus = "APPROVED";
 
       const activeItems = order.items.filter(
-        (i) => !i.isCancelled && !i.refunded
+        (i) => !i.isCancelled && !i.refunded,
       );
 
       if (activeItems.length === 0) {
@@ -214,7 +207,7 @@ export const updateReturnItemStatus = async (req, res) => {
         await creditWallet(
           order.userId,
           refundAmount,
-          `Refund for returned item ${item.productName} (Order ${order.orderId})`
+          `Refund for returned item ${item.productName} (Order ${order.orderId})`,
         );
       }
 

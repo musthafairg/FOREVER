@@ -6,7 +6,7 @@ export const applyCoupon = async (req, res) => {
 
     const coupon = await Coupon.findOne({
       code: code.toUpperCase(),
-      isActive: true
+      isActive: true,
     });
 
     if (!coupon) {
@@ -18,13 +18,16 @@ export const applyCoupon = async (req, res) => {
     }
 
     if (coupon.usedCount >= coupon.usageLimit) {
-      return res.json({ success: false, message: "Coupon usage limit reached" });
+      return res.json({
+        success: false,
+        message: "Coupon usage limit reached",
+      });
     }
 
     if (subtotal < coupon.minPurchase) {
       return res.json({
         success: false,
-        message: `Minimum purchase ₹${coupon.minPurchase}`
+        message: `Minimum purchase ₹${coupon.minPurchase}`,
       });
     }
 
@@ -39,19 +42,17 @@ export const applyCoupon = async (req, res) => {
       discount = coupon.discountValue;
     }
 
-   
     req.session.appliedCoupon = {
       id: coupon._id,
       code: coupon.code,
-      discount
+      discount,
     };
 
     return res.json({
       success: true,
       discount,
-      code: coupon.code
+      code: coupon.code,
     });
-
   } catch (error) {
     console.error("Apply coupon error:", error.message);
     res.status(500).json({ success: false });

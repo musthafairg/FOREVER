@@ -1,5 +1,4 @@
-import {z} from "zod"
-
+import { z } from "zod";
 
 export const addressSchema = z.object({
   body: z.object({
@@ -10,15 +9,11 @@ export const addressSchema = z.object({
     city: z.string().min(2, "City required"),
     district: z.string().min(2, "District required"),
     state: z.string().min(2, "State required"),
-    pincode: z
-      .string()
-      .regex(/^\d{6}$/, "Pincode must be exactly 6 digits"),
-    phone: z
-      .string()
-      .regex(/^\d{10}$/, "Phone must be exactly 10 digits"),
+    pincode: z.string().regex(/^\d{6}$/, "Pincode must be exactly 6 digits"),
+    phone: z.string().regex(/^\d{10}$/, "Phone must be exactly 10 digits"),
     altPhone: z
       .string()
       .regex(/^\d{10}$/, "Alternative phone must be 10 digits")
-      .optional()
-  })
+      .optional(),
+  }),
 });

@@ -18,7 +18,7 @@ export const userAuth = async (req, res, next) => {
     
       delete req.session.user;
 
-      console.log("Blocked user session cleared (user only).");
+      
       return res.redirect("/login");
     }
 
