@@ -1,0 +1,88 @@
+.dashboard-content {
+  background: #f4f6fb;
+  padding: 25px;
+  min-height: 100vh;
+}
+
+.card {
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  background: #fff;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-content > div:first-of-type .card:nth-child(1) {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+}
+
+.dashboard-content > div:first-of-type .card:nth-child(2) {
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+  color: #fff;
+}
+
+.dashboard-content > div:first-of-type .card:nth-child(3) {
+  background: linear-gradient(135deg, #ff9966, #ff5e62);
+  color: #fff;
+}
+
+.dashboard-content > div:first-of-type .card:nth-child(4) {
+  background: linear-gradient(135deg, #f7971e, #ffd200);
+  color: #fff;
+}
+
+.dashboard-content .card h3 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.dashboard-content .card p {
+  opacity: 0.9;
+  margin: 0;
+}
+
+.card button {
+  background: #667eea;
+  border: none;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.card button:hover {
+  background: #5563d6;
+}
+
+#bestProducts {
+  list-style: none;
+  padding: 0;
+}
+
+#bestProducts li {
+  background: #f1f3ff;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+#recentOrders div {
+  background: #f9fafc;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+#recentOrders div:hover {
+  background: #eef1ff;
+}

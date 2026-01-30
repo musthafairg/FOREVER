@@ -108,3 +108,25 @@
 .product-content-wrap a.button-add:hover {
   background-color: #ff4c4c;
 }
+
+
+
+
+      @media (min-width: 992px) {
+        .col-lg-1-5 {
+          flex: 0 0 18%;
+          max-width: 18%;
+
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+      .add-cart {
+        background: #000;
+        color: #fff;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+      }

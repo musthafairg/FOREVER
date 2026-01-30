@@ -1,103 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Email Verification | Forever</title>
-    <link rel="stylesheet" href="/css/emailVerification.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        .verify-container {
-    width: 100%;
-    max-width: 400px;
-    margin: 100px auto;
-    text-align: center;
-}
-
-.verify-container h2 {
-    font-weight: 500;
-    margin-bottom: 30px;
-    color: #1a1a1a;
-}
-
-.verify-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.verify-form input {
-    padding: 12px;
-    border: 1px solid #aaa;
-    font-size: 0.9rem;
-}
-
-.btn-verify {
-    background-color: #0058b0;
-    color: #fff;
-    border: none;
-    padding: 12px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.btn-verify:hover {
-    background-color: #004699;
-}
-
-.redirect {
-    margin-top: 15px;
-    font-size: 0.9rem;
-}
-
-.redirect a {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-.redirect a:hover {
-    text-decoration: underline;
-}
-
-
-      .error-message1{
-    color: red;
-    font-size: 0.75rem;
-    margin-top: 5px;
-    margin-bottom: -10px;
-    padding-left: 5px;
-    display: none;
-    width: 100%;
-    text-align: left;
-}
-
-
-    </style>
-</head>
-<body>
-
-    
-
+    <link rel="stylesheet" href="/css/emailVerification.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/forgot-pass-email.css" />
+  </head>
+  <body>
     <section class="verify-container">
-        <h2>Email Verification</h2>
+      <h2>Email Verification</h2>
 
- 
-         <% if (typeof error !== 'undefined') { %>
-            <div class="error-message"><%= error %></div>
-        <% } %>
+      <% if (typeof error !== 'undefined') { %>
+      <div class="error-message"><%= error %></div>
+      <% } %>
 
-        <form action="/forgot-email-valid" method="POST" class="verify-form">
-            <input type="email" name="email" placeholder="Email" required>
-            <button type="submit" class="btn-verify">Verify</button>
-        </form>
+      <form action="/forgot-email-valid" method="POST" class="verify-form">
+        <input type="email" name="email" placeholder="Email" required />
+        <button type="submit" class="btn-verify">Verify</button>
+      </form>
 
-        <p class="redirect">
-            Don't have an account? <a href="/signUp">Sign Up</a>
-        </p>
+      <p class="redirect">
+        Don't have an account? <a href="/signUp">Sign Up</a>
+      </p>
     </section>
-
-    
-
-</body>
+  </body>
 </html>

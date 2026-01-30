@@ -1,17 +1,24 @@
 
-  const SUBTOTAL = <%= subtotal %>;
+  
+
+  
+const SUBTOTAL = window.SUBTOTAL;
 document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  console.log("Checkout JS loaded");
   const formData = new FormData(e.target);
   const payload = Object.fromEntries(formData.entries());
 
+  console.log("Payload:", payload);
 
   const res = await fetch("/checkout/place-order", {
     method: "POST",
     headers: { "Content-Type":"application/json" },
     body: JSON.stringify(payload)
   });
+
+  
 
   const data = await res.json();
 

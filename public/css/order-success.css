@@ -1,0 +1,38 @@
+.success-wrapper {
+  max-width: 600px;
+  margin: 80px auto;
+  text-align: center;
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+.success-icon {
+  font-size: 70px;
+  color: #28a745;
+  margin-bottom: 20px;
+}
+.success-wrapper h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.success-wrapper p {
+  color: #555;
+  margin-bottom: 30px;
+}
+.success-actions a {
+  display: inline-block;
+  margin: 8px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
+.btn-dark {
+  background: #000;
+  color: #fff;
+}
+.btn-outline {
+  border: 1px solid #000;
+  color: #000;
+}

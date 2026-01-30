@@ -33,8 +33,7 @@ export const placeOrder = async (req, res) => {
     if (!cart || cart.items.length === 0) {
       return res.json({ success: false, message: "Cart empty" });
     }
-
-    const addressData = await Address.findOne({ userId });
+  const addressData = await Address.findOne({ userId });
     const selectedAddress = addressData.address.find(
       (a) => a._id.toString() === addressId,
     );
@@ -42,6 +41,7 @@ export const placeOrder = async (req, res) => {
     if (!selectedAddress) {
       return res.json({ success: false, message: "Invalid address" });
     }
+
 
     let subtotal = 0;
 

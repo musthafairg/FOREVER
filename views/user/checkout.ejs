@@ -7,78 +7,9 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/checkout.css">
 
-  <style>
-    body { font-family: 'Poppins', sans-serif; background: #fafafa; }
-
-    .checkout-container {
-      max-width: 1200px;
-      margin: 40px auto;
-      display: grid;
-      grid-template-columns: 2.3fr 1fr;
-      gap: 30px;
-      padding: 0 20px;
-    }
-
-    .checkout-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 25px;
-      border: 1px solid #eee;
-    }
-
-    h2 { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
-
-    .address-card {
-      display: flex;
-      gap: 12px;
-      padding: 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
-
-    .address-card:hover { border-color: #000; }
-
-    .order-item {
-      display: flex;
-      gap: 15px;
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .order-item img { width: 70px; border-radius: 6px; }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 14px;
-    }
-
-    .summary-row.total {
-      font-size: 16px;
-      font-weight: 600;
-      margin-top: 15px;
-    }
-
-    .place-order-btn {
-      width: 100%;
-      padding: 14px;
-      background: #ff3c3c;
-      border: none;
-      color: #fff;
-      border-radius: 6px;
-      font-size: 15px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .checkout-container { grid-template-columns: 1fr; }
-    }
-  </style>
+  
 </head>
 
 <body>
@@ -261,7 +192,7 @@
 <% } %>
 
 <label>
-  <input type="radio" name="paymentMethod" value="ONLINE">
+  <input type="radio" name="paymentMethod" value="ONLINE" >
   Online Payment
 </label>
 
@@ -270,12 +201,21 @@
       Place Order
     </button>
 
+
     </form>
+
   </div>
+
+
 
 </section>
 
+
 <%- include('../partials/user/footer.ejs') %>
+
+<script>
+  window.SUBTOTAL = <%= subtotal %>;
+</script>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
