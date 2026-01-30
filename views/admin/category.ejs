@@ -167,23 +167,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-      function confirmAction(url,message){
-        Swal.fire({
-            title:message,
-            text:"Are you sure?",
-            icon:"warning",
-            showCancelButton:true,
-            confirmButtonColor:"#d33",
-            cancelButtonColor:"#3085d6",
-            confirmButtonText:"Yes, proceed"
-        }).then((result)=>{
-            if(result.isConfirmed){
-                window.location.href=url;
-            }
-        })
-    }
-</script>
-
+    <script src="/js/category.js"></script>
+    
 </body>
 </html> 
