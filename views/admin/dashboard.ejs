@@ -1,77 +1,138 @@
 <head>
-<link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/dashboard.css" />
 </head>
 
-
-<%- include('../partials/admin/header.ejs', )%>
-
-
-    
+<%- include('../partials/admin/header.ejs') %>
 
 <div class="main-layout">
-    
-    <aside class="sidebar">
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="<%= locals.page === 'dashboard' ? 'active' : '' %>">
-                        <a href="/admin" style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-tachometer-alt"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                  
-                    <li class="<%= locals.page === 'users' ? 'active' : '' %>">
-                        <a href="/admin/users" style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-users"></i>
-                            Users
-                        </a>
-                    </li>
-                    <li class="<%= locals.page === 'category' ? 'active' : '' %>">
-                        <a href="/admin/category" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
-                            <i class="fas fa-folder-open"></i>
-                            Category
-                        </a>
-                    </li>
-                   
-                <li class="<%= locals.page === 'products' ? 'active' : '' %>">
-                        <a href="/admin/products" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
-                            <i class="fas fa-list"></i>
-                            Products
-                        </a>
-                    </li>
-                <li >
-                    <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
-                </li>
-
-                  <li >
-                    <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
-                </li>
-
-                <li >
-                    <a href="/admin/stock"><i class="fa-solid fa-boxes-stacked"></i>Stock</a>
-                </li>
-                      <li  >
-                    <a href="/admin/offers/product"><i class="fa-solid fa-tags"></i>Product Offer</a>
-                </li>
-                   <li  >
-                    <a href="/admin/offers/category"><i class="fa-solid fa-tags"></i>Category Offer</a>
-                </li>
-                <li >
-          <a href="/admin/coupons"><i class="fa-solid fa-ticket"></i>Coupons</a>
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="<%= locals.page === 'dashboard' ? 'active' : '' %>">
+          <a href="/admin">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+          </a>
         </li>
-                </ul> 
-            </nav>
-        </aside>
-  
 
-<div class="dashboard-content">
-  <h2>Dashboard</h2>
+        <li class="<%= locals.page === 'users' ? 'active' : '' %>">
+          <a href="/admin/users">
+            <i class="fas fa-users"></i>
+            Users
+          </a>
+        </li>
 
-  
+        <li class="<%= locals.page === 'category' ? 'active' : '' %>">
+          <a href="/admin/category">
+            <i class="fas fa-folder-open"></i>
+            Category
+          </a>
+        </li>
+
+        <li class="<%= locals.page === 'products' ? 'active' : '' %>">
+          <a href="/admin/products">
+            <i class="fas fa-list"></i>
+            Products
+          </a>
+        </li>
+
+        <li>
+          <a href="/admin/orders"><i class="fas fa-box"></i> Orders</a>
+        </li>
+        <li>
+          <a href="/admin/sales-report"
+            ><i class="fas fa-chart-line"></i> Sales Report</a
+          >
+        </li>
+        <li>
+          <a href="/admin/stock"
+            ><i class="fa-solid fa-boxes-stacked"></i> Stock</a
+          >
+        </li>
+        <li>
+          <a href="/admin/offers/product"
+            ><i class="fa-solid fa-tags"></i> Product Offer</a
+          >
+        </li>
+        <li>
+          <a href="/admin/offers/category"
+            ><i class="fa-solid fa-tags"></i> Category Offer</a
+          >
+        </li>
+        <li>
+          <a href="/admin/coupons"
+            ><i class="fa-solid fa-ticket"></i> Coupons</a
+          >
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-content">
+    <h2>Dashboard</h2>
+
+    <!-- STATS -->
+    <div
+      style="
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+      "
+    >
+      <div class="card text-center p-3">
+        <h3><%= stats.totalProducts %></h3>
+        <p>Total Products</p>
+      </div>
+      <div class="card text-center p-3">
+        <h3><%= stats.totalCustomers %></h3>
+        <p>Total Customers</p>
+      </div>
+      <div class="card text-center p-3">
+        <h3><%= stats.totalOrders %></h3>
+        <p>Total Orders</p>
+      </div>
+      <div class="card text-center p-3">
+        <h3>₹ <%= stats.totalRevenue.toLocaleString("en-IN") %></h3>
+        <p>Total Revenue</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px">
+      <!-- CHART -->
+      <div class="card p-3">
+        <div class="d-flex justify-content-between mb-2">
+          <h5>Sales Graph</h5>
+          <div>
+            <button onclick="loadDashboardData('weekly')">Weekly</button>
+            <button onclick="loadDashboardData('monthly')">Monthly</button>
+            <button onclick="loadDashboardData('yearly')">Yearly</button>
+          </div>
+        </div>
+        <canvas id="salesChart"></canvas>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="card p-3">
+        <h5>Best Selling Products</h5>
+        <ul id="bestProducts"></ul>
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="card p-3">
+        <h5>Best Selling Categories</h5>
+        <ul id="bestCategories"></ul>
+      </div>
+    </div>
+
+    <div class="card p-3 mt-4">
+      <h5>Recent Orders</h5>
+      <div id="recentOrders"></div>
+    </div>
+  </main>
 </div>
-
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script src="/js/admin-dashboard.js"></script>

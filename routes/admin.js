@@ -18,7 +18,7 @@ import { downloadSalesReportExcel, downloadSalesReportPDF, loadSalesReport } fro
 import { productOfferSchema,categoryOfferSchema } from '../validations/offerSchema.js'
 import { couponSchema } from '../validations/couponSchema.js'
 import { salesReportSchema } from '../validations/salesReportSchema.js'
-import { loadDashboard } from '../controllers/admin/dashboardController.js'
+import { loadDashboard,getDashboardData } from '../controllers/admin/dashboardController.js'
 
 
 //Login Management
@@ -27,7 +27,7 @@ router.post("/login",login)
 router.get("/logout",logout)
 
 router.get("/",adminAuth,loadDashboard)
-
+router.get("/dashboard/data", adminAuth, getDashboardData);
 
 //User Management
 router.get("/users",adminAuth,userInfo)
