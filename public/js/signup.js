@@ -109,6 +109,9 @@
         signupForm.addEventListener("submit",async(e)=>{
             e.preventDefault()
 
+            const submitButton=document.getElementById("submit")
+            submitButton.disabled=true
+
             nameValidateChecking()
             emailValidateChecking()
             mobileValidateChecking()
@@ -149,6 +152,8 @@
                 try{
 
                     result= await response.json()
+
+                    submitButton.disabled=false
                 }catch{
                     throw new Error ("Invalid server response")
                 }

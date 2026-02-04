@@ -50,6 +50,9 @@ startTimer();
 
 function validateOTPForm(){
 
+    const btn=document.getElementById("submit");
+    btn.disabled=true;
+
     const otpInputs=document.querySelectorAll(".otp-inputs input");
     let fullOTP= "";
     otpInputs.forEach(input=>{
@@ -70,6 +73,7 @@ function validateOTPForm(){
         url:"/verify-otp",
         data:{otp:fullOTP},
         success:function(response){
+            btn.disabled=false;
             if(response.success){
                 Swal.fire({
                     icon:"success",
@@ -96,6 +100,7 @@ function validateOTPForm(){
             })
         }
     })
+    btn.disabled=false;
     return false;
 }
 
@@ -105,6 +110,7 @@ function validateOTPForm(){
 
 function resendOtp(){
 
+    resendBtn.disabled= true;
     inputs.forEach(input=>input.value= "");
     inputs[0].focus();
 
