@@ -8,6 +8,9 @@
     changeForm.addEventListener("submit",async(e)=>{
         e.preventDefault()
 
+        const btn= document.getElementById("submitBtn")
+        btn.disabled= true;
+
         const formData= new FormData(e.target)
         const data= Object.fromEntries(formData.entries())
 
@@ -19,6 +22,7 @@
         })
 
         const result= await res.json()
+        btn.disabled= false;
 
         if(!result.success){
             errMsg.style.display="block"

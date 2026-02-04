@@ -58,6 +58,10 @@
 
 
       async function addToCart(productId) {
+
+        const btn=event.target;
+        btn.disabled= true;
+
         const res = await fetch('/cart/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -65,6 +69,7 @@
         })
 
         const data = await res.json()
+        btn.disabled= false;
 
 
         if (data.success) {
