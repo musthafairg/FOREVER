@@ -10,7 +10,7 @@
     const data = await res.json();
     if (data.success) {
       document.getElementById("qty-" + productId).innerText = data.quantity;
-      location.reload();
+      
     } else {
       Swal.fire({
         position: "top-end",
