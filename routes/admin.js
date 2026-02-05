@@ -51,7 +51,7 @@ router.get("/products",adminAuth,productInfo)
 router.get("/block-product",adminAuth,blockProduct)
 router.get("/unblock-product",adminAuth,unblockProduct)
 router.get("/edit-product",adminAuth,getEditProduct)
-router.post("/edit-product/:id",adminAuth,uploads.array("images",4),editProduct)
+router.post("/edit-product",adminAuth,uploads.array("images",4),editProduct)
 router.post("/delete-image",adminAuth,deleteSingleImage)
 
 // Order Management

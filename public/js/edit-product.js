@@ -9,7 +9,14 @@
 
     try {
         
-        const response= await fetch("/admin/edit-product/<%=product._id%>",{
+
+const productId = new URLSearchParams(window.location.search).get("id");
+
+
+
+
+
+        const response= await fetch(`/admin/edit-product?id=${productId}`,{
             method:"POST",
             body:formData,
             credentials:"include"

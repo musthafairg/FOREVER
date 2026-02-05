@@ -197,7 +197,7 @@ export const getEditProduct = async (req, res) => {
 
 export const editProduct = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.query.id;
 
     const product = await Product.findById(id);
 
