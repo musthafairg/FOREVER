@@ -1,5 +1,6 @@
 
 const form = document.getElementById("editAddressForm");
+const index = document.getElementById("addressIndex").value;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -8,7 +9,7 @@ form.addEventListener("submit", async (e) => {
 
   const data = Object.fromEntries(new FormData(form).entries());
 
-  const res = await fetch("/address/edit/<%= index %>", {
+  const res = await fetch(`/address/edit/${index}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
