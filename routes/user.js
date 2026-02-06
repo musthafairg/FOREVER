@@ -12,7 +12,7 @@ import { loadAddressPage,loadAddAddressPage, addAddress, loadEditAddress, update
 import { addToCart, loadCart, removeFromCart, updateCartQuantity } from '../controllers/user/cartController.js'
 import { loadCheckout } from '../controllers/user/checkoutController.js'
 import { loadWishlist, removeFromWishlist, addToWishlist } from '../controllers/user/wishlistController.js'
-import { cancelOrder, cancelOrderItem, downloadInvoice, loadFailure, loadOrderDetail, loadOrders, loadSuccess, placeOrder, returnOrder,returnOrderItem, verifyPayment } from '../controllers/user/orderController.js'
+import { cancelOrder, cancelOrderItem, downloadInvoice, loadFailure, loadOrderDetail, loadOrders, loadSuccess, placeOrder, returnOrder,returnOrderItem, verifyPayment,markPaymentFailed } from '../controllers/user/orderController.js'
 const uploads   =   multer({storage})
 
 import { validate } from '../middleware/validate.js'
@@ -103,6 +103,7 @@ router.post("/cart/remove",userAuth,removeFromCart)
 router.get("/checkout",userAuth,loadCheckout)
 router.post("/checkout/place-order",userAuth,placeOrder)
 router.post("/payment/verify",userAuth,verifyPayment)
+router.post("/payment/failed", markPaymentFailed);
 router.get("/orders",userAuth,loadOrders)
 router.get("/orders/:id",userAuth,loadOrderDetail)
 router.post("/orders/:id/cancel",userAuth,cancelOrder)

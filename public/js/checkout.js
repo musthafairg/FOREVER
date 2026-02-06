@@ -21,6 +21,18 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
   
 
   const data = await res.json();
+  console.log("Response Data:", data);
+
+  if (!data.success) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Order Placement Failed',
+      text: data.message || 'There was an issue placing your order. Please try again.',
+    });
+    return;
+  }
+
+  
 
   if (payload.paymentMethod === "COD") {
     window.location.href = data.redirect;
@@ -67,11 +79,18 @@ document.getElementById("checkoutForm").addEventListener("submit", async (e) => 
       }
     },
 
-     modal: {
-    ondismiss: function () {
-      window.location.href = "/order-failure";
-    },
+  modal: {
+  ondismiss: async function () {
+    await fetch("/payment/failed", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: data.dbOrderId })
+    });
+
+    window.location.href = "/order-failure";
   },
+},
+
   };
 
   new Razorpay(options).open();

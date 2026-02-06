@@ -79,6 +79,9 @@ const orderSchema = new Schema(
         "Delivered",
         "Cancelled",
         "Returned",
+        "Refunded",
+        "Failed",
+        
       ],
       default: "Placed",
     },

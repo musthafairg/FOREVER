@@ -33,7 +33,25 @@ export const placeOrder = async (req, res) => {
     if (!cart || cart.items.length === 0) {
       return res.json({ success: false, message: "Cart empty" });
     }
-  const addressData = await Address.findOne({ userId });
+
+    for (const item of cart.items) {
+      const p = item.productId;
+      if (!p || p.isBlocked || p.status !== "Available") {
+        return res.json({
+          success: false,
+          message: "Invalid cart items",
+        });
+      }
+
+      if (p.quantity < item.quantity) {
+        return res.json({
+          success: false,
+          message: `Insufficient stock for ${p.productName}`,
+        });
+      }
+    }
+
+    const addressData = await Address.findOne({ userId });
     const selectedAddress = addressData.address.find(
       (a) => a._id.toString() === addressId,
     );
@@ -41,7 +59,6 @@ export const placeOrder = async (req, res) => {
     if (!selectedAddress) {
       return res.json({ success: false, message: "Invalid address" });
     }
-
 
     let subtotal = 0;
 
@@ -111,6 +128,8 @@ export const placeOrder = async (req, res) => {
       await Cart.deleteOne({ userId });
 
       order.paymentStatus = "PAID";
+      order.orderStatus = "Placed";
+
       await order.save();
 
       return res.json({ success: true, redirect: "/order-success" });
@@ -169,7 +188,9 @@ export const verifyPayment = async (req, res) => {
     if (generated !== razorpay_signature) {
       await Order.findByIdAndUpdate(orderId, {
         paymentStatus: "FAILED",
+        orderStatus: "Failed",
       });
+
       return res.json({ success: false });
     }
 
@@ -187,6 +208,7 @@ export const verifyPayment = async (req, res) => {
       paymentStatus: "PAID",
       razorpayPaymentId: razorpay_payment_id,
       razorpaySignature: razorpay_signature,
+      orderStatus: "Placed",
     });
 
     res.json({ success: true });
@@ -218,6 +240,22 @@ export const loadFailure = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
+export const markPaymentFailed = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    await Order.findByIdAndUpdate(orderId, {
+      paymentStatus: "FAILED",
+      orderStatus: "Failed",
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+};
+
 
 export const loadOrders = async (req, res) => {
   try {
