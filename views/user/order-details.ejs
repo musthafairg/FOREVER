@@ -74,7 +74,7 @@
         <span><%= item.productName %></span>
       </div>
 
-      <% if (!item.isCancelled && order.orderStatus !== "Delivered" && order.orderStatus !== "Out for Delivery" && item.returnStatus === "NONE") { %>
+      <% if (!item.isCancelled && order.orderStatus !== "Delivered" && order.orderStatus !== "Failed" && order.orderStatus !== "Out for Delivery" && item.returnStatus === "NONE") { %>
         <button class="btn btn-outline"
           style="margin-top:6px;padding:4px 10px;font-size:12px"
           onclick="cancelItem('<%= order.orderId %>', '<%= item.productId %>')">

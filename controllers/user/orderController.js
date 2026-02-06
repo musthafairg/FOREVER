@@ -256,7 +256,6 @@ export const markPaymentFailed = async (req, res) => {
   }
 };
 
-
 export const loadOrders = async (req, res) => {
   try {
     const userId = req.session.user._id;
@@ -494,6 +493,23 @@ export const downloadInvoice = async (req, res) => {
       return res.status(404).send("Order not Found");
     }
 
+    const invoiceItems = order.items.filter(
+      (item) => !item.isCancelled && item.returnStatus !== "APPROVED",
+    );
+
+    const invoiceSubtotal = invoiceItems.reduce(
+      (sum, i) => sum + i.itemTotal,
+      0,
+    );
+
+    const invoiceTax = Math.round(invoiceSubtotal * 0.05);
+
+    const invoiceTotal =
+      invoiceSubtotal +
+      invoiceTax +
+      order.priceDetails.shipping -
+      order.priceDetails.discount;
+
     const doc = new PDFDocument({ margin: 40 });
 
     res.setHeader("Content-Type", "application/pdf");
@@ -550,7 +566,7 @@ export const downloadInvoice = async (req, res) => {
 
     doc.font("Helvetica").fontSize(10);
 
-    order.items.forEach((item) => {
+    invoiceItems.forEach((item) => {
       doc.text(item.productName, colProduct, y, { width: 230 });
       doc.text(item.quantity.toString(), colQty, y, {
         width: 40,
@@ -575,14 +591,14 @@ export const downloadInvoice = async (req, res) => {
     const valueX = colTotal;
 
     doc.text("Subtotal", labelX, y, { width: 80, align: "right" });
-    doc.text(`${order.priceDetails.subtotal}`, valueX, y, {
+    doc.text(`${invoiceSubtotal}`, valueX, y, {
       width: 70,
       align: "right",
     });
     y += 14;
 
     doc.text("Tax", labelX, y, { width: 80, align: "right" });
-    doc.text(`${order.priceDetails.tax}`, valueX, y, {
+    doc.text(`${invoiceTax}`, valueX, y, {
       width: 70,
       align: "right",
     });
@@ -607,7 +623,7 @@ export const downloadInvoice = async (req, res) => {
 
     doc.fontSize(12);
     doc.text("Total Amount", labelX, y, { width: 80, align: "right" });
-    doc.text(`${order.priceDetails.total}`, valueX, y, {
+    doc.text(`${invoiceTotal}`, valueX, y, {
       width: 70,
       align: "right",
     });
