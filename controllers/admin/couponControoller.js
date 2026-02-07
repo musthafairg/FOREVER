@@ -1,85 +1,44 @@
 import Coupon from "../../models/couponModel.js";
 
 export const loadCoupons = async (req, res) => {
-  try {
-    const coupons = await Coupon.find().sort({ createdAt: -1 });
+  const coupons = await Coupon.find().sort({ createdAt: -1 });
+  res.render("admin/coupons", { coupons });
+};
 
-    res.render("admin/coupons", {
-      page: "offers",
-      coupons,
-    });
-  } catch (error) {
-    console.error("Load Coupons Error:", error.message);
-    res.status(500).send("Server Error");
-  }
+export const getCoupon = async (req, res) => {
+  const coupon = await Coupon.findById(req.params.id);
+  res.json(coupon);
 };
 
 export const createCoupon = async (req, res) => {
-  try {
-    let {
-      code,
-      discountType,
-      discountValue,
-      minPurchase,
-      maxDiscount,
-      expiryDate,
-      usageLimit,
-    } = req.body;
+  const code = req.body.code.toUpperCase();
 
-    code = code.toUpperCase();
-
-    const exists = await Coupon.findOne({ code });
-    if (exists) {
-      return res.json({
-        success: false,
-        errors: { code: "Coupon already exists" },
-      });
-    }
-
-    const coupon = await Coupon.create({
-      code,
-      discountType,
-      discountValue,
-      minPurchase,
-      maxDiscount,
-      expiryDate,
-      usageLimit,
-    });
-
-    res.json({
-      success: true,
-      coupon,
-    });
-  } catch (error) {
-    console.error("Create Coupon Error:", error.message);
-    res.status(500).json({ success: false });
+  const exists = await Coupon.findOne({ code });
+  if (exists) {
+    return res.json({ success: false, errors: { code: "Already exists" } });
   }
+
+  const coupon = await Coupon.create({ ...req.body, code });
+  res.json({ success: true, coupon });
+};
+
+export const updateCoupon = async (req, res) => {
+  await Coupon.findByIdAndUpdate(req.params.id, {
+    ...req.body,
+    code: req.body.code.toUpperCase(),
+  });
+
+  res.json({ success: true });
 };
 
 export const toggleCoupon = async (req, res) => {
-  try {
-    const coupon = await Coupon.findById(req.params.id);
-    if (!coupon) return res.json({ success: false });
-
-    coupon.isActive = !coupon.isActive;
-    await coupon.save();
-
-    res.json({
-      success: true,
-      isActive: coupon.isActive,
-    });
-  } catch (error) {
-    console.error("Toggle Coupon Error:", error.message);
-    res.status(500).json({ success: false });
-  }
+  const coupon = await Coupon.findById(req.params.id);
+  coupon.isActive = !coupon.isActive;
+  await coupon.save();
+  res.json({ success: true, isActive: coupon.isActive });
 };
 
 export const deleteCoupon = async (req, res) => {
-  try {
-    await Coupon.findByIdAndDelete(req.params.id);
-    res.json({ success: true });
-  } catch (error) {
-    console.error("Delete Coupon Error:", error.message);
-    res.status(500).json({ success: false });
-  }
+  await Coupon.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
 };

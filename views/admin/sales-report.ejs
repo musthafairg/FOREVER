@@ -1,119 +1,160 @@
 <%- include('../partials/admin/header.ejs', )%>
 <div class="main-layout">
-    
-    <aside class="sidebar">
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="<%= locals.page === 'dashboard' ? 'active' : '' %>">
-                        <a href="/admin" style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-tachometer-alt"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                  
-                    <li class="<%= locals.page === 'users' ? 'active' : '' %>">
-                        <a href="/admin/users" style="color: inherit; text-decoration: none;">
-                            <i class="fas fa-users"></i>
-                            Users
-                        </a>
-                    </li>
-                    <li class="<%= locals.page === 'category' ? 'active' : '' %>">
-                        <a href="/admin/category" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
-                            <i class="fas fa-folder-open"></i>
-                            Category
-                        </a>
-                    </li>
-                   
-                <li class="<%= locals.page === 'products' ? 'active' : '' %>">
-                        <a href="/admin/products" style="color: inherit; text-decoration: none; display: flex; align-items: center; width: 100%; height: 100%;">
-                            <i class="fas fa-list"></i>
-                            Products
-                        </a>
-                    </li>
-                <li >
-                    <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
-                </li>
-                <li class="active" >
-                    <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
-                </li>
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="<%= locals.page === 'dashboard' ? 'active' : '' %>">
+          <a href="/admin" style="color: inherit; text-decoration: none">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+          </a>
+        </li>
 
-                <li >
-                    <a href="/admin/stock"><i class="fa-solid fa-boxes-stacked"></i>Stock</a>
-                </li>
-                      <li  >
-                    <a href="/admin/offers/product"><i class="fa-solid fa-tags"></i>Product Offer</a>
-                </li>
-                   <li  >
-                    <a href="/admin/offers/category"><i class="fa-solid fa-tags"></i>Category Offer</a>
-                </li>
-                <li >
+        <li class="<%= locals.page === 'users' ? 'active' : '' %>">
+          <a href="/admin/users" style="color: inherit; text-decoration: none">
+            <i class="fas fa-users"></i>
+            Users
+          </a>
+        </li>
+        <li class="<%= locals.page === 'category' ? 'active' : '' %>">
+          <a
+            href="/admin/category"
+            style="
+              color: inherit;
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 100%;
+            "
+          >
+            <i class="fas fa-folder-open"></i>
+            Category
+          </a>
+        </li>
+
+        <li class="<%= locals.page === 'products' ? 'active' : '' %>">
+          <a
+            href="/admin/products"
+            style="
+              color: inherit;
+              text-decoration: none;
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 100%;
+            "
+          >
+            <i class="fas fa-list"></i>
+            Products
+          </a>
+        </li>
+        <li>
+          <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
+        </li>
+        <li class="active">
+          <a href="/admin/sales-report"
+            ><i class="fas fa-chart-line"></i>Sales Report</a
+          >
+        </li>
+
+        <li>
+          <a href="/admin/stock"
+            ><i class="fa-solid fa-boxes-stacked"></i>Stock</a
+          >
+        </li>
+        <li>
+          <a href="/admin/offers/product"
+            ><i class="fa-solid fa-tags"></i>Product Offer</a
+          >
+        </li>
+        <li>
+          <a href="/admin/offers/category"
+            ><i class="fa-solid fa-tags"></i>Category Offer</a
+          >
+        </li>
+        <li>
           <a href="/admin/coupons"><i class="fa-solid fa-ticket"></i>Coupons</a>
         </li>
-                </ul> 
-            </nav>
-        </aside>
-        
+      </ul>
+    </nav>
+  </aside>
 
-<main class="dashboard-content">
+  <main class="dashboard-content">
+    <h2 class="mb-4">Sales Report</h2>
 
-  <h2 class="mb-4">Sales Report</h2>
+    <form method="GET" class="row g-3 mb-4">
+      <div class="col-md-3">
+        <select name="filter" class="form-select">
+          <option value="today">Today</option>
+          <option value="week">Last 7 Days</option>
+          <option value="month">Last Month</option>
+          <option value="year">Last Year</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
 
-  <form method="GET" class="row g-3 mb-4">
-    <div class="col-md-3">
-      <select name="filter" class="form-select">
-        <option value="today">Today</option>
-        <option value="week">Last 7 Days</option>
-        <option value="month">Last Month</option>
-        <option value="year">Last Year</option>
-        <option value="custom">Custom</option>
-      </select>
+      <div class="col-md-3">
+        <input type="date" name="from" class="form-control" />
+      </div>
+
+      <div class="col-md-3">
+        <input type="date" name="to" class="form-control" />
+      </div>
+
+      <div class="col-md-3">
+        <button class="btn btn-dark w-100">Apply</button>
+      </div>
+    </form>
+
+    <div class="card p-3 mb-4">
+      <p><strong>Total Orders:</strong> <%= totalOrders %></p>
+      <p><strong>Total Sales:</strong> ₹ <%= totalSales %></p>
+      <p><strong>Total Discount:</strong> ₹ <%= totalDiscount %></p>
     </div>
 
-    <div class="col-md-3">
-      <input type="date" name="from" class="form-control">
+    <div class="mb-3">
+      <a
+        href="/admin/sales-report/pdf?<%= new URLSearchParams({
+  filter,
+  ...(from && { from }),
+  ...(to && { to })
+})
+ %>"
+        class="btn btn-danger"
+        >PDF</a
+      >
+      <a
+        href="/admin/sales-report/excel?<%= new URLSearchParams({
+  filter,
+  ...(from && { from }),
+  ...(to && { to })
+})
+ %>"
+        class="btn btn-success"
+        >Excel</a
+      >
     </div>
 
-    <div class="col-md-3">
-      <input type="date" name="to" class="form-control">
-    </div>
-
-    <div class="col-md-3">
-      <button class="btn btn-dark w-100">Apply</button>
-    </div>
-  </form>
-
-  <div class="card p-3 mb-4">
-    <p><strong>Total Orders:</strong> <%= totalOrders %></p>
-    <p><strong>Total Sales:</strong> ₹ <%= totalSales %></p>
-    <p><strong>Total Discount:</strong> ₹ <%= totalDiscount %></p>
-  </div>
-
-  <div class="mb-3">
-    <a href="/admin/sales-report/pdf?<%= new URLSearchParams({filter,from,to}) %>" class="btn btn-danger">PDF</a>
-    <a href="/admin/sales-report/excel?<%= new URLSearchParams({filter,from,to}) %>" class="btn btn-success">Excel</a>
-  </div>
-
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>Date</th>
-        <th>Total</th>
-        <th>Discount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% orders.forEach(o => { %>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Date</th>
+          <th>Total</th>
+          <th>Discount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(o => { %>
         <tr>
           <td><%= o.orderId %></td>
           <td><%= o.createdAt.toDateString() %></td>
           <td>₹ <%= o.priceDetails.total %></td>
           <td>₹ <%= o.priceDetails.discount || 0 %></td>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
-
-</main>
-
-
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+</div>
