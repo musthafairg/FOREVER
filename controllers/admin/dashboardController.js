@@ -29,41 +29,93 @@ export const loadDashboard = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
-
 export const getDashboardData = async (req, res) => {
   try {
     const filter = req.query.filter || "monthly";
     const now = new Date();
-    let startDate, groupId;
 
+    let startDate;
+    let groupStage;
+    let labels = [];
+
+    
     if (filter === "weekly") {
       startDate = new Date();
-      startDate.setDate(now.getDate() - 7);
-      groupId = { $dayOfWeek: "$createdAt" };
+      startDate.setDate(now.getDate() - 6);
+
+      groupStage = {
+        $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+      };
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(now.getDate() - i);
+        labels.push(d.toISOString().slice(0, 10));
+      }
+
     } else if (filter === "yearly") {
       startDate = new Date(now.getFullYear(), 0, 1);
-      groupId = { $month: "$createdAt" };
+
+      groupStage = { $month: "$createdAt" };
+      labels = [
+        "Jan","Feb","Mar","Apr","May","Jun",
+        "Jul","Aug","Sep","Oct","Nov","Dec"
+      ];
+
     } else {
+   
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      groupId = { $dayOfMonth: "$createdAt" };
+
+      groupStage = { $dayOfMonth: "$createdAt" };
+      const daysInMonth = new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        0
+      ).getDate();
+
+      labels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
     }
 
+  
     const matchStage = {
       orderStatus: "Delivered",
       paymentStatus: "PAID",
       createdAt: { $gte: startDate }
     };
 
-    const sales = await Order.aggregate([
+  
+    const rawSales = await Order.aggregate([
       { $match: matchStage },
-      { $group: { _id: groupId, total: { $sum: "$priceDetails.total" } } },
-      { $sort: { _id: 1 } }
+      {
+        $group: {
+          _id: groupStage,
+          total: { $sum: "$priceDetails.total" }
+        }
+      }
     ]);
+
+ 
+    const salesMap = {};
+    rawSales.forEach(s => {
+      salesMap[s._id] = s.total;
+    });
+
+    const sales = labels.map(l => ({
+      _id: l,
+      total: salesMap[l] || 0
+    }));
+
 
     const bestProducts = await Order.aggregate([
       { $match: matchStage },
       { $unwind: "$items" },
-      { $group: { _id: "$items.productId", sold: { $sum: "$items.quantity" } } },
+      { $match: { "items.isCancelled": false } },
+      {
+        $group: {
+          _id: "$items.productId",
+          sold: { $sum: "$items.quantity" }
+        }
+      },
       { $sort: { sold: -1 } },
       { $limit: 5 },
       {
@@ -77,9 +129,11 @@ export const getDashboardData = async (req, res) => {
       { $unwind: "$product" }
     ]);
 
+  
     const bestCategories = await Order.aggregate([
       { $match: matchStage },
       { $unwind: "$items" },
+      { $match: { "items.isCancelled": false } },
       {
         $lookup: {
           from: "products",
@@ -89,7 +143,12 @@ export const getDashboardData = async (req, res) => {
         }
       },
       { $unwind: "$product" },
-      { $group: { _id: "$product.category", sold: { $sum: "$items.quantity" } } },
+      {
+        $group: {
+          _id: "$product.category",
+          sold: { $sum: "$items.quantity" }
+        }
+      },
       { $sort: { sold: -1 } },
       { $limit: 5 },
       {
@@ -103,6 +162,7 @@ export const getDashboardData = async (req, res) => {
       { $unwind: "$category" }
     ]);
 
+ 
     const recentOrders = await Order.find(matchStage)
       .populate("userId", "name")
       .sort({ createdAt: -1 })
@@ -115,8 +175,9 @@ export const getDashboardData = async (req, res) => {
       bestCategories,
       recentOrders
     });
+
   } catch (error) {
-    console.error("Dashboard Data Error:", error.message);
+    console.error("Dashboard Data Error:", error);
     res.status(500).json({ success: false });
   }
 };
