@@ -18,6 +18,7 @@ export const loadOtp = async (req, res) => {
     res.render("user/otp-verification");
   } catch (error) {
     console.error("OTP page not loading");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -72,7 +73,7 @@ export const loadHomepage = async (req, res) => {
     });
   } catch (error) {
     console.error("Home page not loading :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -178,7 +179,7 @@ export const loadShoppingPage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in loadin shopping page :", error.message);
-    res.status(500).send("server error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -187,7 +188,7 @@ export const loadSignup = (req, res) => {
     return res.render("user/signup");
   } catch (error) {
     console.error("Signup page not Loading ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -199,7 +200,7 @@ export const loadLogin = (req, res) => {
     return res.render("user/login");
   } catch (error) {
     console.error("Login page not Loading", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -244,7 +245,7 @@ export const login = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server Error",
-    });
+    }).render("errors/500");
   }
 };
 
@@ -320,7 +321,7 @@ export const signupUser = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Server Error",
-    });
+    }).render("errors/500");
   }
 };
 
@@ -390,7 +391,7 @@ export const verifyOtp = async (req, res) => {
   } catch (error) {
     console.error("Error verifying OTP", error.message);
 
-    res.status(500).json({ success: false, message: "An error occured." });
+    res.status(500).json({ success: false, message: "An error occured." }).render("errors/500");
   }
 };
 
@@ -432,7 +433,7 @@ export const resendOtp = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal Server Error. Please try again.",
-    });
+    }).render("errors/500");
   }
 };
 
@@ -440,7 +441,7 @@ export const getForgotPassEmailPage = async (req, res) => {
   try {
     res.render("user/forgot-pass-email");
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -448,7 +449,7 @@ export const getResetPassPage = async (req, res) => {
   try {
     res.render("user/reset-password");
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -480,7 +481,10 @@ export const emailValid = async (req, res) => {
     return res.render("user/forgot-pass-otp");
   } catch (error) {
     console.error("Email Verification Error");
-    return res.send("Server Error");
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    }).render("errors/500");
   }
 };
 
@@ -517,7 +521,10 @@ export const verifyOTPForgotPass = async (req, res) => {
     });
   } catch (error) {
     console.error("Error verifying OTP :", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    }).render("errors/500");  
   }
 };
 
@@ -542,7 +549,10 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.error("Error in Reset Password :", error.message);
 
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    }).render("errors/500");
   }
 };
 
@@ -577,6 +587,9 @@ export const demoLogin = async (req, res) => {
     return res.redirect("/");
   } catch (error) {
     console.error("Error in demo Login :", error.message);
-    return res.send("Server Error");
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    }).render("errors/500");  
   }
 };

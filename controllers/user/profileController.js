@@ -26,7 +26,7 @@ export const loadUserProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in load Profile page :", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("errors/500");
   }
 };
 
@@ -36,7 +36,7 @@ export const loadEditProfilePage = async (req, res) => {
     res.render("user/edit-profile", { user });
   } catch (error) {
     console.error("Error in load Edit Profile page :", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("errors/500");
   }
 };
 
@@ -46,7 +46,7 @@ export const loadEditPasswordPage = async (req, res) => {
     res.render("user/edit-password", { user });
   } catch (error) {
     console.error("Error in load Edit Profile page :", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("errors/500");
   }
 };
 
@@ -56,7 +56,7 @@ export const loadChangeEmailPage = async (req, res) => {
     res.render("user/change-email", { user });
   } catch (error) {
     console.error("Error in load Change email page :", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("errors/500");
   }
 };
 
@@ -123,7 +123,7 @@ export const changePassword = async (req, res) => {
   } catch (error) {
     console.error("Error in change password :", error.message);
 
-    res.status(500).send("Internal server error");
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -166,7 +166,7 @@ export const updateEmail = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
-    });
+    }).render("errors/500");
   }
 };
 
@@ -179,6 +179,7 @@ export const getotp = async (req, res) => {
     res.render("user/otp-page", { user });
   } catch (error) {
     console.error("Error in load OTP page :", error.message);
+    return res.status(500).render("errors/500");
   }
 };
 
@@ -215,6 +216,6 @@ export const verifyOtpEmail = async (req, res) => {
   } catch (error) {
     console.error("Error verifying OTP", error.message);
 
-    res.status(500).json({ success: false, message: "An error occured." });
+    res.status(500).json({ success: false, message: "An error occured." }).render("errors/500");
   }
 };

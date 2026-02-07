@@ -13,6 +13,7 @@ export const loadAddressPage = async (req, res) => {
     res.render("user/address", { user, addressData });
   } catch (error) {
     console.error("Error in load Address page", error.message);
+    res.status(500).render("errors/500");
   }
 };
 
@@ -29,6 +30,7 @@ export const loadAddAddressPage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in load Add Address page", error.message);
+    res.status(500).render("errors/500");
   }
 };
 
@@ -88,7 +90,7 @@ export const addAddress = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error",
-    });
+    }).render("errors/500");
   }
 };
 
@@ -111,7 +113,7 @@ export const loadEditAddress = async (req, res) => {
     });
   } catch (error) {
     console.error("Load Edit Address Error :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -136,7 +138,7 @@ export const updateAddress = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error("Update Address Error :", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -158,7 +160,7 @@ export const deleteAddress = async (req, res) => {
     res.redirect("/address");
   } catch (error) {
     console.error("Delete Address Error : ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -185,6 +187,6 @@ export const setDefaultAddress = async (req, res) => {
     res.redirect("/address");
   } catch (error) {
     console.error("Set Defualt Address Error :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };

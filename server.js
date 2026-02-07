@@ -9,6 +9,8 @@ import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import userRouter from './routes/user.js'
 import adminRouter from './routes/admin.js'
+import {notFound,errorHandler} from './middleware/errorMiddleware.js'
+import { no } from 'zod/locales'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -44,6 +46,8 @@ app.use(passport.session())
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
 
+app.use(notFound)
+
 app.use((req, res, next) => {
   res.locals.formErrors = req.session.formErrors || {};
   res.locals.formData = req.session.formData || {};
@@ -59,3 +63,5 @@ app.listen(port,()=>{
     console.log(`Server started on port ${port}`);
     
 })
+
+app.use(errorHandler)

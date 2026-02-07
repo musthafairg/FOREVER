@@ -54,7 +54,7 @@ export const loadCart = async (req, res) => {
     });
   } catch (error) {
     console.error("Load cart error:", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -136,7 +136,7 @@ export const addToCart = async (req, res) => {
     console.error("Add to cart error : ", error.message);
     return res.status(500).json({
       success: false,
-    });
+    }).render("errors/500");
   }
 };
 
@@ -197,7 +197,7 @@ export const updateCartQuantity = async (req, res) => {
     });
   } catch (error) {
     console.error("Update cart qty error:", error);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -211,6 +211,6 @@ export const removeFromCart = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error("Remove cart item error :", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };

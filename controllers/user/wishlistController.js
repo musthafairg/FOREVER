@@ -43,7 +43,7 @@ export const loadWishlist = async (req, res) => {
     });
   } catch (error) {
     console.error("Load wishlist error:", error.message);
-    res.status(500).send("Server error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -74,7 +74,7 @@ export const addToWishlist = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error("Add to wishlist  error :", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -88,6 +88,6 @@ export const removeFromWishlist = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error("Remove Wishlist error :", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };

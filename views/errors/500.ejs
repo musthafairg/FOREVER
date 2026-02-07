@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Server Error</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div style="text-align:center;padding:80px;">
+  <h1 style="font-size:70px;">500</h1>
+  <h2>Something went wrong</h2>
+
+  <% if (message) { %>
+    <p><%= message %></p>
+  <% } %>
+
+  <a href="/" class="btn btn-dark">Back to Home</a>
+</div>
+
+</body>
+</html>

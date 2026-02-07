@@ -165,7 +165,7 @@ export const placeOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Place order error:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -213,7 +213,7 @@ export const verifyPayment = async (req, res) => {
 
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -225,7 +225,7 @@ export const loadSuccess = async (req, res) => {
     res.render("user/order-success", { user });
   } catch (error) {
     console.error("Error in load order success page: ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -237,7 +237,7 @@ export const loadFailure = async (req, res) => {
     res.render("user/order-failure", { user });
   } catch (error) {
     console.error("Error in load order failure page: ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -252,7 +252,7 @@ export const markPaymentFailed = async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -270,7 +270,7 @@ export const loadOrders = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in load Orders :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -293,7 +293,7 @@ export const loadOrderDetail = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in load order Details :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -336,7 +336,7 @@ export const cancelOrder = async (req, res) => {
   } catch (error) {
     console.error("Error in Cancel order :", error.message);
 
-    res.status(500).send("Server Error");
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -400,7 +400,7 @@ export const cancelOrderItem = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error("Error in cancel orderItem :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -431,7 +431,7 @@ export const returnOrder = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error("Error in Return order :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -456,7 +456,7 @@ export const returnOrderItem = async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error("Error in Return order Item :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 
@@ -642,6 +642,6 @@ export const downloadInvoice = async (req, res) => {
     doc.end();
   } catch (error) {
     console.error("Error in download Invoice:", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };

@@ -106,6 +106,6 @@ export const loadCheckout = async (req, res) => {
     });
   } catch (error) {
     console.error("Checkout load error:", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };

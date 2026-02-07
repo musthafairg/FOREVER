@@ -55,7 +55,7 @@ export const applyCoupon = async (req, res) => {
     });
   } catch (error) {
     console.error("Apply coupon error:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("errors/500");
   }
 };
 

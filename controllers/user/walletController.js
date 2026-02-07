@@ -7,6 +7,6 @@ export const loadWallet = async (req, res) => {
     res.render("user/wallet", { user });
   } catch (error) {
     console.error("Load Wallet Error :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };

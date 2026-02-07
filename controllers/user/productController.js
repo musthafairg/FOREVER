@@ -17,7 +17,11 @@ export const getProductDetailsPage = async (req, res) => {
     });
 
     if (!product || product.isBlocked || product.status === "Discontinued") {
-      return res.redirect("/shop");
+      return res.status(404).render("errors/product-not-found",{
+        page:"shop",
+        user
+
+      })
     }
 
     const offerData = await applyBestOffer(product);
@@ -41,7 +45,7 @@ export const getProductDetailsPage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching product details: ", error.message);
-    return res.status(500).send("Internal Server Error");
+    return res.status(500).render("errors/500");
   }
 };
 
@@ -57,7 +61,7 @@ export const addReview = async (req, res) => {
     const product = await Product.findById(productId);
 
     if (!product || product.isBlocked || product.status === "Discontinued") {
-      return res.redirect("/shop");
+      return res.status(404).render("errors/product-not-found");
     }
 
     product.reviews.push({
@@ -74,7 +78,7 @@ export const addReview = async (req, res) => {
     return res.redirect(`/product-details?id=${productId}`);
   } catch (error) {
     console.error("Error adding Review :", error.message);
-    return res.status(500).send("Internal Server Error");
+    return res.status(500).render("errors/500");
   }
 };
 
@@ -158,7 +162,7 @@ export const filterByPrice = async (req, res) => {
   } catch (error) {
     console.error("Error in Filter By Price :", error.message);
 
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
 
@@ -242,6 +246,6 @@ export const filter = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in filter :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("errors/500");
   }
 };
