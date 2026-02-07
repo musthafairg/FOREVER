@@ -10,7 +10,8 @@ import { dirname } from 'path'
 import userRouter from './routes/user.js'
 import adminRouter from './routes/admin.js'
 import {notFound,errorHandler} from './middleware/errorMiddleware.js'
-import { no } from 'zod/locales'
+import { adminNotFound, adminErrorHandler } from './middleware/adminErrorHandler.js'
+
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -45,7 +46,8 @@ app.use(passport.session())
 
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
-
+app.use(adminNotFound)
+app.use(adminErrorHandler)
 app.use(notFound)
 
 app.use((req, res, next) => {
