@@ -10,7 +10,9 @@ export const loadLogin = async (req, res) => {
   } catch (error) {
     console.error("admin Login page not loading : ", error.message);
 
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/login", {
+      error: "Server Error",
+    }); 
   }
 };
 
