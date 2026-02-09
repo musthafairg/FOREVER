@@ -428,6 +428,10 @@ export const returnOrder = async (req, res) => {
 
     await order.save();
 
+    await Order.findByIdAndUpdate(order._id, {
+    orderStatus: "Return Requested",
+  });
+
     res.json({ success: true });
   } catch (error) {
     console.error("Error in Return order :", error.message);
@@ -453,6 +457,9 @@ export const returnOrderItem = async (req, res) => {
     item.returnStatus = "REQUESTED";
     item.returnReason = reason;
     await order.save();
+
+   
+
     res.json({ success: true });
   } catch (error) {
     console.error("Error in Return order Item :", error.message);
@@ -477,8 +484,14 @@ export const requestItemReturn = async (req, res) => {
 
   item.returnStatus = "REQUESTED";
   item.returnReason = reason;
+  
 
   await order.save();
+
+  await Order.findByIdAndUpdate(order._id, {
+    orderStatus: "Return Requested",
+  });
+
   res.json({ success: true });
 };
 

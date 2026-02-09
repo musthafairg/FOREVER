@@ -81,6 +81,9 @@ const orderSchema = new Schema(
         "Returned",
         "Refunded",
         "Failed",
+        "Return Requested",
+        "Return Approved",
+        "Return Rejected",
         
       ],
       default: "Placed",

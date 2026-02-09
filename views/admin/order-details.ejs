@@ -81,7 +81,7 @@
           </p>
 
          
-<% if (order.orderStatus !== "Delivered" && order.orderStatus !== "Cancelled" && order.returnStatus == "NONE") { %>
+<% if (order.orderStatus !== "Delivered" && order.orderStatus !== "Cancelled" && order.returnStatus == "NONE" && order.orderStatus !== "Return Requested") { %>
           <!-- STATUS UPDATE -->
           <form action="/admin/orders/<%= order.orderId %>/status" method="POST" class="d-flex justify-content-end gap-2 mt-2">
             <select name="status" class="form-select form-select-sm w-auto">
