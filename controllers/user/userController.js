@@ -13,6 +13,9 @@ import CategoryOffer from "../../models/categoryofferModel.js";
 import { generateReferralCode } from "../../utils/generateReferralCode.js";
 import Coupon from "../../models/couponModel.js";
 
+
+const REFERRAL_BONUS_AMOUNT = 200;
+
 export const loadOtp = async (req, res) => {
   try {
     res.render("user/otp-verification");
@@ -373,6 +376,17 @@ export const verifyOtp = async (req, res) => {
 
           await User.findByIdAndUpdate(referringUser._id, {
             $push: { redeemedUsers: saveUserData._id },
+          });
+
+
+          await User.findByIdAndUpdate(saveUserData._id, {
+            $inc:{"wallet.balance":REFERRAL_BONUS_AMOUNT},
+          $push: { "wallet.transactions": {
+              type: "CREDIT",
+              amount: REFERRAL_BONUS_AMOUNT,
+              reason: `Referral bonus from ${referringUser.name}`,
+            }
+          },
           });
         }
       }
