@@ -46,7 +46,9 @@ export const userInfo = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in userInfo Controll : ", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "users",
+     });
   }
 };
 
@@ -58,7 +60,9 @@ export const blockCustomer = async (req, res) => {
     return res.redirect("/admin/users");
   } catch (error) {
     console.error("Error in blocking user in admin side: ", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "users",
+     });
   }
 };
 
@@ -71,6 +75,8 @@ export const unblockCustomer = async (req, res) => {
     return res.redirect("/admin/users");
   } catch (error) {
     console.error("Error in unblocking user in admin side :", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "users",
+     });
   }
 };

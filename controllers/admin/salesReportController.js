@@ -35,7 +35,9 @@ export const loadSalesReport = async (req, res) => {
     });
   } catch (err) {
     console.error("Sales report error:", err.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "sales-report",
+    });
   }
 };
 
@@ -114,7 +116,9 @@ export const downloadSalesReportPDF = async (req, res) => {
     doc.end();
   } catch (err) {
     console.error("PDF error:", err.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "sales-report",
+     });
   }
 };
 
@@ -174,6 +178,8 @@ export const downloadSalesReportExcel = async (req, res) => {
     res.end();
   } catch (err) {
     console.error("Excel error:", err.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "sales-report",
+    });
   }
 };

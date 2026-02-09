@@ -39,7 +39,9 @@ export const categoryInfo = async (req, res) => {
   } catch (error) {
     console.error("Error in CategoryInfo ", error.message);
 
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "category",
+    }); 
   }
 };
 
@@ -50,7 +52,9 @@ export const getAddCategoryPage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in addCategory page loading : ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "category",
+    });
   }
 };
 export const addCategory = async (req, res) => {
@@ -91,6 +95,8 @@ export const addCategory = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal Server Error"
+    }).render("admin/errors/500", {
+      page: "category",
     });
   }
 };
@@ -104,7 +110,9 @@ export const listCategory = async (req, res) => {
     return res.redirect("/admin/category");
   } catch (error) {
     console.error("Error in listing category :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "category",
+    });
   }
 };
 
@@ -116,7 +124,9 @@ export const unlistCategory = async (req, res) => {
     return res.redirect("/admin/category");
   } catch (error) {
     console.error("Error in listing category :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "category",
+    });
   }
 };
 
@@ -132,7 +142,9 @@ export const geteditCategoryPage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in addCategory page loading : ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "category",
+    });
   }
 };
 
@@ -173,6 +185,8 @@ export const editCategory = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal Server Error"
+    }).render("admin/errors/500", {
+      page: "category", 
     });
   }
 };

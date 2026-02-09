@@ -26,7 +26,9 @@ export const loadStockPage = async (req, res) => {
     });
   } catch (error) {
     console.error("Load stock error:", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "stock",
+     });
   }
 };
 
@@ -55,6 +57,8 @@ export const updateStock = async (req, res) => {
     });
   } catch (error) {
     console.error("Update stock error:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("admin/errors/500", {
+      page: "stock",
+     });
   }
 };

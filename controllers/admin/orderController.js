@@ -53,7 +53,9 @@ export const loadAdminOrders = async (req, res) => {
     });
   } catch (error) {
     console.error("Admin order list eror : ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "orders",
+    });
   }
 };
 
@@ -69,7 +71,9 @@ export const loadAdminOrderDetail = async (req, res) => {
     res.render("admin/order-details", { order });
   } catch (error) {
     console.error("Admin order detail error: ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "orders",
+    });
   }
 };
 
@@ -82,7 +86,9 @@ export const updateOrderStatus = async (req, res) => {
     res.redirect(`/admin/orders/${req.params.id}`);
   } catch (error) {
     console.error("Update order status error : ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "orders",
+    });
   }
 };
 
@@ -92,7 +98,9 @@ export const deleteOrder = async (req, res) => {
     res.redirect("/admin/orders");
   } catch (error) {
     console.error("Delete order error : ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "orders",
+    });
   }
 };
 
@@ -141,7 +149,9 @@ export const updateReturnStatus = async (req, res) => {
     res.redirect(`/admin/orders/${req.params.id}`);
   } catch (error) {
     console.error("Update return status error : ", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "orders",
+    });
   }
 };
 
@@ -223,6 +233,8 @@ export const updateReturnItemStatus = async (req, res) => {
     res.redirect(`/admin/orders/${id}`);
   } catch (error) {
     console.error("Update return item status error:", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "orders", 
+    });
   }
 };

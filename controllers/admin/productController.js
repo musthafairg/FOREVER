@@ -6,7 +6,6 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
 import { promisify } from "util";
-import { error } from "console";
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -21,7 +20,9 @@ export const getAddProductPage = async (req, res) => {
   } catch (error) {
     console.error("Error in loading addProducts page :", error.message);
 
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "products",
+    });
   }
 };
 
@@ -88,7 +89,13 @@ export const addProducts = async (req, res) => {
     }
   } catch (error) {
     console.error("Error saving product :", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    }).render("admin/errors/500", {
+      page: "products",
+    });
+
   } finally {
     for (const filePath of originalFilePaths) {
       try {
@@ -147,7 +154,9 @@ export const productInfo = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in loading products page: ", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "products",
+    });
   }
 };
 
@@ -159,7 +168,9 @@ export const blockProduct = async (req, res) => {
     return res.redirect("/admin/products");
   } catch (error) {
     console.error("Error in Block Product : ", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "products",
+    });
   }
 };
 
@@ -172,7 +183,9 @@ export const unblockProduct = async (req, res) => {
     return res.redirect("/admin/products");
   } catch (error) {
     console.error("Error in Block Product : ", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "products",
+    });
   }
 };
 
@@ -191,7 +204,10 @@ export const getEditProduct = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in loading Edit Product page :", error.message);
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "products",
+    });
+
   }
 };
 
@@ -271,6 +287,8 @@ export const editProduct = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error",
+    }).render("admin/errors/500", {
+      page: "products",
     });
   }
 };
@@ -307,6 +325,8 @@ export const deleteSingleImage = async (req, res) => {
   } catch (error) {
     console.error("Error deleting single image", error.message);
 
-    return res.status(500).send("Server Error");
+    return res.status(500).render("admin/errors/500", {
+      page: "products",
+    });
   }
 };

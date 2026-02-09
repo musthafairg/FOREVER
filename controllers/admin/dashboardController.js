@@ -26,7 +26,9 @@ export const loadDashboard = async (req, res) => {
     });
   } catch (error) {
     console.error("Dashboard Load Error:", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "dashboard",
+    });
   }
 };
 export const getDashboardData = async (req, res) => {
@@ -178,6 +180,8 @@ export const getDashboardData = async (req, res) => {
 
   } catch (error) {
     console.error("Dashboard Data Error:", error);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("admin/errors/500", {
+      page: "dashboard",
+    });
   }
 };

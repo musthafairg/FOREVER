@@ -15,7 +15,9 @@ export const loadProductOffers = async (req, res) => {
     });
   } catch (error) {
     console.error("Load Product Offers Error:", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "offers", 
+    });
   }
 };
 
@@ -40,7 +42,9 @@ export const addProductOffer = async (req, res) => {
     });
   } catch (error) {
     console.error("Add Product Offer Error:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("admin/errors/500", {
+      page: "offers", 
+    });
   }
 };
 
@@ -61,7 +65,9 @@ export const toggleProductOffer = async (req, res) => {
     });
   } catch (error) {
     console.error("Toggle Product Offer Error:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("admin/errors/500", {
+      page: "offers", 
+    });
   }
 };
 
@@ -77,7 +83,9 @@ export const loadCategoryOffers = async (req, res) => {
     });
   } catch (error) {
     console.error("Load Category Offers Error:", error.message);
-    res.status(500).send("Server Error");
+    res.status(500).render("admin/errors/500", {
+      page: "offers", 
+    });
   }
 };
 
@@ -102,7 +110,9 @@ export const addCategoryOffer = async (req, res) => {
     });
   } catch (error) {
     console.error("Add Category Offer Error:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("admin/errors/500", {
+      page: "offers", 
+    });
   }
 };
 
@@ -123,6 +133,8 @@ export const toggleCategoryOffer = async (req, res) => {
     });
   } catch (error) {
     console.error("Toggle Category Offer Error:", error.message);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false }).render("admin/errors/500", {
+      page: "offers", 
+    });
   }
 };
