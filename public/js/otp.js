@@ -4,7 +4,7 @@ const timerDisplay=document.getElementById("timer")
 const resendBtn=document.getElementById("resendBtn")
 
 
-//move cursor automatic
+
 
 const inputs=document.querySelectorAll(".otp-inputs input")
 

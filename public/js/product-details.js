@@ -2,7 +2,7 @@
 
 
           const qtyEl = document.getElementById("quantity");
-          const maxStock = <%= product.quantity %>;
+          const maxStock = parseInt(quantity);
           const MAX_LIMIT = 5;
           const MAX_ALLOWED = Math.min(maxStock, MAX_LIMIT);
 

@@ -1,102 +1,94 @@
-
-  
-
-  
 const SUBTOTAL = window.SUBTOTAL;
-document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document
+  .getElementById("checkoutForm")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  console.log("Checkout JS loaded");
-  const formData = new FormData(e.target);
-  const payload = Object.fromEntries(formData.entries());
+    console.log("Checkout JS loaded");
+    const formData = new FormData(e.target);
+    const payload = Object.fromEntries(formData.entries());
 
-  console.log("Payload:", payload);
+    console.log("Payload:", payload);
 
-  const res = await fetch("/checkout/place-order", {
-    method: "POST",
-    headers: { "Content-Type":"application/json" },
-    body: JSON.stringify(payload)
-  });
-
-  
-
-  const data = await res.json();
-  console.log("Response Data:", data);
-
-  if (!data.success) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Order Placement Failed',
-      text: data.message || 'There was an issue placing your order. Please try again.',
-    });
-    return;
-  }
-
-  
-
-  if (payload.paymentMethod === "COD") {
-    window.location.href = data.redirect;
-    return;
-  }
-  if (payload.paymentMethod === "WALLET") {
-    if(data.success){
-      window.location.href = data.redirect;
-      return;   
-    }else{
-      Swal.fire({
-        icon: 'error',
-        title: 'Insufficient Wallet Balance',
-        text: data.message||'Your wallet balance is insufficient for this order.',
-      });
-    }  
-    return; 
-  }
-    
-    
-
-
-  const options = {
-    key: data.key,
-    amount: data.amount,
-    currency: "INR",
-    name: "FOREVER",
-    order_id: data.razorpayOrderId,
-    handler: async function (response) {
-      const verify = await fetch("/payment/verify",{
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({
-          ...response,
-          orderId: data.dbOrderId
-        })
-      });
-
-      const result = await verify.json();
-      if(result.success){
-        window.location.href="/order-success";
-      }else{
-        window.location.href="/order-failure";
-      }
-    },
-
-  modal: {
-  ondismiss: async function () {
-    await fetch("/payment/failed", {
+    const res = await fetch("/checkout/place-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId: data.dbOrderId })
+      body: JSON.stringify(payload),
     });
 
-    window.location.href = "/order-failure";
-  },
-},
+    const data = await res.json();
+    console.log("Response Data:", data);
 
-  };
+    if (!data.success) {
+      Swal.fire({
+        icon: "error",
+        title: "Order Placement Failed",
+        text:
+          data.message ||
+          "There was an issue placing your order. Please try again.",
+      });
+      return;
+    }
 
-  new Razorpay(options).open();
-});
+    if (payload.paymentMethod === "COD") {
+      window.location.href = data.redirect;
+      return;
+    }
+    if (payload.paymentMethod === "WALLET") {
+      if (data.success) {
+        window.location.href = data.redirect;
+        return;
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Insufficient Wallet Balance",
+          text:
+            data.message ||
+            "Your wallet balance is insufficient for this order.",
+        });
+      }
+      return;
+    }
 
+    const options = {
+      key: data.key,
+      amount: data.amount,
+      currency: "INR",
+      name: "FOREVER",
+      order_id: data.razorpayOrderId,
+      handler: async function (response) {
+        const verify = await fetch("/payment/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...response,
+            orderId: data.dbOrderId,
+          }),
+        });
 
+        const result = await verify.json();
+        if (result.success) {
+          window.location.href = "/order-success";
+        } else {
+          window.location.href = "/order-failure";
+        }
+      },
+
+      modal: {
+        ondismiss: async function () {
+          await fetch("/payment/failed", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: data.dbOrderId }),
+          });
+
+          window.location.href = "/order-failure";
+        },
+      },
+    };
+
+    new Razorpay(options).open();
+  });
 
 async function applyCoupon() {
   const code = document.getElementById("couponCode").value;
@@ -105,7 +97,7 @@ async function applyCoupon() {
     const errorEl = document.getElementById("errorCoupon");
     errorEl.innerText = "Please enter a coupon code.";
     return;
-  }else {
+  } else {
     document.getElementById("errorCoupon").innerText = "";
   }
 
@@ -114,7 +106,8 @@ async function applyCoupon() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       code,
-      subtotal: SUBTOTAL    })
+      subtotal: SUBTOTAL,
+    }),
   });
 
   const data = await res.json();
@@ -132,14 +125,7 @@ async function removeCoupon() {
   location.reload();
 }
 
-
-
-
 function applyCouponFromList(code) {
   document.getElementById("couponCode").value = code;
   applyCoupon();
 }
-
-
-
-
