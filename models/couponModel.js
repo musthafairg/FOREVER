@@ -31,7 +31,7 @@ const couponSchema = new Schema(
     },
     usageLimit: {
       type: Number,
-      default: 1
+      default: 10
     },
     usedCount: {
       type: Number,

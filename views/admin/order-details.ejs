@@ -152,7 +152,7 @@
               <th>Offer Price</th>
               <th>Qty</th>
               <th>Total</th>
-              <th>Status</th>
+              <!-- <th>Status</th> -->
               <th>Return Status</th>
             </tr>
           </thead>
@@ -169,7 +169,7 @@
                 <td>₹ <%= item.offerPrice %></td>
                 <td><%= item.quantity %></td>
                 <td>₹ <%= item.itemTotal %></td>
-                <td>
+                <!-- <td>
                   <% if(item.isCancelled){ %>
                     <span class="badge bg-danger">Cancelled</span>
                   <% } %>
@@ -177,7 +177,7 @@
                   <% if(item.isCancelled===false && item.returnStatus==="NONE"){ %>
                     <span class="badge bg-success">Active</span>
                   <% } %>
-                </td>
+                </td> -->
                 <td><%= item.returnStatus %>
 
                   <% if (item.returnStatus === "REQUESTED" && item.isCancelled===false && order.orderStatus !== "Returned") { %>
