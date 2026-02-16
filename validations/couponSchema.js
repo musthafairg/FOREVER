@@ -22,6 +22,12 @@ export const couponSchema = z.object({
         .min(0, "Minimum purchase cannot be negative")
         .optional(),
 
+      maxPurchase: z.coerce
+        .number()
+        .min(0, "Maximum purchase cannot be negative")
+        .optional(),
+
+
       maxDiscount: z.coerce
         .number()
         .min(0, "Maximum discount cannot be negative")
@@ -40,7 +46,7 @@ export const couponSchema = z.object({
         .optional(),
     })
     .superRefine((data, ctx) => {
-      const { discountType, discountValue, minPurchase } = data;
+      const { discountType, discountValue, minPurchase , maxPurchase } = data;
 
       if (minPurchase !== undefined) {
     
@@ -57,6 +63,35 @@ export const couponSchema = z.object({
             message: "Minimum purchase must be greater than 0",
           });
         }
+
+        if(discountType==="PERCENT")  {
+          const maxPossibleDiscount = (minPurchase * discountValue) / 100;
+          if (maxPossibleDiscount > minPurchase) {
+            ctx.addIssue({
+              path: ["discountValue"],
+              message: "Discount percentage is too high for the minimum purchase",
+            });
+          }
+        }
+
+        if(maxPurchase !== undefined && minPurchase > maxPurchase) {
+          ctx.addIssue({
+            path: ["maxPurchase"],
+            message: "Maximum purchase must be greater than or equal to minimum purchase",
+          });
+        }
+
+        if(maxPurchase !== undefined && discountType === "PERCENT") {
+          const maxPossibleDiscount = (maxPurchase * discountValue) / 100;
+          if (maxPossibleDiscount > maxPurchase) {
+            ctx.addIssue({
+              path: ["discountValue"],
+              message: "Discount percentage is too high for the maximum purchase",
+            });
+          }
+        }
+        
+
       }
     }),
 });

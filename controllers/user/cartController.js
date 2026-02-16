@@ -94,7 +94,8 @@ export const addToCart = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "Please login first",
-      });
+        redirect: "/login",
+      })
     }
 
     const userId = req.session.user._id;

@@ -1,59 +1,88 @@
 <style>
   .user-dropdown {
+    position: relative;
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .user-pill {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .user-pill:hover {
+    background: #eaeaea;
+  }
+
+  .user-menu {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    width: 140px;
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0px 4px 18px rgba(0, 0, 0, 0.15);
+    padding: 6px 0;
+    z-index: 999;
+  }
+
+  .user-menu a {
+    display: block;
+    padding: 10px 16px;
+    color: #222;
+    font-size: 15px;
+    text-decoration: none;
+  }
+
+  .user-menu a:hover {
+    background: #f5f5f5;
+  }
+
+  .user-dropdown:hover .user-menu {
+    display: block;
+  }
+
+  .wishlist-icon-wrapper {
   position: relative;
   display: inline-block;
-  font-family: "Inter", sans-serif;
 }
 
-
-.user-pill {
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  padding: 6px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #333;
-}
-
-.user-pill:hover {
-  background: #eaeaea;
-}
-
-
-.user-menu {
-  display: none;
+.wishlist-badge {
   position: absolute;
-  top: 30px; 
-  left: 0;
-  width: 140px;
-  background: #ffffff;
-  border-radius: 4px;
-  box-shadow: 0px 4px 18px rgba(0,0,0,0.15);
-  padding: 6px 0;
-  z-index: 999;
+  top: -13px;
+  right: -12px;
+  background: #e63946;
+  border: #1d035a solid 1px;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: 600;
+  min-width: 18px;
+  text-align: center;
 }
 
-
-.user-menu a {
-  display: block;
-  padding: 10px 16px;
-  color: #222;
-  font-size: 15px;
-  text-decoration: none;
-}
-
-.user-menu a:hover {
-  background: #f5f5f5;
-}
-
-
-.user-dropdown:hover .user-menu {
-  display: block;
+.cart-badge {
+  position: absolute;
+  top: -13px;
+  right: -8px;
+  background: #1d035a;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: 600;
+  min-width: 18px;
+  text-align: center;
 }
 
 </style>
-
 
 <header class="site-header">
   <div class="navbar">
@@ -65,32 +94,39 @@
       <ul>
         <li><a href="/">HOME</a></li>
         <li><a href="/shop">SHOP</a></li>
-        <!-- <li><a href="/about">ABOUT</a></li>
-        <li><a href="/contact">CONTACT</a></li> -->
       </ul>
     </nav>
 
-          <div class="header-right">
-            <% if (locals.user) { %>
-              <div class="user-dropdown">
-           <button type="button" class="user-pill">
-           <%= locals.user.name %>
-          </button>
+    <div class="header-right">
+      <% if (locals.user) { %>
+      <div class="user-dropdown">
+        <button type="button" class="user-pill"><%= locals.user.name %></button>
 
         <div class="user-menu">
           <a href="/user-profile">Profile</a>
           <a href="/logout">Logout</a>
-         </div>
-       </div>
+        </div>
+      </div>
       <% } else { %>
-        <a href="/signup" class="sign-in-link">Sign Up</a>
-        <a href="/login" class="sign-in-link">Log in</a>
+      <a href="/signup" class="sign-in-link">Sign Up</a>
+      <a href="/login" class="sign-in-link">Log in</a>
       <% } %>
 
       <div class="icons">
-       <a href="/wishlist"> <i class="fa-regular fa-heart"></i></a>
+        <a href="/wishlist" class="wishlist-icon-wrapper">
+          <i class="fa-regular fa-heart"></i>
+
+          <% if (wishlistCount > 0) { %>
+          <span class="wishlist-badge"> <%= wishlistCount %> </span>
+          <% } %>
+        </a>
+
         <i class="fa-solid fa-magnifying-glass"></i>
-       <a href="/cart"> <i class="fa-solid fa-bag-shopping"></i></a>
+        <a href="/cart" class="wishlist-icon-wrapper"> <i class="fa-solid fa-bag-shopping"></i>
+        <% if (cartCount > 0) { %>
+          <span class="cart-badge"> <%= cartCount %> </span>
+          <% } %>
+        </a>
         <i class="fa-solid fa-bars menu-toggle"></i>
       </div>
     </div>

@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Payment Failed | Forever</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/order-failure.css">
- 
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Payment Failed | Forever</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/order-failure.css" />
+  </head>
 
-<body>
-<%- include('../partials/user/header.ejs') %>
+  <body>
+    <%- include('../partials/user/header.ejs') %>
 
-<div class="failure-wrapper">
-  <div class="failure-icon">✖</div>
-  <h2>Payment Failed</h2>
-  <p>Your transaction could not be completed. Please try again.</p>
+    <div class="failure-wrapper">
+      <div class="failure-icon">✖</div>
+      <h2>Payment Failed</h2>
+      <p>Your transaction could not be completed. Please try again.</p>
 
-  <div class="failure-actions">
-    <a href="/orders" class="btn-outline">View Order</a>
-    <a href="/checkout" class="btn-dark">Retry Payment</a>
-  </div>
-</div>
+      <div class="failure-actions">
+        <a href="/orders" class="btn-outline">View Order</a>
+        <a href="/shop" class="btn-dark">Continue Shopping</a>
+      </div>
+    </div>
 
-<%- include('../partials/user/footer.ejs') %>
-</body>
+    <%- include('../partials/user/footer.ejs') %>
+  </body>
 </html>
