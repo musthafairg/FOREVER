@@ -286,10 +286,11 @@ export const loadOrderDetail = async (req, res) => {
     order
       .save()
       .then(() => {
-        console.log("Order price details updated based on active items");
+        console.log("Order details updated successfully");
+      
       })
       .catch((err) => {
-        console.error("Error updating order price details:", err);
+        console.error("Error updating order details:", err.message);
       });
 
     const subtotal = activeItems.reduce((sum, i) => sum + i.itemTotal, 0);
@@ -385,46 +386,71 @@ export const cancelOrderItem = async (req, res) => {
 
     if (!order) return res.json({ success: false });
 
-    const item = order.items.find((i) => i.productId.toString() === productId);
+    const item = order.items.find(
+      (i) => i.productId.toString() === productId
+    );
 
     if (!item || item.isCancelled) {
       return res.json({ success: false });
     }
 
+
     const product = await Product.findById(productId);
-    const variant = product.variants.find((v) => v.size === item.size);
+    const variant = product?.variants.find(v => v.size === item.size);
 
     if (variant) {
       variant.quantity += item.quantity;
       await product.save();
     }
 
-    item.isCancelled = true;
-    item.cancelReason = reason;
-
-    const activeItems = order.items.filter((i) => !i.isCancelled);
-
-    const newSubtotal = activeItems.reduce((sum, i) => sum + i.itemTotal, 0);
-
-    const newTax = Math.round(newSubtotal * 0.05);
+ 
 
     const originalSubtotal = order.priceDetails.subtotal;
     const originalDiscount = order.priceDetails.discount;
 
-    let adjustedDiscount = 0;
+    const itemSubtotal = item.itemTotal;
+    const itemTax = Math.round(itemSubtotal * 0.05);
 
-    if (originalSubtotal > 0) {
-      adjustedDiscount = Math.round(
-        (newSubtotal / originalSubtotal) * originalDiscount,
+    let proportionalDiscount = 0;
+
+    if (originalSubtotal > 0 && originalDiscount > 0) {
+      proportionalDiscount = Math.round(
+        (itemSubtotal / originalSubtotal) * originalDiscount
       );
     }
 
-    const newTotal = newSubtotal + newTax - adjustedDiscount;
+    const refundAmount =
+      itemSubtotal + itemTax - proportionalDiscount;
+
+
+    item.isCancelled = true;
+    item.cancelReason = reason;
+
+
+
+    const activeItems = order.items.filter(i => !i.isCancelled);
+
+    const newSubtotal = activeItems.reduce(
+      (sum, i) => sum + i.itemTotal,
+      0
+    );
+
+    const newTax = Math.round(newSubtotal * 0.05);
+
+    let newDiscount = 0;
+
+    if (originalSubtotal > 0 && originalDiscount > 0) {
+      newDiscount = Math.round(
+        (newSubtotal / originalSubtotal) * originalDiscount
+      );
+    }
+
+    const newTotal = newSubtotal + newTax - newDiscount;
 
     order.priceDetails.subtotal = newSubtotal;
     order.priceDetails.tax = newTax;
-    order.priceDetails.discount = adjustedDiscount;
-    order.priceDetails.total = newTotal;
+    order.priceDetails.discount = newDiscount;
+    order.priceDetails.total = newTotal < 0 ? 0 : newTotal;
 
     if (activeItems.length === 0) {
       order.orderStatus = "Cancelled";
@@ -432,21 +458,28 @@ export const cancelOrderItem = async (req, res) => {
 
     await order.save();
 
-    if (order.paymentMethod !== "COD" && order.paymentStatus === "PAID") {
-      const refundAmount = item.itemTotal;
+   
+
+    if (
+      refundAmount > 0 &&
+      order.paymentMethod !== "COD" &&
+      order.paymentStatus === "PAID"
+    ) {
       await creditWallet(
         req.session.user._id,
         refundAmount,
-        `Refund for cancelled item ${item.productName} in order ${order.orderId}`,
+        `Refund for cancelled item ${item.productName} in order ${order.orderId}`
       );
     }
 
     res.json({ success: true });
+
   } catch (error) {
     console.error("Cancel order item error:", error);
     res.status(500).json({ success: false });
   }
 };
+
 
 export const returnOrder = async (req, res) => {
   try {
