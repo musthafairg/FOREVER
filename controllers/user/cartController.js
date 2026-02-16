@@ -7,6 +7,10 @@ const Max_QUANTITY_PER_PRODUCT = 5;
 
 export const loadCart = async (req, res) => {
   try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
     const userId = req.session.user._id;
     const user = await User.findById(userId);
 
@@ -25,23 +29,49 @@ export const loadCart = async (req, res) => {
 
     cart.items = cart.items.filter((item) => {
       const p = item.productId;
-      return p && !p.isBlocked && p.status === "Available" && p.quantity > 0;
+
+      if (!p || p.isBlocked || p.status !== "Available") {
+        return false;
+      }
+
+      const selectedVariant = p.variants.find((v) => v.size === item.size);
+
+      return selectedVariant && selectedVariant.quantity > 0;
     });
 
     let subtotal = 0;
 
     const cartItemsWithOffer = await Promise.all(
       cart.items.map(async (item) => {
-        const offer = await applyBestOffer(item.productId);
+        const product = item.productId;
 
-        const itemTotal = offer.finalPrice * item.quantity;
+        const selectedVariant = product.variants.find(
+          (v) => v.size === item.size,
+        );
+
+        if (!selectedVariant) return null;
+
+        const offer = await applyBestOffer(product);
+        const discountPercent = offer.discountPercent || 0;
+
+        const originalPrice = selectedVariant.price;
+
+        const finalPrice =
+          discountPercent > 0
+            ? Math.round(
+                originalPrice - (originalPrice * discountPercent) / 100,
+              )
+            : originalPrice;
+
+        const itemTotal = finalPrice * item.quantity;
+
         subtotal += itemTotal;
 
         return {
           ...item.toObject(),
-          finalPrice: offer.finalPrice,
-          originalPrice: offer.originalPrice,
-          discountPercent: offer.discountPercent,
+          finalPrice,
+          originalPrice,
+          discountPercent,
           itemTotal,
         };
       }),
@@ -60,36 +90,52 @@ export const loadCart = async (req, res) => {
 
 export const addToCart = async (req, res) => {
   try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Please login first",
+      });
+    }
+
     const userId = req.session.user._id;
-    const { productId, quantity = 1 } = req.body;
+    const { productId, quantity = 1, size } = req.body;
 
     const product = await Product.findById(productId);
 
-    if (
-      !product ||
-      product.isBlocked ||
-      product.status !== "Available" ||
-      product.quantity <= 0
-    ) {
+    if (!product || product.isBlocked || product.status !== "Available") {
       return res.json({
         success: false,
         message: "Product unavailable",
       });
     }
 
-    const category = await Category.findById(product.category);
-
-    if (!category || !category.isListed) {
+    if (!size) {
       return res.json({
         success: false,
-        message: "Category unavailable",
+        message: "Please select a size",
       });
     }
 
-    if (quantity > product.quantity || quantity > Max_QUANTITY_PER_PRODUCT) {
+    const selectedVariant = product.variants.find((v) => v.size === size);
+
+    if (!selectedVariant || selectedVariant.quantity <= 0) {
       return res.json({
         success: false,
-        message: "Quantity exceeds allowed limit",
+        message: "Selected size out of stock",
+      });
+    }
+
+    if (quantity > selectedVariant.quantity) {
+      return res.json({
+        success: false,
+        message: "Not enough stock",
+      });
+    }
+
+    if (quantity > Max_QUANTITY_PER_PRODUCT) {
+      return res.json({
+        success: false,
+        message: "Maximum limit reached",
       });
     }
 
@@ -98,34 +144,37 @@ export const addToCart = async (req, res) => {
     if (!cart) {
       cart = new Cart({
         userId,
-        items: [{ productId, quantity }],
+        items: [],
       });
-    } else {
-      const itemIndex = cart.items.findIndex(
-        (item) => item.productId.toString() === productId,
-      );
-
-      if (itemIndex > -1) {
-        const newQuantity = cart.items[itemIndex].quantity + quantity;
-        if (newQuantity > Max_QUANTITY_PER_PRODUCT) {
-          return res.json({
-            success: false,
-            message: "Maximum limit reached",
-          });
-        }
-
-        if (newQuantity > product.quantity) {
-          return res.json({
-            success: false,
-            message: "Out of stock for the requested quantity",
-          });
-        }
-
-        cart.items[itemIndex].quantity = newQuantity;
-      } else {
-        cart.items.push({ productId, quantity });
-      }
     }
+
+    const existingItem = cart.items.find(
+      (item) => item.productId.toString() === productId && item.size === size,
+    );
+
+    if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity;
+
+      if (
+        newQuantity > selectedVariant.quantity ||
+        newQuantity > Max_QUANTITY_PER_PRODUCT
+      ) {
+        return res.json({
+          success: false,
+          message: "Quantity exceeds limit",
+        });
+      }
+
+      existingItem.quantity = newQuantity;
+    } else {
+      cart.items.push({
+        productId,
+        size,
+        quantity,
+        price: selectedVariant.price,
+      });
+    }
+
     await cart.save();
 
     return res.json({
@@ -133,54 +182,41 @@ export const addToCart = async (req, res) => {
       message: "Added to cart",
     });
   } catch (error) {
-    console.error("Add to cart error : ", error.message);
+    console.error("Add to cart error:", error);
     return res.status(500).json({
       success: false,
-    }).render("errors/500");
+      message: "Server error",
+    });
   }
 };
 
 export const updateCartQuantity = async (req, res) => {
   try {
-    const { productId, action } = req.body;
+    const { productId, size, action } = req.body;
     const userId = req.session.user._id;
 
     const cart = await Cart.findOne({ userId });
-    if (!cart) {
-      return res.json({
-        success: false,
-        message: "Cart not found",
-      });
-    }
-    const item = cart.items.find((i) => i.productId.toString() === productId);
+    if (!cart) return res.json({ success: false, message: "Cart not found" });
 
-    if (!item)
-      return res.json({
-        success: false,
-        message: "Item not found",
-      });
+    const item = cart.items.find(
+      (i) => i.productId.toString() === productId && i.size === size,
+    );
+
+    if (!item) return res.json({ success: false, message: "Item not found" });
+
     const product = await Product.findById(productId);
 
-    if (
-      product.isBlocked ||
-      product.status !== "Available" ||
-      product.quantity <= 0
-    ) {
-      return res.json({ success: false, message: "Product unavailable" });
-    }
+    const selectedVariant = product.variants.find((v) => v.size === size);
+
+    if (!selectedVariant)
+      return res.json({ success: false, message: "Size not found" });
 
     if (action === "inc") {
-      if (item.quantity >= Max_QUANTITY_PER_PRODUCT) {
-        return res.json({
-          success: false,
-          message: "Limit reached",
-        });
-      } else if (item.quantity >= product.quantity) {
-        return res.json({
-          success: false,
-          message: "Out of stock",
-        });
-      }
+      if (item.quantity >= Max_QUANTITY_PER_PRODUCT)
+        return res.json({ success: false, message: "Limit reached" });
+
+      if (item.quantity >= selectedVariant.quantity)
+        return res.json({ success: false, message: "Out of stock" });
 
       item.quantity++;
     }
@@ -197,20 +233,19 @@ export const updateCartQuantity = async (req, res) => {
     });
   } catch (error) {
     console.error("Update cart qty error:", error);
-    return res.status(500).json({ success: false }).render("errors/500");
+    return res.status(500).json({ success: false });
   }
 };
-
 export const removeFromCart = async (req, res) => {
   try {
     const userId = req.session.user._id;
-    const { productId } = req.body;
+    const { productId, size } = req.body;
 
-    await Cart.updateOne({ userId }, { $pull: { items: { productId } } });
+    await Cart.updateOne({ userId }, { $pull: { items: { productId, size } } });
 
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (error) {
-    console.error("Remove cart item error :", error.message);
-    res.status(500).json({ success: false }).render("errors/500");
+    console.error("Remove cart item error:", error.message);
+    return res.status(500).json({ success: false });
   }
 };

@@ -1,143 +1,142 @@
+let selectedProductId = null;
+let selectedVariant = null;
 
-
-
-function showMessage(message, type = "success") {
-  const modalTitle = document.getElementById("modalTitle");
-  const modalMessage = document.getElementById("modalMessage");
-  const modalIcon = document.getElementById("modalIcon");
-
-  if (type === "success") {
-    modalTitle.innerText = "Success";
-    modalIcon.innerHTML = `<i class="fas fa-check-circle modal-success"></i>`;
+function handleAddToCart(productId, sizes) {
+  if (sizes && sizes.length > 0) {
+    selectedProductId = productId;
+    openSizeModal(sizes);
   } else {
-    modalTitle.innerText = "Error";
-    modalIcon.innerHTML = `<i class="fas fa-times-circle modal-error"></i>`;
+    addToCart(productId, null);
   }
-
-  modalMessage.innerText = message;
-
-  const modalEl = document.getElementById("messageModal");
-  const modal = new bootstrap.Modal(modalEl);
-  modal.show();
-
-  setTimeout(() => {
-    modal.hide();
-  }, 1800);
 }
 
+function openSizeModal(variants) {
+  const modal = document.getElementById("sizeModal");
+  const container = document.getElementById("sizeOptions");
 
-  async function toggleWishlist(productId) {
-    try {
-      const res = await fetch("/wishlist/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId })
-      });
+  container.innerHTML = "";
+  selectedVariant = null;
 
-      const data = await res.json();
-
-      if (data.success) {
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Wishlist Updated",
-          text: "Product added to wishlist",
-          showConfirmButton: false,
-          timer: 1500
-        });
-      } else {
-        Swal.fire({
-          position: "top-end",
-          icon: "error",
-          title: "Failed",
-          text: "Unable to update wishlist",
-          showConfirmButton: false,
-          timer: 1500
-        });
-      }
-    } catch (err) {
-          Swal.fire({
-        position: "top-end",  
-        icon: "error",
-        title: "Error",
-        text: "An error occurred",
-        showConfirmButton: false,
-        timer: 1500
-      });
-      console.error(err);
-
-
-    }
-  }
-
-
-  
-  async function removeWishlist(productId) {
-    const res = await fetch("/wishlist/remove", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId })
-    });
-
-    const data = await res.json();
-  if (data.success){
- 
-     console.log("Removed from wishlist");
-     setTimeout(() => {
-      location.reload();
-    
-    }, 1500);
-
-  } else {
-    Swal.fire({
-      position: "top-end",
+  if (!variants || variants.length === 0) {
+    return Swal.fire({
       icon: "error",
-      title: "Failed to Remove",
+      title: "No sizes available",
+      timer: 1500,
       showConfirmButton: false,
-      timer: 1500 
     });
   }
+
+  variants.forEach((variant) => {
+    const btn = document.createElement("button");
+    btn.innerText = variant.size;
+    btn.className = "size-option-btn";
+
+    if (variant.quantity <= 0) {
+      btn.disabled = true;
+      btn.classList.add("out-of-stock");
+    }
+
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".size-option-btn")
+        .forEach((b) => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      selectedVariant = variant;
+
+      document.getElementById("variantDetails").style.display = "block";
+
+      if (variant.discountPercent > 0) {
+        document.getElementById("selectedPrice").innerHTML = `
+          <span style="text-decoration: line-through; color: gray;">
+            ₹${variant.originalPrice.toLocaleString("en-IN")}
+          </span>
+          <span style="color: red; font-weight: bold; margin-left:8px;">
+            ₹${variant.finalPrice.toLocaleString("en-IN")}
+          </span>
+          <span style="color: green; margin-left:6px;">
+            (${variant.discountPercent}% OFF)
+          </span>
+        `;
+      } else {
+        document.getElementById("selectedPrice").innerHTML =
+          `₹${variant.originalPrice.toLocaleString("en-IN")}`;
+      }
+
+      document.getElementById("selectedStock").innerText =
+        variant.quantity > 0 ? `${variant.quantity} available` : "Out of stock";
+    });
+
+    container.appendChild(btn);
+  });
+
+  modal.style.display = "flex";
 }
 
+function confirmSize() {
+  if (!selectedVariant) {
+    return Swal.fire({
+      icon: "warning",
+      title: "Please select a size",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  }
 
-  async function addToCart(productId) {
+  document.getElementById("sizeModal").style.display = "none";
 
+  addToCart(selectedProductId, selectedVariant.size);
+}
 
-      const btn = event.target;
-  btn.disabled = true;
-
+async function addToCart(productId, size = null) {
+  try {
     const res = await fetch("/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId, quantity: 1 })
+      body: JSON.stringify({
+        productId,
+        quantity: 1,
+        size,
+      }),
     });
 
     const data = await res.json();
-    btn.disabled = false;
 
     if (data.success) {
-     Swal.fire({
-      position: "top-end",
-      icon: "success",
-      title: data.message || "Added to Cart",
-      showConfirmButton: false,
-      timer: 1500 
-    });
-      
-  await removeWishlist(productId);
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Added to Cart",
+        showConfirmButton: false,
+        timer: 1500,
+      });
 
-      setTimeout(() => {
-      location.reload();
-    }, 2000);
-
+      setTimeout(() => location.reload(), 1500);
     } else {
-     Swal.fire({
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        title: data.message || "Failed to add",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
       position: "top-end",
       icon: "error",
-      title: "Failed to Add",
-      text: data.message || "Please try again",
+      title: "Something went wrong",
       showConfirmButton: false,
-      timer: 1500 
+      timer: 1500,
     });
-    }
   }
+}
+
+window.addEventListener("click", function (e) {
+  const modal = document.getElementById("sizeModal");
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});

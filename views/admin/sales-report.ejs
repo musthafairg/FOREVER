@@ -1,149 +1,144 @@
-<%- include('../partials/admin/header.ejs', )%>
+<%- include('../partials/admin/header.ejs')%>
+
 <div class="main-layout">
+
   <aside class="sidebar">
     <nav class="sidebar-nav">
       <ul>
         <li class="<%= locals.page === 'dashboard' ? 'active' : '' %>">
-          <a href="/admin" style="color: inherit; text-decoration: none">
-            <i class="fas fa-tachometer-alt"></i>
-            Dashboard
-          </a>
+          <a href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         </li>
 
         <li class="<%= locals.page === 'users' ? 'active' : '' %>">
-          <a href="/admin/users" style="color: inherit; text-decoration: none">
-            <i class="fas fa-users"></i>
-            Users
-          </a>
+          <a href="/admin/users"><i class="fas fa-users"></i> Users</a>
         </li>
+
         <li class="<%= locals.page === 'category' ? 'active' : '' %>">
-          <a
-            href="/admin/category"
-            style="
-              color: inherit;
-              text-decoration: none;
-              display: flex;
-              align-items: center;
-              width: 100%;
-              height: 100%;
-            "
-          >
-            <i class="fas fa-folder-open"></i>
-            Category
-          </a>
+          <a href="/admin/category"><i class="fas fa-folder-open"></i> Category</a>
         </li>
 
         <li class="<%= locals.page === 'products' ? 'active' : '' %>">
-          <a
-            href="/admin/products"
-            style="
-              color: inherit;
-              text-decoration: none;
-              display: flex;
-              align-items: center;
-              width: 100%;
-              height: 100%;
-            "
-          >
-            <i class="fas fa-list"></i>
-            Products
-          </a>
-        </li>
-        <li>
-          <a href="/admin/orders"><i class="fas fa-box"></i>Orders</a>
-        </li>
-        <li class="active">
-          <a href="/admin/sales-report"
-            ><i class="fas fa-chart-line"></i>Sales Report</a
-          >
+          <a href="/admin/products"><i class="fas fa-list"></i> Products</a>
         </li>
 
         <li>
-          <a href="/admin/stock"
-            ><i class="fa-solid fa-boxes-stacked"></i>Stock</a
-          >
+          <a href="/admin/orders"><i class="fas fa-box"></i> Orders</a>
         </li>
-        <li>
-          <a href="/admin/offers/product"
-            ><i class="fa-solid fa-tags"></i>Product Offer</a
-          >
+
+        <li class="active">
+          <a href="/admin/sales-report"><i class="fas fa-chart-line"></i> Sales Report</a>
         </li>
+
         <li>
-          <a href="/admin/offers/category"
-            ><i class="fa-solid fa-tags"></i>Category Offer</a
-          >
+          <a href="/admin/offers/product"><i class="fa-solid fa-tags"></i> Product Offer</a>
         </li>
+
         <li>
-          <a href="/admin/coupons"><i class="fa-solid fa-ticket"></i>Coupons</a>
+          <a href="/admin/offers/category"><i class="fa-solid fa-tags"></i> Category Offer</a>
+        </li>
+
+        <li>
+          <a href="/admin/coupons"><i class="fa-solid fa-ticket"></i> Coupons</a>
         </li>
       </ul>
     </nav>
   </aside>
 
+
+
   <main class="dashboard-content">
     <h2 class="mb-4">Sales Report</h2>
 
-<form method="GET" class="row g-3 mb-4">
-  <div class="col-md-3">
-    <select name="filter" class="form-select">
-      <option value="today" <%= filter === 'today' ? 'selected' : '' %>>Today</option>
-      <option value="week" <%= filter === 'week' ? 'selected' : '' %>>Last 7 Days</option>
-      <option value="month" <%= filter === 'month' ? 'selected' : '' %>>Last Month</option>
-      <option value="year" <%= filter === 'year' ? 'selected' : '' %>>Last Year</option>
-      <option value="custom" <%= filter === 'custom' ? 'selected' : '' %>>Custom</option>
-    </select>
-  </div>
+    <form method="GET" class="row g-3 mb-4">
+      <div class="col-md-3">
+        <select name="filter" class="form-select">
+          <option value="today" <%= filter === 'today' ? 'selected' : '' %>>Today</option>
+          <option value="week" <%= filter === 'week' ? 'selected' : '' %>>Last 7 Days</option>
+          <option value="month" <%= filter === 'month' ? 'selected' : '' %>>Last Month</option>
+          <option value="year" <%= filter === 'year' ? 'selected' : '' %>>Last Year</option>
+          <option value="custom" <%= filter === 'custom' ? 'selected' : '' %>>Custom</option>
+        </select>
+      </div>
 
-  <div class="col-md-3">
-    <input type="date" name="from" class="form-control" value="<%= from || '' %>" />
-  </div>
+      <div class="col-md-3">
+        <input type="date" name="from" class="form-control" value="<%= from || '' %>" />
+      </div>
 
-  <div class="col-md-3">
-    <input type="date" name="to" class="form-control" value="<%= to || '' %>" />
-  </div>
+      <div class="col-md-3">
+        <input type="date" name="to" class="form-control" value="<%= to || '' %>" />
+      </div>
 
-  <div class="col-md-3">
-    <button class="btn btn-dark w-100">Apply</button>
-  </div>
-</form>
+      <div class="col-md-3">
+        <button class="btn btn-dark w-100">Apply</button>
+      </div>
+    </form>
 
 
-    <div class="card p-3 mb-4">
-      <p><strong>Total Orders:</strong> <%= totalOrders %></p>
-      <p><strong>Total Sales:</strong> ₹ <%= totalSales %></p>
-      <p><strong>Total Discount:</strong> ₹ <%= totalDiscount %></p>
+
+  
+    <div class="card p-4 mb-4 shadow-sm">
+      <div class="row">
+        <div class="col-md-4">
+          <p><strong>Total Orders:</strong> <%= totalOrders %></p>
+          <p><strong>Total Items Sold:</strong> <%= totalItemsSold %></p>
+        </div>
+
+        <div class="col-md-4">
+          <p><strong>Gross Revenue:</strong> ₹ <%= grossRevenue %></p>
+          <p><strong>Total Discount:</strong> ₹ <%= totalDiscount %></p>
+          <p><strong>Total Tax:</strong> ₹ <%= totalTax %></p>
+        </div>
+
+        <div class="col-md-4">
+          <p><strong>Net Revenue:</strong> ₹ <%= netRevenue %></p>
+          <p><strong>Average Order Value:</strong> ₹ <%= averageOrderValue %></p>
+
+          <% if (topProduct) { %>
+            <p>
+              <strong>Top Product:</strong>
+              <%= topProduct[0] %> ( <%= topProduct[1] %> sold )
+            </p>
+          <% } %>
+        </div>
+      </div>
     </div>
+
+
+
 
     <div class="mb-3">
       <a
         href="/admin/sales-report/pdf?<%= new URLSearchParams({
-  filter,
-  ...(from && { from }),
-  ...(to && { to })
-})
- %>"
+          filter,
+          ...(from && { from }),
+          ...(to && { to })
+        }) %>"
         class="btn btn-danger"
-        >PDF</a
-      >
+      >Download PDF</a>
+
       <a
         href="/admin/sales-report/excel?<%= new URLSearchParams({
-  filter,
-  ...(from && { from }),
-  ...(to && { to })
-})
- %>"
+          filter,
+          ...(from && { from }),
+          ...(to && { to })
+        }) %>"
         class="btn btn-success"
-        >Excel</a
-      >
+      >Download Excel</a>
     </div>
 
-    <table class="table table-bordered">
-      <thead>
+
+
+   
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
         <tr>
           <th>Order ID</th>
           <th>Date</th>
-          <th>Total</th>
+          <th>Subtotal</th>
+          <th>Tax</th>
           <th>Discount</th>
+          <th>Total</th>
+          <th>Payment</th>
         </tr>
       </thead>
       <tbody>
@@ -151,11 +146,15 @@
         <tr>
           <td><%= o.orderId %></td>
           <td><%= o.createdAt.toDateString() %></td>
-          <td>₹ <%= o.priceDetails.total %></td>
+          <td>₹ <%= o.priceDetails.subtotal %></td>
+          <td>₹ <%= o.priceDetails.tax %></td>
           <td>₹ <%= o.priceDetails.discount || 0 %></td>
+          <td><strong>₹ <%= o.priceDetails.total %></strong></td>
+          <td><%= o.paymentMethod %></td>
         </tr>
         <% }) %>
       </tbody>
     </table>
+
   </main>
 </div>

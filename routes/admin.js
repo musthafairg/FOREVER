@@ -41,10 +41,6 @@ import {
 } from "../controllers/admin/orderController.js";
 import { validate } from "../middleware/validate.js";
 const uploads = multer({ storage });
-import {
-  loadStockPage,
-  updateStock,
-} from "../controllers/admin/stockController.js";
 import { updateStockSchema } from "../validations/stockSchema.js";
 import {
   addCategoryOffer,
@@ -132,11 +128,6 @@ router.post(
   adminAuth,
   updateReturnItemStatus,
 );
-
-//Stock Management
-
-router.get("/stock", adminAuth, loadStockPage);
-router.patch("/stock/:id", adminAuth, validate(updateStockSchema), updateStock);
 
 //Product Offers
 

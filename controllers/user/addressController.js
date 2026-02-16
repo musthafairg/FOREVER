@@ -87,10 +87,13 @@ export const addAddress = async (req, res) => {
     });
   } catch (error) {
     console.error("Add Address Error", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    }).render("errors/500");
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error",
+      })
+      .render("errors/500");
   }
 };
 

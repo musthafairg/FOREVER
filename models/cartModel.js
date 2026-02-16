@@ -17,7 +17,18 @@ const cartSchema =new Schema({
                 type:Number,
                 required:true,
                 min:1
+            },
+            size:{
+                type:String,
+                enum:["XS","S","M","L","XL","XXL"],
+                required:true
+            },
+            price:{
+                type:Number,
+                required:true,
+                min:0
             }
+            
         }
     ]
 },{timestamps:true})

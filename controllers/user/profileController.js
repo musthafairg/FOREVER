@@ -163,10 +163,13 @@ export const updateEmail = async (req, res) => {
   } catch (error) {
     console.error("Error in update email :", error.message);
 
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    }).render("errors/500");
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Internal server error",
+      })
+      .render("errors/500");
   }
 };
 
@@ -216,6 +219,9 @@ export const verifyOtpEmail = async (req, res) => {
   } catch (error) {
     console.error("Error verifying OTP", error.message);
 
-    res.status(500).json({ success: false, message: "An error occured." }).render("errors/500");
+    res
+      .status(500)
+      .json({ success: false, message: "An error occured." })
+      .render("errors/500");
   }
 };

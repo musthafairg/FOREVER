@@ -30,6 +30,7 @@ export const loadHomepage = async (req, res) => {
     const user = req.session.user;
 
     const products = await Product.find({ isBlocked: false })
+      .populate("category")
       .sort({ createdAt: -1 })
       .limit(10);
 
@@ -40,32 +41,53 @@ export const loadHomepage = async (req, res) => {
     const categoryOfferMap = new Map();
 
     productOffers.forEach((o) =>
-      productOfferMap.set(o.productId.toString(), o.discount),
+      productOfferMap.set(o.productId.toString(), o.discount)
     );
 
     categoryOffers.forEach((o) =>
-      categoryOfferMap.set(o.categoryId.toString(), o.discount),
+      categoryOfferMap.set(o.categoryId.toString(), o.discount)
     );
 
     const productsWithOffer = products.map((product) => {
-      const productDiscount = productOfferMap.get(product._id.toString()) || 0;
 
-      const categoryDiscount = categoryOfferMap.get(
-        product.category?._id.toString() || 0,
-      );
+      const productDiscount =
+        productOfferMap.get(product._id.toString()) || 0;
+
+      const categoryDiscount =
+        categoryOfferMap.get(product.category?._id.toString()) || 0;
 
       const maxDiscount = Math.max(productDiscount, categoryDiscount);
 
-      const finalPrice =
-        maxDiscount > 0
-          ? Math.round(
-              product.regularPrice - (product.regularPrice * maxDiscount) / 100,
-            )
-          : product.regularPrice;
+      // 🔥 Apply discount per variant
+      const updatedVariants = product.variants.map((variant) => {
+
+        const originalPrice = variant.price;
+
+        const discountAmount =
+          (originalPrice * maxDiscount) / 100;
+
+        const finalPrice =
+          maxDiscount > 0
+            ? Math.round(originalPrice - discountAmount)
+            : originalPrice;
+
+        return {
+          ...variant.toObject(),
+          originalPrice,
+          finalPrice,
+          discountPercent: maxDiscount,
+        };
+      });
+
+      // 🔥 Find lowest final price (for product card display)
+      const minFinalPrice = Math.min(
+        ...updatedVariants.map((v) => v.finalPrice)
+      );
 
       return {
         ...product.toObject(),
-        finalPrice,
+        variants: updatedVariants,
+        finalPrice: minFinalPrice,
         discountPercent: maxDiscount,
       };
     });
@@ -74,6 +96,7 @@ export const loadHomepage = async (req, res) => {
       products: productsWithOffer,
       user,
     });
+
   } catch (error) {
     console.error("Home page not loading :", error.message);
     res.status(500).render("errors/500");
@@ -127,40 +150,55 @@ export const loadShoppingPage = async (req, res) => {
 
     const productOffers = await ProductOffer.find({ isActive: true });
     const categoryOffers = await CategoryOffer.find({ isActive: true });
-
     const productOfferMap = new Map();
     const categoryOfferMap = new Map();
-
     productOffers.forEach((o) =>
-      productOfferMap.set(o.productId.toString(), o.discount),
+      productOfferMap.set(o.productId.toString(), o.discount)
     );
-
     categoryOffers.forEach((o) =>
-      categoryOfferMap.set(o.categoryId.toString(), o.discount),
+      categoryOfferMap.set(o.categoryId.toString(), o.discount)
     );
 
-    const productsWithOffer = products.map((product) => {
-      const productDiscount = productOfferMap.get(product._id.toString()) || 0;
+  const productsWithOffer = products.map(product => {
 
-      const categoryDiscount = categoryOfferMap.get(
-        product.category?._id.toString() || 0,
-      );
+  const productDiscount =
+    productOfferMap.get(product._id.toString()) || 0;
 
-      const maxDiscount = Math.max(productDiscount, categoryDiscount);
+  const categoryDiscount =
+    categoryOfferMap.get(product.category?.toString()) || 0;
 
-      const finalPrice =
-        maxDiscount > 0
-          ? Math.round(
-              product.regularPrice - (product.regularPrice * maxDiscount) / 100,
-            )
-          : product.regularPrice;
+  const maxDiscount = Math.max(productDiscount, categoryDiscount);
 
-      return {
-        ...product.toObject(),
-        finalPrice,
-        discountPercent: maxDiscount,
-      };
-    });
+  const updatedVariants = product.variants.map(v => {
+
+    const finalPrice =
+      maxDiscount > 0
+        ? Math.round(v.price - (v.price * maxDiscount) / 100)
+        : v.price;
+
+    return {
+      ...v.toObject(),
+      originalPrice: v.price,
+      finalPrice,
+      discountPercent: maxDiscount
+    };
+  });
+
+  const minVariant = updatedVariants.length > 0
+    ? updatedVariants.reduce((min, v) =>
+        v.finalPrice < min.finalPrice ? v : min
+      )
+    : null;
+
+  return {
+    ...product.toObject(),
+    variants: updatedVariants,
+    finalPrice: minVariant ? minVariant.finalPrice : 0,
+    originalPrice: minVariant ? minVariant.originalPrice : 0,
+    discountPercent: maxDiscount
+  };
+});
+
 
     const totalProducts = await Product.countDocuments(filter);
 

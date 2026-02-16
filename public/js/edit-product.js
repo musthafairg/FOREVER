@@ -1,8 +1,121 @@
+
+function attachRemoveHandler(div) {
+  const btn = div.querySelector(".remove-variant-btn");
+  if (!btn) return;
+
+  btn.addEventListener("click", function () {
+    div.remove();
+  });
+}
+
+function addNewVariant() {
+  const container = document.getElementById("sizeVariantsContainer");
+  const index = container.querySelectorAll(".size-variant").length;
+
+  const div = document.createElement("div");
+  div.className = "size-variant mb-2";
+  div.setAttribute("data-index", index);
+
+  div.innerHTML = `
+    <select name="size_${index}" class="form-select border size-select" style="width:150px;">
+        <option value="">Select Size</option>
+        <option value="XS">XS</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+    </select>
+
+    <input type="number"
+           name="quantity_${index}"
+           class="form-control border quantity-input"
+           placeholder="Quantity"
+           min="0">
+
+    <input type="number"
+           name="price_${index}"
+           class="form-control border"
+           placeholder="Price"
+           min="0"
+           step="0.01">
+
+    <button type="button"
+            class="btn btn-sm btn-danger remove-variant-btn">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+  `;
+
+  container.appendChild(div);
+  attachRemoveHandler(div);
+}
+
+
+document.querySelectorAll(".size-variant").forEach(div => {
+  attachRemoveHandler(div);
+});
+function collectVariants() {
+  const variants = [];
+  const blocks = document.querySelectorAll(".size-variant");
+
+  const sizeSet = new Set();
+
+  for (let block of blocks) {
+
+    const size = block.querySelector("select")?.value;
+    const quantity = block.querySelector(".quantity-input")?.value;
+    const price = block.querySelector("input[name^='price_']")?.value;
+
+    if (!size || quantity === "" || price === "") {
+      continue;
+    }
+
+   
+    if (sizeSet.has(size)) {
+      Swal.fire({
+        icon: "error",
+        title: "Duplicate size not allowed",
+        text: "Each size must be unique.",
+        showConfirmButton: false,
+        timer: 1500
+      });
+
+      return null; 
+    }
+
+    sizeSet.add(size);
+
+    variants.push({
+      size,
+      quantity: Number(quantity),
+      price: Number(price),
+    });
+  }
+
+  return variants;
+}
+
+
 async function validateAndSubmit() {
   if (!validateForm()) return;
 
   const form = document.getElementById("productForm");
   const formData = new FormData(form);
+  const variants = collectVariants();
+
+if (!variants) return; 
+
+if (variants.length === 0) {
+  Swal.fire({
+    icon: "error",
+    title: "At least one variant required",
+    timer: 1500,
+    showConfirmButton: false
+  });
+  return;
+}
+
+formData.append("sizeVariants", JSON.stringify(variants));
 
   try {
     const productId = new URLSearchParams(window.location.search).get("id");
@@ -49,7 +162,7 @@ function validateForm() {
   const price = document.getElementsByName("regularPrice")[0].value;
 
   const category = document.getElementsByName("category")[0].value;
-  const quantity = document.getElementsByName("quantity")[0].value;
+
   imageDatas = document.getElementById("imageDatas")?.value;
 
   const ExistingImages = document.getElementById("ExistingImages").value;
@@ -74,14 +187,7 @@ function validateForm() {
     isValid = false;
   }
 
-  const quantityVal = parseInt(quantity);
-  if (isNaN(quantityVal) || quantityVal <= 0) {
-    displayErrorMessage(
-      "quantity-error",
-      "Please a valid non-negative integer quantity.",
-    );
-    isValid = false;
-  }
+  
 
   if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
     displayErrorMessage(

@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-
 const orderItemSchema = new Schema({
   productId: {
     type: Schema.Types.ObjectId,
@@ -12,6 +11,7 @@ const orderItemSchema = new Schema({
   price: Number,
   offerPrice: Number,
   quantity: Number,
+  size: String,
   itemTotal: Number,
   isCancelled: {
     type: Boolean,
@@ -28,7 +28,7 @@ const orderItemSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  });
+});
 
 const orderSchema = new Schema(
   {
@@ -62,7 +62,7 @@ const orderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["COD", "ONLINE","WALLET"],
+      enum: ["COD", "ONLINE", "WALLET"],
       required: true,
     },
     paymentStatus: {
@@ -84,18 +84,22 @@ const orderSchema = new Schema(
         "Return Requested",
         "Return Approved",
         "Return Rejected",
-        
       ],
       default: "Placed",
     },
     cancelReason: String,
     returnReason: String,
 
-     returnStatus: {
-    type: String,
-    enum: ["NONE", "REQUESTED", "APPROVED", "REJECTED"],
-    default: "NONE",
-  },
+    returnStatus: {
+      type: String,
+      enum: ["NONE", "REQUESTED", "APPROVED", "REJECTED"],
+      default: "NONE",
+    },
+    isFullyRefunded: {
+      type: Boolean,
+      default: false,
+    },
+
     razorpayOrderId: String,
     razorpayPaymentId: String,
     razorpaySignature: String,

@@ -3,6 +3,33 @@ import User from "../../models/userModel.js";
 import Product from "../../models/productModel.js";
 import { creditWallet } from "../../utils/walletUtils.js";
 
+const recalculateOrderSummary = (order) => {
+  const activeItems = order.items.filter((i) => !i.isCancelled && !i.refunded);
+
+  const subtotal = activeItems.reduce((sum, i) => sum + i.itemTotal, 0);
+
+  const tax = Math.round(subtotal * 0.05);
+
+  let discount = 0;
+  const originalSubtotal = order.items.reduce((sum, i) => sum + i.itemTotal, 0);
+
+  if (originalSubtotal > 0 && order.priceDetails.discount > 0) {
+    discount = Math.round(
+      (subtotal / originalSubtotal) * order.priceDetails.discount,
+    );
+  }
+
+  let total = subtotal + tax + order.priceDetails.shipping - discount;
+  if (total < 0) total = 0;
+
+  order.priceDetails.subtotal = subtotal;
+  order.priceDetails.tax = tax;
+  order.priceDetails.discount = discount;
+  order.priceDetails.total = total;
+
+  return total;
+};
+
 export const loadAdminOrders = async (req, res) => {
   try {
     const { search = "", status = "", page = 1, sort = "latest" } = req.query;
@@ -114,35 +141,47 @@ export const updateReturnStatus = async (req, res) => {
       return res.redirect("/admin/orders");
     }
 
+    if (order.paymentStatus !== "PAID") {
+      return res.redirect(`/admin/orders/${id}`);
+    }
+
     if (status === "APPROVED") {
-      if (order.paymentMethod === "COD" || order.paymentStatus !== "PAID") {
+      if (order.isFullyRefunded) {
         return res.redirect(`/admin/orders/${req.params.id}`);
       }
-
-      let alreadyRefunded = order.items.every((item) => item.refunded);
-
-      if (alreadyRefunded) {
-        return res.redirect(`/admin/orders/${req.params.id}`);
-      }
+      const refundAmount = order.priceDetails.total;
 
       for (const item of order.items) {
         if (!item.refunded && !item.isCancelled) {
-          await Product.findByIdAndUpdate(item.productId, {
-            $inc: { quantity: item.quantity },
-          });
+          const product = await Product.findById(item.productId);
+          const variant = product.variants.find((v) => v.size === item.size);
+
+          if (variant) {
+            variant.quantity += item.quantity;
+            await product.save();
+          }
 
           item.refunded = true;
           item.returnStatus = "APPROVED";
         }
       }
 
-      await creditWallet(
-        order.userId,
-        order.priceDetails.total,
-        `Refund for returned Order ${order.orderId}`,
-      );
+      if (refundAmount > 0 && order.paymentMethod !== "COD") {
+        await creditWallet(
+          order.userId,
+          refundAmount,
+          `Refund for returned Order ${order.orderId}`,
+        );
+      }
+
+      order.priceDetails.subtotal = 0;
+      order.priceDetails.tax = 0;
+      order.priceDetails.total = 0;
 
       order.orderStatus = "Returned";
+      order.returnStatus = "APPROVED";
+      order.isFullyRefunded = true;
+
       await order.save();
     }
 
@@ -163,6 +202,13 @@ export const updateReturnItemStatus = async (req, res) => {
     const order = await Order.findOne({ orderId: id });
     if (!order) return res.redirect("/admin/orders");
 
+    if (order.isFullyRefunded) {
+      return res.redirect(`/admin/orders/${id}`);
+    }
+    if (order.paymentStatus !== "PAID") {
+      return res.redirect(`/admin/orders/${id}`);
+    }
+
     const item = order.items.find((i) => i.productId.toString() === productId);
 
     if (
@@ -175,39 +221,25 @@ export const updateReturnItemStatus = async (req, res) => {
     }
 
     if (status === "APPROVED") {
-      const oldTotal = order.priceDetails.total;
-
-      if (!item.refunded) {
-        await Product.findByIdAndUpdate(productId, {
-          $inc: { quantity: item.quantity },
-        });
+      if (item.refunded) {
+        return res.redirect(`/admin/orders/${id}`);
       }
+
+      const product = await Product.findById(item.productId);
+      const variant = product.variants.find((v) => v.size === item.size);
+
+      if (variant) {
+        variant.quantity += item.quantity;
+        await product.save();
+      }
+      const oldTotal = order.priceDetails.total;
 
       item.refunded = true;
       item.returnStatus = "APPROVED";
 
-      const activeItems = order.items.filter(
-        (i) => !i.isCancelled && !i.refunded,
-      );
+      const newTotal = recalculateOrderSummary(order);
 
-      if (activeItems.length === 0) {
-        order.orderStatus = "Returned";
-      }
-
-      const subtotal = activeItems.reduce((sum, i) => sum + i.itemTotal, 0);
-      const tax = Math.round(subtotal * 0.05);
-      const total =
-        subtotal +
-        tax +
-        order.priceDetails.shipping -
-        order.priceDetails.discount;
-
-      order.priceDetails.subtotal = subtotal;
-      order.priceDetails.tax = tax;
-      order.priceDetails.total = total;
-      order.returnStatus = "APPROVED";
-
-      const refundAmount = oldTotal - total;
+      const refundAmount = oldTotal - newTotal;
 
       if (
         refundAmount > 0 &&
@@ -219,6 +251,17 @@ export const updateReturnItemStatus = async (req, res) => {
           refundAmount,
           `Refund for returned item ${item.productName} (Order ${order.orderId})`,
         );
+      }
+
+      const remainingItems = order.items.filter(
+        (i) => !i.isCancelled && !i.refunded,
+      );
+
+      if (remainingItems.length === 0) {
+        order.orderStatus = "Returned";
+        order.isFullyRefunded = true;
+      } else {
+        order.orderStatus = "Delivered";
       }
 
       await order.save();
@@ -233,8 +276,6 @@ export const updateReturnItemStatus = async (req, res) => {
     res.redirect(`/admin/orders/${id}`);
   } catch (error) {
     console.error("Update return item status error:", error.message);
-    res.status(500).render("admin/errors/500", {
-      page: "orders", 
-    });
+    res.status(500).render("admin/errors/500", { page: "orders" });
   }
 };

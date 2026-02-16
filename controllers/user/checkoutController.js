@@ -7,6 +7,10 @@ import Coupon from "../../models/couponModel.js";
 
 export const loadCheckout = async (req, res) => {
   try {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
     const userId = req.session.user._id;
     const user = await User.findById(userId);
 
@@ -23,12 +27,14 @@ export const loadCheckout = async (req, res) => {
 
     cart.items = cart.items.filter((item) => {
       const p = item.productId;
-      return (
-        p &&
-        !p.isBlocked &&
-        p.status === "Available" &&
-        p.quantity >= item.quantity
-      );
+
+      if (!p || p.isBlocked || p.status !== "Available") {
+        return false;
+      }
+
+      const selectedVariant = p.variants.find((v) => v.size === item.size);
+
+      return selectedVariant && selectedVariant.quantity >= item.quantity;
     });
 
     if (cart.items.length === 0) {
@@ -39,16 +45,35 @@ export const loadCheckout = async (req, res) => {
 
     const checkoutItems = await Promise.all(
       cart.items.map(async (item) => {
-        const offer = await applyBestOffer(item.productId);
+        const product = item.productId;
 
-        const itemTotal = offer.finalPrice * item.quantity;
+        const selectedVariant = product.variants.find(
+          (v) => v.size === item.size,
+        );
+
+        if (!selectedVariant) return null;
+
+        const offer = await applyBestOffer(product);
+        const discountPercent = offer.discountPercent || 0;
+
+        const originalPrice = selectedVariant.price;
+
+        const finalPrice =
+          discountPercent > 0
+            ? Math.round(
+                originalPrice - (originalPrice * discountPercent) / 100,
+              )
+            : originalPrice;
+
+        const itemTotal = finalPrice * item.quantity;
+
         subtotal += itemTotal;
 
         return {
           ...item.toObject(),
-          finalPrice: offer.finalPrice,
-          originalPrice: offer.originalPrice,
-          discountPercent: offer.discountPercent,
+          finalPrice,
+          originalPrice,
+          discountPercent,
           itemTotal,
         };
       }),
@@ -70,7 +95,6 @@ export const loadCheckout = async (req, res) => {
 
       if (validCoupon) {
         couponDiscount = Math.min(couponData.discount, subtotal);
-
         coupon = couponData;
       } else {
         req.session.appliedCoupon = null;

@@ -58,10 +58,23 @@
 
               <div class="product-content-wrap">
                 <h6><%= products[i].productName %></h6>
-                <h5>₹ <%= products[i].finalPrice %></h5>
+               <h5>
+  <% if (products[i].discountPercent > 0) { %>
+    <span class="original-price">
+      ₹<%= products[i].variants[0].originalPrice %>
+    </span class="final-price"  >
+    ₹<%= products[i].finalPrice %>
+  <% } else { %>
+    ₹<%= products[i].finalPrice %>
+  <% } %>
+</h5>
+
                 <button
                   class="add-to-cart-btn"
-                  onclick="addToCart('<%= products[i]._id %>')"
+                  onclick='handleAddToCart(
+  "<%= products[i]._id %>",
+  <%- JSON.stringify(products[i].variants || []) %>
+)'
                 >
                   Add to Cart
                 </button>
@@ -74,6 +87,23 @@
     </section>
 
     <%- include('../partials/user/footer.ejs') %>
+
+
+<div id="sizeModal" class="size-modal">
+  <div class="size-modal-content">
+    <h5>Select Size</h5>
+
+    <div id="sizeOptions" class="mb-3"></div>
+
+    <div id="variantDetails" class="variant-details mb-3" style="display:none;">
+      <p><strong>Price:</strong> ₹ <span id="selectedPrice"></span></p>
+      <p><strong>Stock:</strong> <span id="selectedStock"></span></p>
+    </div>
+
+    <button onclick="confirmSize()">Confirm</button>
+  </div>
+</div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

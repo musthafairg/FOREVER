@@ -36,11 +36,13 @@
 
             <div>
               <h4><%= item.productId.productName %></h4>
+              <h5>Size: <%= item.size %></h5>
               <div class="cart-price">₹ <%= item.finalPrice %></div>
             </div>
 
             <div class="qty-box">
-              <button onclick="updateQty('<%= item.productId._id %>','dec')">
+              <button onclick="updateQty('<%= item.productId._id %>','<%= item.size %>','dec')">
+
                 <i class="fa-solid fa-minus"></i>
               </button>
 
@@ -48,12 +50,14 @@
                 <%= item.quantity %>
               </span>
 
-              <button onclick="updateQty('<%= item.productId._id %>','inc')">
+              <button onclick="updateQty('<%= item.productId._id %>','<%= item.size %>','inc')">
+
                 <i class="fa-solid fa-plus"></i>
               </button>
             </div>
 
-            <div class="remove-btn" onclick="removeItem('<%= item.productId._id %>')">
+            <div class="remove-btn" onclick="removeItem('<%= item.productId._id %>','<%= item.size %>')">
+
               Remove
             </div>
 

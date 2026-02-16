@@ -249,3 +249,28 @@ form label {
 .action-btn:hover i {
   color: #ff4d6d;
 }
+
+.size-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.size-btn {
+  border: 1px solid #ccc;
+  padding: 6px 14px;
+  background: white;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.size-btn:hover {
+  border-color: black;
+}
+
+.size-btn.active {
+  background: black;
+  color: white;
+  border-color: black;
+}

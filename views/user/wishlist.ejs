@@ -43,10 +43,16 @@
             <td>₹ <%= p.finalPrice %></td>
 
             <td>
-              <button class="add-cart"
-                      onclick="addToCart('<%= p._id %>')">
-                Add to Cart
-              </button>
+               <button
+                  class="add-cart"
+        onclick='handleAddToCart(
+  "<%= p._id %>",
+  <%- JSON.stringify(p.variants || []) %>
+)'
+
+                >
+                  Add to Cart
+                </button>
             </td>
 
             <td>
@@ -73,6 +79,26 @@
 
 
 <%- include('../partials/user/footer.ejs') %>
+
+
+
+<div id="sizeModal" class="size-modal">
+  <div class="size-modal-content">
+    <h5>Select Size</h5>
+
+    <div id="sizeOptions" class="mb-3"></div>
+
+    <div id="variantDetails" class="variant-details mb-3" style="display:none;">
+      <p><strong>Price:</strong> ₹ <span id="selectedPrice"></span></p>
+      <p><strong>Stock:</strong> <span id="selectedStock"></span></p>
+    </div>
+
+    <button onclick="confirmSize()">Confirm</button>
+  </div>
+</div>
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

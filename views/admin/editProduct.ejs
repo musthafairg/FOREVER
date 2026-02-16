@@ -55,9 +55,7 @@
                 <li >
                     <a href="/admin/sales-report"><i class="fas fa-chart-line"></i>Sales Report</a> 
                 </li>
-                 <li  >
-                    <a href="/admin/stock"><i class="fa-solid fa-boxes-stacked"></i>Stock</a>
-                </li>
+                 
                   <li  >
                     <a href="/admin/offers/product"><i class="fa-solid fa-tags"></i>Product Offer</a>
                 </li>
@@ -121,13 +119,39 @@
                                     </div>
                                 </div>
                                
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Quantity</label>
-                                        <input placeholder="" name="quantity" type="text" class="form-control border" value="<%= product.quantity%>">
-                                        <div id="quantity-error" class="error-message"></div>
+                                
+
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Sizes</label>
+                                            <div id="sizeVariantsContainer">
+                                                <% if (product.variants && product.variants.length > 0) { %>
+                                                    <% product.variants.forEach((variant, index) => { %>
+                                                        <div class="size-variant mb-2" data-index="<%= index %>">
+                                                            <select name="size_<%= index %>" class="form-select border size-select" style="width: 150px;">
+                                                                <option value="S" <%= variant.size === 'S' ? 'selected' : '' %>>S</option>
+                                                                <option value="M" <%= variant.size === 'M' ? 'selected' : '' %>>M</option>
+                                                                <option value="L" <%= variant.size === 'L' ? 'selected' : '' %>>L</option>
+                                                                <option value="XL" <%= variant.size === 'XL' ? 'selected' : '' %>>XL</option>
+                                                                <option value="XXL" <%= variant.size === 'XXL' ? 'selected' : '' %>>XXL</option>
+                                                            </select>
+                                                            <input type="number" name="quantity_<%= index %>" class="form-control border quantity-input" placeholder="Quantity" value="<%= variant.quantity %>">
+                                                            <input type="number" name="price_<%= index %>" class="size-index" value="<%= variant.price %>">
+                                                            <button type="button" class="btn btn-sm btn-danger remove-variant-btn"><i class="fa-solid fa-xmark"></i></button>
+                                                        </div>
+                                                    <% }) %>
+                                                <% } %>   
+                                            </div>  
+                                            <button type="button"
+        class="btn btn-sm btn-secondary mt-2"
+        onclick="addNewVariant()">
+  + Add Variant
+</button>
+
+                                            </div>
                                     </div>
-                                </div>
+
+
                             </div>
                           
                             <div class="card mb-4">

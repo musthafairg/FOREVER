@@ -3,59 +3,68 @@ export const getDateRange = (filter = "today", from, to) => {
   let start, end;
 
   switch (filter) {
-    case "today": {
+
+    case "today":
       start = new Date();
       start.setHours(0, 0, 0, 0);
 
       end = new Date();
+      end.setHours(23, 59, 59, 999);
       break;
-    }
 
-    case "week": {
+    case "week":
       start = new Date();
       start.setDate(start.getDate() - 6);
       start.setHours(0, 0, 0, 0);
 
       end = new Date();
-      break;
-    }
-
-    case "month": {
-      start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      start.setHours(0, 0, 0, 0);
-
-      end = new Date(now.getFullYear(), now.getMonth(), 0);
       end.setHours(23, 59, 59, 999);
       break;
-    }
 
-    case "year": {
-      start = new Date(now.getFullYear() - 1, 0, 1);
+    case "month":
+      start = new Date();
+      start.setDate(start.getDate() - 29); 
       start.setHours(0, 0, 0, 0);
 
-      end = new Date(now.getFullYear() - 1, 11, 31);
+      end = new Date();
       end.setHours(23, 59, 59, 999);
       break;
-    }
 
-    case "custom": {
+    case "year":
+      start = new Date();
+      start.setFullYear(start.getFullYear() - 1);
+      start.setHours(0, 0, 0, 0);
+
+      end = new Date();
+      end.setHours(23, 59, 59, 999);
+      break;
+
+    case "custom":
       if (!from || !to) {
         throw new Error("From and To dates required for custom filter");
       }
 
       start = new Date(from);
-      start.setHours(0, 0, 0, 0);
-
       end = new Date(to);
+
+      if (isNaN(start) || isNaN(end)) {
+        throw new Error("Invalid date format");
+      }
+
+      if (start > end) {
+        throw new Error("From date cannot be greater than To date");
+      }
+
+      start.setHours(0, 0, 0, 0);
       end.setHours(23, 59, 59, 999);
       break;
-    }
 
-    default: {
+    default:
       start = new Date();
       start.setHours(0, 0, 0, 0);
+
       end = new Date();
-    }
+      end.setHours(23, 59, 59, 999);
   }
 
   return { start, end };

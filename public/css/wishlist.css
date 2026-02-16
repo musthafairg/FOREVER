@@ -53,3 +53,32 @@
   padding: 80px 0;
   color: #777;
 }
+.size-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.size-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.size-option-btn {
+  margin: 5px;
+  padding: 6px 14px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.size-option-btn.active {
+  background: black;
+  color: white;
+}

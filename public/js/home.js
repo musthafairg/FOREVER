@@ -1,98 +1,177 @@
+let selectedProductId = null;
+let selectedVariant = null;
 
-      async function toggleWishlist(productId) {
-        try {
-          const res = await fetch('/wishlist/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productId })
-          })
+function handleAddToCart(productId, sizes) {
+  if (sizes && sizes.length > 0) {
+    selectedProductId = productId;
+    openSizeModal(sizes);
+  } else {
+    addToCart(productId, null);
+  }
+}
 
-          const data = await res.json()
+function openSizeModal(variants) {
+  const modal = document.getElementById("sizeModal");
+  const container = document.getElementById("sizeOptions");
 
-          if (data.success) {
-            Swal.fire({
-              position: 'top-end',
-              icon: 'success',
-              title: 'Wishlist Updated',
-              text: 'Product added to wishlist',
-              showConfirmButton: false,
-              timer: 1500
-            })
-          } else {
-            Swal.fire({
-              position: 'top-end',
-              icon: 'error',
-              title: 'Failed',
-              text: 'Unable to update wishlist',
-              showConfirmButton: false,
-              timer: 1500
-            })
-          }
-        } catch (err) {
-          console.error(err)
-          Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred',
-            showConfirmButton: false,
-            timer: 1500
-          })
-        }
+  container.innerHTML = "";
+  selectedVariant = null;
+
+  variants.forEach((variant) => {
+    const btn = document.createElement("button");
+    btn.innerText = variant.size;
+    btn.classList.add("size-option-btn");
+
+    if (variant.quantity <= 0) {
+      btn.disabled = true;
+      btn.classList.add("out-of-stock");
+    }
+
+    btn.onclick = () => {
+      document
+        .querySelectorAll(".size-option-btn")
+        .forEach((b) => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      selectedVariant = variant;
+
+      document.getElementById("variantDetails").style.display = "block";
+
+      if (variant.discountPercent > 0) {
+        document.getElementById("selectedPrice").innerHTML = `
+      <span style="text-decoration: line-through; color: gray;">
+        ₹${variant.originalPrice}
+      </span>
+      <span style="color: red; font-weight: bold; margin-left: 8px;">
+        ₹${variant.finalPrice}
+      </span>
+      <span style="color: green; margin-left: 6px;">
+        (${variant.discountPercent}% OFF)
+      </span>
+    `;
+      } else {
+        document.getElementById("selectedPrice").innerHTML =
+          `₹${variant.originalPrice}`;
       }
 
-      async function removeWishlist(productId) {
-        const res = await fetch('/wishlist/remove', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productId })
-        })
+      document.getElementById("selectedStock").innerText =
+        variant.quantity > 0 ? `${variant.quantity} available` : "Out of stock";
+    };
 
-        const data = await res.json()
-        setTimeout(() => {
-           if (data.success) location.reload()
-        }, 1500)
-       
-      }
+    container.appendChild(btn);
+  });
 
+  modal.style.display = "flex";
+}
 
+function confirmSize() {
+  if (!selectedVariant) {
+    return Swal.fire({
+      icon: "warning",
+      title: "Please select a size",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  }
 
-      async function addToCart(productId) {
+  document.getElementById("sizeModal").style.display = "none";
 
-        const btn=event.target;
-        btn.disabled= true;
+  addToCart(selectedProductId, selectedVariant.size);
+}
 
-        const res = await fetch('/cart/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productId, quantity: 1 })
-        })
+async function toggleWishlist(productId) {
+  try {
+    const res = await fetch("/wishlist/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId }),
+    });
 
-        const data = await res.json()
-        btn.disabled= false;
+    const data = await res.json();
 
+    if (data.success) {
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Wishlist Updated",
+        text: "Product added to wishlist",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } else {
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        title: "Failed",
+        text: "Unable to update wishlist",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
+      position: "top-end",
+      icon: "error",
+      title: "Error",
+      text: "An error occurred",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
+}
 
-        if (data.success) {
-          Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: 'Added to Cart',
-            showConfirmButton: false,
-            timer: 1500
-          })
+async function removeWishlist(productId) {
+  const res = await fetch("/wishlist/remove", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productId }),
+  });
 
-          await removeWishlist(productId)
-          setTimeout(() => {
-            location.reload()
-          }, 1500)
-        } else {
-          Swal.fire({
-            position: 'top-end',
-            icon: 'error',
-            title: 'Failed to Add',
-            text: data.message || 'Please try again'
-            
-          })
-        }
-      }
-    
+  const data = await res.json();
+  setTimeout(() => {
+    if (data.success) location.reload();
+  }, 1500);
+}
+
+async function addToCart(productId, size = null) {
+  const res = await fetch("/cart/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      productId,
+      quantity: 1,
+      size: size,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Added to Cart",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    await removeWishlist(productId);
+
+    setTimeout(() => location.reload(), 1500);
+  } else {
+    Swal.fire({
+      position: "top-end",
+      icon: "error",
+      title: data.message || "Failed to Add",
+    });
+  }
+}
+
+window.addEventListener("click", function (e) {
+  const modal = document.getElementById("sizeModal");
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});

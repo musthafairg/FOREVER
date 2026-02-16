@@ -23,6 +23,24 @@ const reviewSchema = new mongoose.Schema({
     }
 });
 
+const variantsSchema = new mongoose.Schema({
+    size: {
+        type: String,
+        enum: ["XS", "S", "M", "L", "XL", "XXL"],
+        required: true
+    },
+    quantity: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    price: {
+        type: Number,
+        required: true,
+        min: 0
+    }
+});
+
 const productSchema = new mongoose.Schema(
     {
         productName: {
@@ -43,15 +61,7 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        salePrice: {
-            type: Number,
-            required: false,
-        },
         productOffer: {
-            type: Number,
-            default: 0
-        },
-        quantity: {
             type: Number,
             default: 0
         },
@@ -83,7 +93,9 @@ const productSchema = new mongoose.Schema(
         avgRating: {
             type: Number,
             default: 0
-        }
+        },
+        variants: [variantsSchema],
+
 
     },
     { timestamps: true }

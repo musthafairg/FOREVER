@@ -131,14 +131,35 @@
                 <img src="/uploads/image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />
                 <h4><%= products[i].productName %></h4>
                 
-                <p>
-                  Price: ₹<%= products[i].finalPrice.toLocaleString('en-IN') %>
-                  <span class="text-muted">
-                    <strike>₹<%= products[i].regularPrice.toLocaleString('en-IN') %></strike>
-                  </span>
-                </p>
+   <p>
+  <% if (products[i].discountPercent > 0) { %>
+
+    <span class="regular-price">
+      ₹<%= products[i].regularPrice.toLocaleString('en-IN') %>
+    </span>
+
+    <span class="final-price" >
+      ₹<%= products[i].finalPrice.toLocaleString('en-IN') %>
+    </span>
+
+
+  <% } else { %>
+
+    ₹<%= products[i].regularPrice.toLocaleString('en-IN') %>
+
+  <% } %>
+</p>
+
               </a>
-              <button class="add-to-cart-btn" onclick="addToCart('<%= products[i]._id %>')">Add to Cart</button>
+              <button
+                  class="add-to-cart-btn"
+                  onclick='handleAddToCart(
+  "<%= products[i]._id %>",
+  <%- JSON.stringify(products[i].variants || []) %>
+)'
+                >
+                  Add to Cart
+                </button>
             </div>
           <% } %>
         </main>
@@ -165,11 +186,29 @@
 
 
 
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
   <%- include('../partials/user/footer.ejs') %>
+
+ <div id="sizeModal" class="size-modal">
+  <div class="size-modal-content">
+
+    <h5>Select Size</h5>
+
+    <div id="sizeOptions"></div>
+
+    <div id="variantDetails" style="display:none; margin-top:15px;">
+      <p><strong>Price:</strong> <span id="selectedPrice"></span></p>
+      <p><strong>Stock:</strong> <span id="selectedStock"></span></p>
+    </div>
+
+    <button onclick="confirmSize()">Confirm</button>
+
+  </div>
+</div>
 
 
   

@@ -29,11 +29,8 @@ export const getAddProductPage = async (req, res) => {
 export const addProducts = async (req, res) => {
   const originalFilePaths = req.files ? req.files.map((file) => file.path) : [];
 
-
-
   try {
     const products = req.body;
-   
 
     const productExists = await Product.findOne({
       productName: products.productName,
@@ -52,7 +49,7 @@ export const addProducts = async (req, res) => {
             "public",
             "uploads",
             "image",
-            updatedName
+            updatedName,
           );
 
           await sharp(originalImagePath).toFile(resizedImagePath);
@@ -79,6 +76,9 @@ export const addProducts = async (req, res) => {
         quantity: products.quantity,
         productImage: images,
         status: "Available",
+        variants: products.sizeVariants
+          ? JSON.parse(products.sizeVariants)
+          : [],
       });
 
       await newProduct.save();
@@ -89,13 +89,15 @@ export const addProducts = async (req, res) => {
     }
   } catch (error) {
     console.error("Error saving product :", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    }).render("admin/errors/500", {
-      page: "products",
-    });
-
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error",
+      })
+      .render("admin/errors/500", {
+        page: "products",
+      });
   } finally {
     for (const filePath of originalFilePaths) {
       try {
@@ -103,7 +105,7 @@ export const addProducts = async (req, res) => {
       } catch (error) {
         console.error(
           `Failed to delete temporary file : ${filePath}`,
-          error.message
+          error.message,
         );
       }
     }
@@ -207,7 +209,6 @@ export const getEditProduct = async (req, res) => {
     return res.status(500).render("admin/errors/500", {
       page: "products",
     });
-
   }
 };
 
@@ -216,6 +217,12 @@ export const editProduct = async (req, res) => {
     const id = req.query.id;
 
     const product = await Product.findById(id);
+
+    const variants = req.body.sizeVariants
+      ? JSON.parse(req.body.sizeVariants)
+      : [];
+
+    product.variants = variants;
 
     if (!product) {
       return res.status(404).json({
@@ -250,7 +257,7 @@ export const editProduct = async (req, res) => {
           "public",
           "uploads",
           "image",
-          updatedName
+          updatedName,
         );
 
         await sharp(originalImagePath).toFile(resizedImagePath);
@@ -272,8 +279,7 @@ export const editProduct = async (req, res) => {
       productName: productData.productName,
       description: productData.descriptionData,
       regularPrice: productData.regularPrice,
-      salePrice: productData.salePrice,
-      quantity: productData.quantity,
+      variants: variants,
       category: categoryDoc._id,
       $push: { productImage: { $each: images } },
     });
@@ -284,12 +290,15 @@ export const editProduct = async (req, res) => {
     });
   } catch (error) {
     console.error("Error Updating product :", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    }).render("admin/errors/500", {
-      page: "products",
-    });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error",
+      })
+      .render("admin/errors/500", {
+        page: "products",
+      });
   }
 };
 
@@ -309,16 +318,13 @@ export const deleteSingleImage = async (req, res) => {
       "public",
       "uploads",
       "image",
-      imageNameToServer
+      imageNameToServer,
     );
 
     if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath)
-
-      
+      fs.unlinkSync(imagePath);
     } else {
       console.log("Image file not found :", imagePath);
-      
     }
 
     return res.json({ status: true });
