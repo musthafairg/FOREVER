@@ -121,11 +121,16 @@
           
           <% for (let i = 0; i < products.length; i++) { %>
             <div class="product-card">
-              <button
-                  class="wishlist-btn" style="color: #FF6B6B;"
-                  onclick="toggleWishlist('<%= products[i]._id %>')"
-                >
-                  <i class="fas fa-heart"></i>
+                     <button 
+  class="wishlist-btn"
+  onclick="toggleWishlist('<%= products[i]._id %>', this.querySelector('i'))"
+>
+
+                  <i class="<%= wishlistItems.includes(products[i]._id.toString()) 
+  ? 'fas fa-heart wishlist-active' 
+  : 'far fa-heart' %>">
+</i>
+
                 </button>
               <a href="/product-details?id=<%= products[i]._id %>">
                 <img src="/uploads/image/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>" />

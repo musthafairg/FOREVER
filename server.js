@@ -11,7 +11,7 @@ import userRouter from './routes/user.js'
 import adminRouter from './routes/admin.js'
 import {notFound,errorHandler} from './middleware/errorMiddleware.js'
 import { adminNotFound, adminErrorHandler } from './middleware/adminErrorHandler.js'
-import { injectWishlistCount } from './middleware/wishlistCount.js'
+import { injectWishlistData } from './middleware/wishlistCount.js'
 import { injectCartCount } from './middleware/cartCount.js'
 
 
@@ -46,7 +46,7 @@ app.use(express.json())
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.use(injectWishlistCount)
+app.use(injectWishlistData)
 app.use(injectCartCount)
 
 

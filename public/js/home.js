@@ -80,7 +80,7 @@ function confirmSize() {
   addToCart(selectedProductId, selectedVariant.size);
 }
 
-async function toggleWishlist(productId) {
+async function toggleWishlist(productId, iconElement) {
   try {
     const res = await fetch("/wishlist/add", {
       method: "POST",
@@ -91,34 +91,15 @@ async function toggleWishlist(productId) {
     const data = await res.json();
 
     if (data.success) {
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Wishlist Updated",
-        text: "Product added to wishlist",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    } else {
-      Swal.fire({
-        position: "top-end",
-        icon: "error",
-        title: "Failed",
-        text: "Unable to update wishlist",
-        showConfirmButton: false,
-        timer: 1500,
-      });
+
+    
+      iconElement.classList.toggle("fas");
+      iconElement.classList.toggle("far");
+      iconElement.classList.toggle("wishlist-active");
+
     }
   } catch (err) {
     console.error(err);
-    Swal.fire({
-      position: "top-end",
-      icon: "error",
-      title: "Error",
-      text: "An error occurred",
-      showConfirmButton: false,
-      timer: 1500,
-    });
   }
 }
 

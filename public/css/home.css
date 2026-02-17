@@ -189,3 +189,15 @@
   font-weight: 600; 
   margin-left:6px;
 }
+.wishlist-active {
+  color: #e63946;
+}
+
+.wishlist-btn i {
+  font-size: 18px;
+  transition: 0.2s ease;
+}
+
+.wishlist-btn:hover i {
+  transform: scale(1.15);
+}

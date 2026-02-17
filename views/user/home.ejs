@@ -48,11 +48,15 @@
                   </a>
                 </div>
 
-                <button
-                  class="wishlist-btn"
-                  onclick="toggleWishlist('<%= products[i]._id %>')"
-                >
-                  <i class="fas fa-heart"></i>
+                <button 
+  class="wishlist-btn"
+  onclick="toggleWishlist('<%= products[i]._id %>', this.querySelector('i'))"
+>
+
+                  <i class="<%= wishlistItems.includes(products[i]._id.toString()) 
+  ? 'fas fa-heart wishlist-active' 
+  : 'far fa-heart' %>">
+</i>
                 </button>
               </div>
 
