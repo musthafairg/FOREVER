@@ -181,7 +181,7 @@
                       <div class="detail-extralink">
                         <div
                           class="detail-qty border radius"
-                          style="<%= isUnavailable ? 'opacity:0.6;pointer-events:none;' : '' %>"
+                          <% if (isUnavailable) { %> style="opacity:0.6;pointer-events:none;"<% } %>
                         >
                           <a href="#" class="qty-down"
                             ><i class="fa-solid fa-angle-down"></i
@@ -383,11 +383,11 @@
 
     <%- include('../partials/user/footer.ejs') %>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
+    <
+   <script>
+  const variants = <%- JSON.stringify(product.variants || []) %>;
 
 
-
-      const variants = <%- JSON.stringify(product.variants) %>;
     </script>
 
     <script src="/js/product-details.js"></script>

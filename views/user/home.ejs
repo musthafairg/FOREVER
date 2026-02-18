@@ -73,13 +73,11 @@
   <% } %>
 </h5>
 
-                <button
-                  class="add-to-cart-btn"
-                  onclick='handleAddToCart(
-  "<%= products[i]._id %>",
-  <%- JSON.stringify(products[i].variants || []) %>
-)'
-                >
+               <button
+  class="add-to-cart-btn"
+  onclick="handleAddToCart('<%= products[i]._id %>', '<%= JSON.stringify(products[i].variants || []) %>')"
+>
+
                   Add to Cart
                 </button>
               </div>

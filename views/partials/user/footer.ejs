@@ -1,45 +1,53 @@
 <footer class="footer">
   <div class="footer-content">
+
     <div class="footer-section about">
       <h4>FOREVER<span class="dot">.</span></h4>
       <ul>
-        <li><a href="#">Our Story</a></li>
-        <li><a href="#">Careers</a></li>
-        <li><a href="#">Press</a></li>
+        <li><a href="/about">Our Story</a></li>
+        <li><a href="/careers">Careers</a></li>
+        <li><a href="/press">Press</a></li>
       </ul>
     </div>
 
     <div class="footer-section shop">
       <h4>SHOP</h4>
       <ul>
-        <li><a href="#">New Arrivals</a></li>
-        <li><a href="#">Dresses</a></li>
-        <li><a href="#">Accessories</a></li>
-        <li><a href="#">Sale</a></li>
+        <li><a href="/shop?sort=new">New Arrivals</a></li>
+        <li><a href="/shop?category=dresses">Dresses</a></li>
+        <li><a href="/shop?category=accessories">Accessories</a></li>
+        <li><a href="/shop?sale=true">Sale</a></li>
       </ul>
     </div>
 
     <div class="footer-section help">
       <h4>HELP</h4>
       <ul>
-        <li><a href="#">FAQ</a></li>
-        <li><a href="#">Shipping</a></li>
-        <li><a href="#">Returns</a></li>
-        <li><a href="#">Size Guide</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/shipping-policy">Shipping</a></li>
+        <li><a href="/return-policy">Returns</a></li>
+        <li><a href="/size-guide">Size Guide</a></li>
       </ul>
     </div>
 
     <div class="footer-section social">
       <h4>CONNECT</h4>
       <div class="social-icons">
-        <i class="fa-brands fa-facebook"></i>
-        <i class="fa-brands fa-twitter"></i>
-        <i class="fa-brands fa-instagram"></i>
+        <a href="https://facebook.com" target="_blank">
+          <i class="fa-brands fa-facebook"></i>
+        </a>
+        <a href="https://twitter.com" target="_blank">
+          <i class="fa-brands fa-twitter"></i>
+        </a>
+        <a href="https://instagram.com" target="_blank">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
       </div>
     </div>
+
   </div>
 
   <div class="footer-bottom">
-    &copy; 2025 FOREVER. All Rights Reserved.
+    &copy; <%= new Date().getFullYear() %> FOREVER. All Rights Reserved.
   </div>
 </footer>

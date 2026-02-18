@@ -1,0 +1,51 @@
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<link rel="stylesheet" href="/css/style.css" />
+
+
+
+<%- include('../partials/user/header') %>
+
+<section class="container py-5">
+  <h2 class="fw-bold text-center mb-5">Frequently Asked Questions</h2>
+
+  <div class="accordion" id="faqAccordion">
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#q1">
+          How long does shipping take?
+        </button>
+      </h2>
+      <div id="q1" class="accordion-collapse collapse show">
+        <div class="accordion-body">
+          Standard shipping takes 3-7 business days.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#q2">
+          Can I return items?
+        </button>
+      </h2>
+      <div id="q2" class="accordion-collapse collapse">
+        <div class="accordion-body">
+          Yes. Returns are accepted within 7 days of delivery.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<%- include('../partials/user/footer') %>

@@ -17,6 +17,10 @@ function openSizeModal(variants) {
   container.innerHTML = "";
   selectedVariant = null;
 
+  document.getElementById("variantDetails").style.display = "none";
+  document.getElementById("selectedPrice").innerHTML = "";
+  document.getElementById("selectedStock").innerText = "";
+
   if (!variants || variants.length === 0) {
     return Swal.fire({
       icon: "error",
@@ -37,6 +41,8 @@ function openSizeModal(variants) {
     }
 
     btn.addEventListener("click", () => {
+
+      
       document
         .querySelectorAll(".size-option-btn")
         .forEach((b) => b.classList.remove("active"));
@@ -45,27 +51,30 @@ function openSizeModal(variants) {
 
       selectedVariant = variant;
 
-      document.getElementById("variantDetails").style.display = "block";
+      const details = document.getElementById("variantDetails");
+      details.style.display = "block";
 
       if (variant.discountPercent > 0) {
         document.getElementById("selectedPrice").innerHTML = `
           <span style="text-decoration: line-through; color: gray;">
-            ₹${variant.originalPrice.toLocaleString("en-IN")}
+            ₹${variant.originalPrice}
           </span>
-          <span style="color: red; font-weight: bold; margin-left:8px;">
-            ₹${variant.finalPrice.toLocaleString("en-IN")}
+          <span style="color: red; font-weight: bold; margin-left: 8px;">
+            ₹${variant.finalPrice}
           </span>
-          <span style="color: green; margin-left:6px;">
+          <span style="color: green; margin-left: 6px;">
             (${variant.discountPercent}% OFF)
           </span>
         `;
       } else {
         document.getElementById("selectedPrice").innerHTML =
-          `₹${variant.originalPrice.toLocaleString("en-IN")}`;
+          `₹${variant.originalPrice}`;
       }
 
       document.getElementById("selectedStock").innerText =
-        variant.quantity > 0 ? `${variant.quantity} available` : "Out of stock";
+        variant.quantity > 0
+          ? `${variant.quantity} available`
+          : "Out of stock";
     });
 
     container.appendChild(btn);
@@ -73,6 +82,7 @@ function openSizeModal(variants) {
 
   modal.style.display = "flex";
 }
+
 
 function confirmSize() {
   if (!selectedVariant) {
@@ -84,7 +94,8 @@ function confirmSize() {
     });
   }
 
-  document.getElementById("sizeModal").style.display = "none";
+  const modal = document.getElementById("sizeModal");
+  modal.style.display = "none";
 
   addToCart(selectedProductId, selectedVariant.size);
 }

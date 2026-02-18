@@ -9,25 +9,40 @@ function handleAddToCart(productId, sizes) {
     addToCart(productId, null);
   }
 }
-
 function openSizeModal(variants) {
   const modal = document.getElementById("sizeModal");
   const container = document.getElementById("sizeOptions");
 
+
   container.innerHTML = "";
   selectedVariant = null;
+
+  document.getElementById("variantDetails").style.display = "none";
+  document.getElementById("selectedPrice").innerHTML = "";
+  document.getElementById("selectedStock").innerText = "";
+
+  if (!variants || variants.length === 0) {
+    return Swal.fire({
+      icon: "error",
+      title: "No sizes available",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  }
 
   variants.forEach((variant) => {
     const btn = document.createElement("button");
     btn.innerText = variant.size;
-    btn.classList.add("size-option-btn");
+    btn.className = "size-option-btn";
 
     if (variant.quantity <= 0) {
       btn.disabled = true;
       btn.classList.add("out-of-stock");
     }
 
-    btn.onclick = () => {
+    btn.addEventListener("click", () => {
+
+  
       document
         .querySelectorAll(".size-option-btn")
         .forEach((b) => b.classList.remove("active"));
@@ -36,28 +51,31 @@ function openSizeModal(variants) {
 
       selectedVariant = variant;
 
-      document.getElementById("variantDetails").style.display = "block";
+      const details = document.getElementById("variantDetails");
+      details.style.display = "block";
 
       if (variant.discountPercent > 0) {
         document.getElementById("selectedPrice").innerHTML = `
-      <span style="text-decoration: line-through; color: gray;">
-        ₹${variant.originalPrice}
-      </span>
-      <span style="color: red; font-weight: bold; margin-left: 8px;">
-        ₹${variant.finalPrice}
-      </span>
-      <span style="color: green; margin-left: 6px;">
-        (${variant.discountPercent}% OFF)
-      </span>
-    `;
+          <span style="text-decoration: line-through; color: gray;">
+            ₹${variant.originalPrice}
+          </span>
+          <span style="color: red; font-weight: bold; margin-left: 8px;">
+            ₹${variant.finalPrice}
+          </span>
+          <span style="color: green; margin-left: 6px;">
+            (${variant.discountPercent}% OFF)
+          </span>
+        `;
       } else {
         document.getElementById("selectedPrice").innerHTML =
           `₹${variant.originalPrice}`;
       }
 
       document.getElementById("selectedStock").innerText =
-        variant.quantity > 0 ? `${variant.quantity} available` : "Out of stock";
-    };
+        variant.quantity > 0
+          ? `${variant.quantity} available`
+          : "Out of stock";
+    });
 
     container.appendChild(btn);
   });
@@ -75,10 +93,12 @@ function confirmSize() {
     });
   }
 
-  document.getElementById("sizeModal").style.display = "none";
+  const modal = document.getElementById("sizeModal");
+  modal.style.display = "none";
 
   addToCart(selectedProductId, selectedVariant.size);
 }
+
 
 async function toggleWishlist(productId, iconElement) {
   try {

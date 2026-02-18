@@ -199,4 +199,26 @@ router.post("/coupon/remove", userAuth, removeCoupon);
 // Wallet Management
 router.get("/wallet", userAuth, loadWallet);
 
+
+router.get("/about", (req, res) => {
+  res.render("user/about");
+});
+
+
+router.get("/faq", (req, res) => {
+  res.render("user/faq");
+});
+
+router.get("/shipping-policy", (req, res) => {
+  res.render("user/shipping");
+});
+
+router.get("/return-policy", (req, res) => {
+  res.render("user/return");
+});
+
+router.get("/size-guide", (req, res) => {
+  res.render("user/size-guide");
+});
+
 export default router;
