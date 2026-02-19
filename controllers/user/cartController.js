@@ -4,7 +4,6 @@ import Category from "../../models/categoryModel.js";
 import User from "../../models/userModel.js";
 import { applyBestOffer } from "../../utils/applyBestOffer.js";
 const Max_QUANTITY_PER_PRODUCT = 5;
-
 export const loadCart = async (req, res) => {
   try {
     if (!req.session.user) {
@@ -24,63 +23,68 @@ export const loadCart = async (req, res) => {
         user,
         cart: null,
         subtotal: 0,
+        hasInvalidItems: false,
       });
     }
 
-    cart.items = cart.items.filter((item) => {
-      const p = item.productId;
-
-      if (!p || p.isBlocked || p.status !== "Available") {
-        return false;
-      }
-
-      const selectedVariant = p.variants.find((v) => v.size === item.size);
-
-      return selectedVariant && selectedVariant.quantity > 0;
-    });
-
     let subtotal = 0;
+    let hasInvalidItems = false;
 
     const cartItemsWithOffer = await Promise.all(
       cart.items.map(async (item) => {
         const product = item.productId;
 
-        const selectedVariant = product.variants.find(
-          (v) => v.size === item.size,
+        let isBlocked = false;
+        let stockIssue = false;
+
+        if (!product || product.isBlocked || product.status !== "Available") {
+          isBlocked = true;
+          hasInvalidItems = true;
+        }
+
+        const selectedVariant = product?.variants?.find(
+          (v) => v.size === item.size
         );
 
-        if (!selectedVariant) return null;
+        if (!selectedVariant || selectedVariant.quantity < item.quantity) {
+          stockIssue = true;
+          hasInvalidItems = true;
+        }
 
-        const offer = await applyBestOffer(product);
-        const discountPercent = offer.discountPercent || 0;
+        let originalPrice = selectedVariant?.price || 0;
+        let discountPercent = 0;
+        let finalPrice = originalPrice;
 
-        const originalPrice = selectedVariant.price;
+        if (!isBlocked && !stockIssue) {
+          const offer = await applyBestOffer(product);
+          discountPercent = offer.discountPercent || 0;
 
-        const finalPrice =
-          discountPercent > 0
-            ? Math.round(
-                originalPrice - (originalPrice * discountPercent) / 100,
-              )
-            : originalPrice;
+          finalPrice =
+            discountPercent > 0
+              ? Math.round(
+                  originalPrice - (originalPrice * discountPercent) / 100
+                )
+              : originalPrice;
 
-        const itemTotal = finalPrice * item.quantity;
-
-        subtotal += itemTotal;
+          subtotal += finalPrice * item.quantity;
+        }
 
         return {
           ...item.toObject(),
           finalPrice,
           originalPrice,
           discountPercent,
-          itemTotal,
+          isBlocked,
+          stockIssue,
         };
-      }),
+      })
     );
 
     res.render("user/cart", {
       user,
       cart: { ...cart.toObject(), items: cartItemsWithOffer },
       subtotal,
+      hasInvalidItems,
     });
   } catch (error) {
     console.error("Load cart error:", error.message);

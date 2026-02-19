@@ -116,3 +116,20 @@
     grid-template-rows: auto auto;
   }
 }
+.invalid-item {
+  opacity: 0.6;
+  border: 1px solid #ff4d4d;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.error-text {
+  color: #ff4d4d;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.checkout-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

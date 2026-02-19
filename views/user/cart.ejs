@@ -38,39 +38,49 @@
       <% if (cart && cart.items.length > 0) { %>
 
         <% cart.items.forEach(item => { %>
-          <div class="cart-item">
+  <div class="cart-item <%= item.isBlocked || item.stockIssue ? 'invalid-item' : '' %>">
 
-            <img src="/uploads/image/<%= item.productId.productImage[0] || 'placeholder.png' %>">
+    <img src="/uploads/image/<%= item.productId.productImage[0] || 'placeholder.png' %>">
 
-            <div>
-              <h4><%= item.productId.productName %></h4>
-              <h5>Size: <%= item.size %></h5>
-              <div class="cart-price">₹ <%= item.finalPrice %></div>
-            </div>
+    <div>
+      <h4><%= item.productId.productName %></h4>
+      <h5>Size: <%= item.size %></h5>
 
-            <div class="qty-box">
-              <button onclick="updateQty('<%= item.productId._id %>','<%= item.size %>','dec')">
+      <% if(item.isBlocked){ %>
+        <p class="error-text">This product is no longer available</p>
+      <% } %>
 
-                <i class="fa-solid fa-minus"></i>
-              </button>
+      <% if(item.stockIssue){ %>
+        <p class="error-text">Insufficient stock available</p>
+      <% } %>
 
-              <span id="qty-<%= item.productId._id %>">
-                <%= item.quantity %>
-              </span>
+      <% if(!item.isBlocked && !item.stockIssue){ %>
+        <div class="cart-price">₹ <%= item.finalPrice %></div>
+      <% } %>
+    </div>
 
-              <button onclick="updateQty('<%= item.productId._id %>','<%= item.size %>','inc')">
+    <% if(!item.isBlocked && !item.stockIssue){ %>
+      <div class="qty-box">
+        <button onclick="updateQty('<%= item.productId._id %>','<%= item.size %>','dec')">
+          <i class="fa-solid fa-minus"></i>
+        </button>
 
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div>
+        <span><%= item.quantity %></span>
 
-            <div class="remove-btn" onclick="removeItem('<%= item.productId._id %>','<%= item.size %>')">
- 
-              Remove
-            </div>
+        <button onclick="updateQty('<%= item.productId._id %>','<%= item.size %>','inc')">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </div>
+    <% } %>
 
-          </div>
-        <% }) %>
+    <div class="remove-btn"
+         onclick="removeItem('<%= item.productId._id %>','<%= item.size %>')">
+      Remove
+    </div>
+
+  </div>
+<% }) %>
+
 
       <% } else { %>
         <div class="empty-cart">
@@ -101,9 +111,19 @@
         <span>₹ <%= subtotal %></span>
       </div>
 
-      <button class="checkout-btn" onclick="location.href='/checkout'">
-        Proceed to Checkout
-      </button>
+      <button
+  class="checkout-btn"
+  <%= hasInvalidItems ? 'disabled' : '' %>
+  onclick="location.href='/checkout'">
+  Proceed to Checkout
+</button>
+
+<% if(hasInvalidItems){ %>
+  <p class="error-text">
+    Please remove unavailable items before checkout.
+  </p>
+<% } %>
+
     </div>
 
   </div>

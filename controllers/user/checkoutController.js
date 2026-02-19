@@ -25,17 +25,21 @@ export const loadCheckout = async (req, res) => {
       return res.redirect("/cart");
     }
 
-    cart.items = cart.items.filter((item) => {
+    const hasInvalidItems = cart.items.some((item) => {
       const p = item.productId;
 
       if (!p || p.isBlocked || p.status !== "Available") {
-        return false;
+        return true;
       }
 
       const selectedVariant = p.variants.find((v) => v.size === item.size);
 
-      return selectedVariant && selectedVariant.quantity >= item.quantity;
+      return !selectedVariant || selectedVariant.quantity < item.quantity;
     });
+
+    if (hasInvalidItems) {
+      return res.redirect("/cart");
+    }
 
     if (cart.items.length === 0) {
       return res.redirect("/cart");
