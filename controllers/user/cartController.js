@@ -6,11 +6,11 @@ import { applyBestOffer } from "../../utils/applyBestOffer.js";
 const Max_QUANTITY_PER_PRODUCT = 5;
 export const loadCart = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.redirect("/login");
-    }
+    
 
-    const userId = req.session.user._id;
+    const userId = req.session.user._id;  
+
+  
     const user = await User.findById(userId);
 
     const cart = await Cart.findOne({ userId }).populate({
@@ -94,15 +94,21 @@ export const loadCart = async (req, res) => {
 
 export const addToCart = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({
-        success: false,
-        message: "Please login first",
-        redirect: "/login",
-      })
-    }
+  
 
-    const userId = req.session.user._id;
+
+
+    if (!req.session?.user?._id) {
+  return res.status(401).json({
+    success: false,
+    message: "Please login",
+  });
+}
+
+const userId = req.session.user._id;
+   
+    
+
     const { productId, quantity = 1, size } = req.body;
 
     const product = await Product.findById(productId);

@@ -9,9 +9,7 @@ export const couponSchema = z.object({
         .max(20, "Coupon code is too long")
         .regex(/^[A-Z0-9]+$/, "Only uppercase letters and numbers allowed"),
 
-      discountType: z.enum(["PERCENT", "FLAT"], {
-        errorMap: () => ({ message: "Invalid discount type" }),
-      }),
+      discountType: z.enum(["PERCENT", "FLAT"]),
 
       discountValue: z.coerce
         .number()
@@ -27,18 +25,15 @@ export const couponSchema = z.object({
         .min(0, "Maximum purchase cannot be negative")
         .optional(),
 
-
       maxDiscount: z.coerce
         .number()
         .min(0, "Maximum discount cannot be negative")
         .optional(),
 
-      expiryDate: z
-        .string()
-        .refine(
-          (date) => new Date(date) > new Date(),
-          "Expiry date must be in the future"
-        ),
+      expiryDate: z.string().refine(
+        (date) => new Date(date) > new Date(),
+        "Expiry date must be in the future"
+      ),
 
       usageLimit: z.coerce
         .number()
@@ -46,52 +41,47 @@ export const couponSchema = z.object({
         .optional(),
     })
     .superRefine((data, ctx) => {
-      const { discountType, discountValue, minPurchase , maxPurchase } = data;
+      const {
+        discountType,
+        discountValue,
+        minPurchase,
+        maxPurchase,
+        maxDiscount,
+      } = data;
 
-      if (minPurchase !== undefined) {
-    
-        if (discountType === "FLAT" && minPurchase <= discountValue) {
+      // FLAT validation
+      if (discountType === "FLAT") {
+        if (minPurchase && discountValue >= minPurchase) {
           ctx.addIssue({
-            path: ["minPurchase"],
-            message: "Minimum purchase must be greater than discount amount",
+            path: ["discountValue"],
+            message: "Flat discount must be less than minimum purchase",
+          });
+        }
+      }
+
+      // PERCENT validation
+      if (discountType === "PERCENT") {
+        if (discountValue > 90) {
+          ctx.addIssue({
+            path: ["discountValue"],
+            message: "Percentage discount cannot exceed 90%",
           });
         }
 
-        if (discountType === "PERCENT" && minPurchase <= 0) {
+        if (!maxDiscount) {
           ctx.addIssue({
-            path: ["minPurchase"],
-            message: "Minimum purchase must be greater than 0",
+            path: ["maxDiscount"],
+            message: "Maximum discount cap is required for percentage coupons",
           });
         }
+      }
 
-        if(discountType==="PERCENT")  {
-          const maxPossibleDiscount = (minPurchase * discountValue) / 100;
-          if (maxPossibleDiscount > minPurchase) {
-            ctx.addIssue({
-              path: ["discountValue"],
-              message: "Discount percentage is too high for the minimum purchase",
-            });
-          }
-        }
-
-        if(maxPurchase !== undefined && minPurchase > maxPurchase) {
-          ctx.addIssue({
-            path: ["maxPurchase"],
-            message: "Maximum purchase must be greater than or equal to minimum purchase",
-          });
-        }
-
-        if(maxPurchase !== undefined && discountType === "PERCENT") {
-          const maxPossibleDiscount = (maxPurchase * discountValue) / 100;
-          if (maxPossibleDiscount > maxPurchase) {
-            ctx.addIssue({
-              path: ["discountValue"],
-              message: "Discount percentage is too high for the maximum purchase",
-            });
-          }
-        }
-        
-
+      if (maxPurchase && minPurchase && maxPurchase < minPurchase) {
+        ctx.addIssue({
+          path: ["maxPurchase"],
+          message:
+            "Maximum purchase must be greater than or equal to minimum purchase",
+        });
       }
     }),
 });

@@ -23,7 +23,8 @@ const couponSchema = new Schema(
       default: 0
     },
     maxDiscount: {
-      type: Number
+      type: Number,
+      default: null
     },
     expiryDate: {
       type: Date,

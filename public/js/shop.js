@@ -155,6 +155,8 @@ async function addToCart(productId, size = null) {
 
     const data = await res.json();
 
+    
+
     if (data.success) {
       Swal.fire({
         position: "top-end",

@@ -158,10 +158,7 @@
               </a>
               <button
                   class="add-to-cart-btn"
-                  onclick="handleAddToCart(
-  '<%= products[i]._id %>',
-  '<%- JSON.stringify(products[i].variants || []) %>'
-)"
+      onclick='handleAddToCart("<%= products[i]._id %>", <%- JSON.stringify(products[i].variants || []) %>)'
                 >
                   Add to Cart
                 </button>

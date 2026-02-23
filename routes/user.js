@@ -127,9 +127,9 @@ router.get("/", loadHomepage);
 router.get("/shop", loadShoppingPage);
 
 // Product Management
-router.get("/product-details", userAuth, getProductDetailsPage);
-router.get("/filter-by-Price", userAuth, filterByPrice);
-router.get("/filter", userAuth, filter);
+router.get("/product-details",getProductDetailsPage);
+router.get("/filter-by-Price",filterByPrice);
+router.get("/filter", filter);
 router.post("/product/add-review", userAuth, addReview);
 
 //Profile Management

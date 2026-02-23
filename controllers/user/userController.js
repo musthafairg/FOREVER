@@ -58,7 +58,7 @@ export const loadHomepage = async (req, res) => {
 
       const maxDiscount = Math.max(productDiscount, categoryDiscount);
 
-      // 🔥 Apply discount per variant
+  
       const updatedVariants = product.variants.map((variant) => {
 
         const originalPrice = variant.price;
@@ -79,7 +79,7 @@ export const loadHomepage = async (req, res) => {
         };
       });
 
-      // 🔥 Find lowest final price (for product card display)
+      
       const minFinalPrice = Math.min(
         ...updatedVariants.map((v) => v.finalPrice)
       );

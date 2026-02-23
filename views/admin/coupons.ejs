@@ -27,7 +27,7 @@
         </li>
         <li>
           <a href="/admin/sales-report"
-            ><i class="fas fa-chart-line"></i>Sales</a
+            ><i class="fas fa-chart-line"></i>Sales Report</a
           >
         </li>
         
@@ -206,6 +206,16 @@
           type="number"
           class="form-control mb-2"
         />
+
+        <div class="col-md-2">
+  <input
+    name="maxDiscount"
+    type="number"
+    class="form-control"
+    placeholder="Max Discount (for %)"
+  />
+  <small id="error-maxDiscount" class="text-danger"></small>
+</div>
 
         <input
           id="edit-expiryDate"

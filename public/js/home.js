@@ -147,6 +147,12 @@ async function addToCart(productId, size = null) {
     }),
   });
 
+
+  if (res.status === 401) {
+  window.location.href = "/login";
+  return;
+}
+
   const data = await res.json();
 
   if (data.success) {

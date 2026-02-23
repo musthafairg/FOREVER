@@ -1,36 +1,25 @@
 import User from "../models/userModel.js";
-
 export const userAuth = async (req, res, next) => {
   try {
-    const sessionUser = req.session.user;
+  if (!req.session?.user?._id) {
+  if (req.headers.accept.includes("json")) {
+    return res.status(401).json({ success: false });
+  }
+  return res.redirect("/login");
+}
+    const user = await User.findById(req.session.user._id);
 
-    if (!sessionUser) {
-      return res.redirect("/login");
-    }
-
-    const user = await User.findById(sessionUser._id);
-
-    if (user && !user.isBlocked) {
-      return next();
-    }
-
-    if (user && user.isBlocked) {
-    
+    if (!user || user.isBlocked) {
       delete req.session.user;
-
-      
       return res.redirect("/login");
     }
 
-    delete req.session.user;
-    return res.redirect("/login");
-
+    next();
   } catch (error) {
-    console.error("Error in userAuth middleware:", error.message);
-    return res.status(500).send("Server Error");
+    console.error("UserAuth error:", error.message);
+    return res.redirect("/login");
   }
 };
-
 
 export const adminAuth = async (req, res, next) => {
   try {
