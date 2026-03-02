@@ -250,13 +250,26 @@ export const loadOrders = async (req, res) => {
   try {
     const userId = req.session.user._id;
 
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
     const user = await User.findById(userId);
 
-    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+    const totalOrders = await Order.countDocuments({ userId });
+
+    const orders = await Order.find({ userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(totalOrders / limit);
 
     res.render("user/orders", {
       user,
       orders,
+      currentPage: page,
+      totalPages,
     });
   } catch (error) {
     console.error("Error in load Orders :", error.message);
