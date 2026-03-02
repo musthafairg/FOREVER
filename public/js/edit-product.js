@@ -1,4 +1,7 @@
 
+
+
+
 function attachRemoveHandler(div) {
   const btn = div.querySelector(".remove-variant-btn");
   if (!btn) return;
@@ -252,6 +255,9 @@ for (let i = 1; i <= 4; i++) {
   initCropButton(i);
 }
 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
+
+
 function onFileChange(event, index) {
   const state = cropStates[index];
   const input = state.input;
@@ -265,6 +271,26 @@ function onFileChange(event, index) {
 
   if (input.files && input.files[0]) {
     const file = input.files[0];
+
+    
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid file type",
+        text: "Only JPG, PNG and WEBP images are allowed.",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
+      input.value = "";
+      container.style.display = "none";
+      cropBtn.style.display = "none";
+      mainImage.src = "";
+      return;
+    }
+
+   
+
     const reader = new FileReader();
 
     reader.onload = function (ev) {
