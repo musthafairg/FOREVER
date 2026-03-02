@@ -117,6 +117,7 @@ async function toggleWishlist(productId, iconElement) {
       iconElement.classList.toggle("far");
       iconElement.classList.toggle("wishlist-active");
 
+      location.reload()
     }
   } catch (err) {
     console.error(err);

@@ -118,6 +118,8 @@ async function toggleWishlist(productId, iconElement) {
       iconElement.classList.toggle("far");
       iconElement.classList.toggle("wishlist-active");
 
+      location.reload()
+
     }
   } catch (err) {
     console.error(err);
@@ -185,7 +187,7 @@ async function addToCart(productId, size = null) {
     Swal.fire({
       position: "top-end",
       icon: "error",
-      title: "Something went wrong",
+      title: "please login first ",
       showConfirmButton: false,
       timer: 1500,
     });

@@ -204,6 +204,8 @@ function validateForm() {
   for (let i = 1; i <= 4; i++) {
     const input = document.getElementById(`input${i}`);
     if (input && input.files && input.files.length > 0) {
+
+      
       imagesSelected = true;
       break;
     }
@@ -212,6 +214,8 @@ function validateForm() {
     displayErrorMessage("images-error", "Please select at least one image.");
     isValid = false;
   }
+
+  
 
   return isValid;
 }
