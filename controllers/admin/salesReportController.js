@@ -2,6 +2,8 @@ import Order from "../../models/orderModel.js";
 import PDFDocument from "pdfkit";
 import ExcelJS from "exceljs";
 import { getDateRange } from "../../utils/getDateRange.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 export const loadSalesReport = async (req, res) => {
   try {
@@ -108,12 +110,24 @@ export const downloadSalesReportPDF = async (req, res) => {
       paymentStatus: "PAID",
     }).sort({ createdAt: -1 });
 
+   
+
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+    const fontPath = path.join(
+      __dirname,
+      "../../public/fonts/NotoSans-Regular.ttf",
+    );
+
     const doc = new PDFDocument({ size: "A4", margin: 40 });
+    doc.registerFont("NotoSans", fontPath);
+    doc.font("NotoSans");
 
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      "attachment; filename=sales-report.pdf"
+      "attachment; filename=sales-report.pdf",
     );
 
     doc.pipe(res);
@@ -161,7 +175,7 @@ export const downloadSalesReportPDF = async (req, res) => {
     const avgOrderValue =
       orders.length > 0 ? Math.round(netRevenue / orders.length) : 0;
 
-    doc.fontSize(11).font("Helvetica-Bold");
+    doc.fontSize(11).font("NotoSans");
     doc.text(`Total Orders: ${orders.length}`);
     doc.text(`Cancelled Amount: ₹ ${cancelledAmount}`);
     doc.text(`Refunded Amount: ₹ ${refundedAmount}`);
@@ -171,13 +185,13 @@ export const downloadSalesReportPDF = async (req, res) => {
 
     doc.moveDown(1);
 
-    doc.font("Helvetica-Bold").fontSize(10);
+    doc.font("NotoSans").fontSize(10);
     doc.text("Order ID", 40);
     doc.text("Date", 140);
     doc.text("Total", 300);
 
     doc.moveDown(0.5);
-    doc.font("Helvetica").fontSize(9);
+    doc.font("NotoSans").fontSize(9);
 
     orders.forEach((o) => {
       doc.text(o.orderId, 40);
@@ -246,7 +260,7 @@ export const downloadSalesReportExcel = async (req, res) => {
 
     res.setHeader(
       "Content-Disposition",
-      "attachment; filename=sales-report.xlsx"
+      "attachment; filename=sales-report.xlsx",
     );
 
     await workbook.xlsx.write(res);
