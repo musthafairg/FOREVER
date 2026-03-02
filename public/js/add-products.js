@@ -224,6 +224,8 @@ for (let i = 1; i <= 4; i++) {
   initDragHandlers(i);
   initCropButton(i);
 }
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg"];
+
 
 function onFileChange(event, index) {
   const state = cropStates[index];
@@ -238,6 +240,25 @@ function onFileChange(event, index) {
 
   if (input.files && input.files[0]) {
     const file = input.files[0];
+
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid file type",
+        text: "Only JPG, PNG and WEBP images are allowed.",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
+      input.value = "";
+      container.style.display = "none";
+      cropBtn.style.display = "none";
+      mainImage.src = "";
+      return;
+    }
+
+  
+
     const reader = new FileReader();
 
     reader.onload = function (ev) {
@@ -261,7 +282,6 @@ function onFileChange(event, index) {
     preview.innerHTML = "";
   }
 }
-
 function initDragHandlers(index) {
   const state = cropStates[index];
   const cropArea = state.cropArea;
