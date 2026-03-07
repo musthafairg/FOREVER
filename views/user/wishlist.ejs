@@ -45,11 +45,7 @@
             <td>
                <button
                   class="add-cart"
-        onclick="handleAddToCart(
-  '<%= p._id %>',
-  '<%- JSON.stringify(p.variants || []) %>'
-)"
-
+        onclick='handleAddToCart("<%= p._id %>", <%- JSON.stringify(p.variants || []) %>)'
                 >
                   Add to Cart
                 </button>

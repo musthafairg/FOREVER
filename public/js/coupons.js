@@ -17,6 +17,7 @@ form.addEventListener("submit", async (e) => {
   const result = await res.json();
 
   if (!result.success) {
+
     for (const f in result.errors) {
       document.getElementById(`error-${f}`).innerText = result.errors[f];
     }

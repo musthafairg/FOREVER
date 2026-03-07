@@ -49,13 +49,6 @@ app.use(passport.session())
 app.use(injectWishlistData)
 app.use(injectCartCount)
 
-
-app.use('/',userRouter)
-app.use('/admin',adminRouter)
-app.use(adminNotFound)
-app.use(adminErrorHandler)
-app.use(notFound)
-
 app.use((req, res, next) => {
   res.locals.formErrors = req.session.formErrors || {};
   res.locals.formData = req.session.formData || {};
@@ -67,9 +60,21 @@ app.use((req, res, next) => {
 });
 
 
+app.use('/',userRouter)
+app.use('/admin',adminRouter)
+
+
+app.use(adminNotFound)
+app.use(adminErrorHandler)
+app.use(notFound)
+app.use(errorHandler)
+
+
+
+
+
 app.listen(port,()=>{
     console.log(`Server started on port ${port}`);
     
 })
 
-app.use(errorHandler)

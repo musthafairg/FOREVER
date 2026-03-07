@@ -33,6 +33,7 @@ export const sendVerificationEmail= async(email,otp)=>{
       }
     })
 
+
     const info=await transporter.sendMail({
       from:process.env.NODEMAILER_EMAIL,
       to:email,
@@ -41,6 +42,9 @@ export const sendVerificationEmail= async(email,otp)=>{
       html:`<b>Your OTP : ${otp}</b>`,
 
     })
+
+
+    console.log(info)
     return info.accepted.length>0
 
   } catch (error) {

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import Coupon from "../models/couponModel.js";
 
 export const couponSchema = z.object({
   body: z
@@ -48,7 +49,21 @@ export const couponSchema = z.object({
         minPurchase,
         maxPurchase,
         maxDiscount,
+        code,
       } = data;
+
+
+    //  const exists = Coupon.findOne({ code });
+
+    //   if(exists){
+
+    //      ctx.addIssue({
+    //         path: ["code"],
+    //         message: "Already Exists",
+    //       });
+
+    //   }
+
 
       // FLAT validation
       if (discountType === "FLAT") {

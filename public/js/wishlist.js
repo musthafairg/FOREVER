@@ -13,7 +13,9 @@ async function removeWishlist(productId) {
     });
 
     const data = await res.json();
-    if (data.success) location.reload();
+    if (data.success) setTimeout(() => {
+      location.reload();
+    }, 1500); 
 
   } catch (err) {
     console.error(err);

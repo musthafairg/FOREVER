@@ -331,6 +331,8 @@ export const signupUser = async (req, res) => {
 
     const otp = generateOtp();
 
+    console.log(email,otp)
+
     const emailSent = await sendVerificationEmail(email, otp);
 
     if (!emailSent) {
