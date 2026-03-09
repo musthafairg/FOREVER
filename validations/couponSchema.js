@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Coupon from "../models/couponModel.js";
+
 
 export const couponSchema = z.object({
   body: z
@@ -48,22 +48,11 @@ export const couponSchema = z.object({
         discountValue,
         minPurchase,
         maxPurchase,
-        maxDiscount,
-        code,
+        
       } = data;
 
 
-    //  const exists = Coupon.findOne({ code });
-
-    //   if(exists){
-
-    //      ctx.addIssue({
-    //         path: ["code"],
-    //         message: "Already Exists",
-    //       });
-
-    //   }
-
+    
 
       // FLAT validation
       if (discountType === "FLAT") {
@@ -84,10 +73,10 @@ export const couponSchema = z.object({
           });
         }
 
-        if (!maxDiscount) {
+        if (!maxPurchase) {
           ctx.addIssue({
-            path: ["maxDiscount"],
-            message: "Maximum discount cap is required for percentage coupons",
+            path: ["maxPurchase"],
+            message: "Maximum Purchase cap is required for percentage coupons",
           });
         }
       }

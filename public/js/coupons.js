@@ -56,6 +56,7 @@ async function openEditModal(id) {
   editCouponForm.discountType.value = c.discountType;
   editCouponForm.discountValue.value = c.discountValue;
   editCouponForm.minPurchase.value = c.minPurchase || "";
+  editCouponForm.maxPurchase.value=c.maxPurchase||"";
   editCouponForm.expiryDate.value = c.expiryDate.split("T")[0];
 
   modal.show();

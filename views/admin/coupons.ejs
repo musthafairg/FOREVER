@@ -1,7 +1,7 @@
 <%- include("../../views/partials/admin/header") %>
 
 <script>
-  const discountTypeSelect= document.getElementById("discountType").value()
+  const discountTypeSelect = document.getElementById('discountType').value
 </script>
 
 <div class="main-layout" style="gap: 2%">
@@ -30,7 +30,7 @@
             ><i class="fas fa-chart-line"></i>Sales Report</a
           >
         </li>
-        
+
         <li>
           <a href="/admin/offers/product"
             ><i class="fa-solid fa-tags"></i>Product Offer</a
@@ -85,18 +85,15 @@
           />
         </div>
 
-       
-
         <div class="col-md-2">
-          <input type="number",
-          name="maxPurchase",
-          class="form-control",
-          placeholder="Max Purchase"
+          <input
+            type="number"
+            name="maxPurchase"
+            class="form-control"
+            placeholder="Max Purchase"
           />
           <small id="error-maxPurchase" class="text-danger"></small>
-
         </div>
-      
 
         <div class="col-md-2">
           <input name="expiryDate" type="date" class="form-control" />
@@ -208,14 +205,14 @@
         />
 
         <div class="col-md-2">
-  <input
-    name="maxDiscount"
-    type="number"
-    class="form-control"
-    placeholder="Max Discount (for %)"
-  />
-  <small id="error-maxDiscount" class="text-danger"></small>
-</div>
+          <input
+            name="maxPurchase"
+            type="number"
+            class="form-control"
+            placeholder="Max Purchase"
+          />
+          <small id="error-maxPurchase" class="text-danger"></small>
+        </div>
 
         <input
           id="edit-expiryDate"

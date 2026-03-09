@@ -44,7 +44,7 @@ export const sendVerificationEmail= async(email,otp)=>{
     })
 
 
-    console.log(info)
+   
     return info.accepted.length>0
 
   } catch (error) {
