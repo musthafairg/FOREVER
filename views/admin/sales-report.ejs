@@ -2,6 +2,7 @@
 
 <div class="main-layout">
 
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <nav class="sidebar-nav">
       <ul>
@@ -45,11 +46,15 @@
   </aside>
 
 
-
+  <!-- MAIN CONTENT -->
   <main class="dashboard-content">
+
     <h2 class="mb-4">Sales Report</h2>
 
+
+    <!-- FILTER -->
     <form method="GET" class="row g-3 mb-4">
+
       <div class="col-md-3">
         <select name="filter" class="form-select">
           <option value="today" <%= filter === 'today' ? 'selected' : '' %>>Today</option>
@@ -61,106 +66,226 @@
       </div>
 
       <div class="col-md-3">
-        <input type="date" name="from" class="form-control" value="<%= from || '' %>" />
+        <input type="date" name="from" class="form-control" value="<%= from || '' %>">
       </div>
 
       <div class="col-md-3">
-        <input type="date" name="to" class="form-control" value="<%= to || '' %>" />
+        <input type="date" name="to" class="form-control" value="<%= to || '' %>">
       </div>
 
       <div class="col-md-3">
         <button class="btn btn-dark w-100">Apply</button>
       </div>
+
     </form>
 
 
 
-  
-    <div class="card p-4 mb-4 shadow-sm">
-      <div class="row">
-        <div class="col-md-4">
-          <p><strong>Total Orders:</strong> <%= totalOrders %></p>
-          <p><strong>Total Items Sold:</strong> <%= totalItemsSold %></p>
+    <!-- ANALYTICS CARDS -->
+    <div class="row g-3 mb-4">
+
+      <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+          <h6>Total Orders</h6>
+          <h3><%= totalOrders %></h3>
         </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+          <h6>Net Revenue</h6>
+          <h3>₹ <%= netRevenue %></h3>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+          <h6>Items Sold</h6>
+          <h3><%= totalItemsSold %></h3>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+          <h6>Avg Order Value</h6>
+          <h3>₹ <%= averageOrderValue %></h3>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <!-- REVENUE BREAKDOWN -->
+    <div class="card p-4 mb-4 shadow-sm">
+
+      <h5 class="mb-3">Revenue Breakdown</h5>
+
+      <div class="row">
 
         <div class="col-md-4">
           <p><strong>Gross Revenue:</strong> ₹ <%= grossRevenue %></p>
           <p><strong>Total Discount:</strong> ₹ <%= totalDiscount %></p>
+        </div>
+
+        <div class="col-md-4">
           <p><strong>Total Tax:</strong> ₹ <%= totalTax %></p>
+          <p><strong>Cancelled Amount:</strong> ₹ <%= cancelledAmount %></p>
         </div>
 
         <div class="col-md-4">
-  <p><strong>Cancelled Amount:</strong> ₹ <%= cancelledAmount %></p>
-  <p><strong>Refunded Amount:</strong> ₹ <%= refundedAmount %></p>
-  <p><strong>Returned Items:</strong> <%= totalReturnedItems %></p>
-</div>
-
-        <div class="col-md-4">
-          <p><strong>Net Revenue:</strong> ₹ <%= netRevenue %></p>
-          <p><strong>Average Order Value:</strong> ₹ <%= averageOrderValue %></p>
-
-          <% if (topProduct) { %>
-            <p>
-              <strong>Top Product:</strong>
-              <%= topProduct[0] %> ( <%= topProduct[1] %> sold )
-            </p>
-          <% } %>
+          <p><strong>Refunded Amount:</strong> ₹ <%= refundedAmount %></p>
+          <p><strong>Returned Items:</strong> <%= totalReturnedItems %></p>
         </div>
+
       </div>
+
     </div>
 
 
 
+    <!-- PAYMENT SUMMARY -->
+    <div class="card p-4 mb-4 shadow-sm">
 
+      <h5 class="mb-3">Payment Summary</h5>
+
+      <div class="row">
+
+        <div class="col-md-4">
+          <p><strong>COD Revenue:</strong> ₹ <%= codRevenue %></p>
+        </div>
+
+        <div class="col-md-4">
+          <p><strong>Online Revenue:</strong> ₹ <%= onlineRevenue %></p>
+        </div>
+
+        <div class="col-md-4">
+          <p><strong>Wallet Revenue:</strong> ₹ <%= walletRevenue %></p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ORDER STATUS -->
+    <div class="card p-4 mb-4 shadow-sm">
+
+      <h5 class="mb-3">Order Status Summary</h5>
+
+      <div class="row">
+
+        <div class="col-md-4">
+          <p><strong>Delivered Orders:</strong> <%= deliveredOrders %></p>
+        </div>
+
+        <div class="col-md-4">
+          <p><strong>Cancelled Orders:</strong> <%= cancelledOrders %></p>
+        </div>
+
+        <div class="col-md-4">
+          <p><strong>Returned Orders:</strong> <%= returnedOrders %></p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- TOP PRODUCT -->
+    <% if(topProduct){ %>
+
+    <div class="card p-4 mb-4 shadow-sm">
+
+      <h5>Top Selling Product</h5>
+
+      <p><strong><%= topProduct[0] %></strong></p>
+
+      <p>Units Sold : <%= topProduct[1] %></p>
+
+    </div>
+
+    <% } %>
+
+
+
+    <!-- EXPORT BUTTONS -->
     <div class="mb-3">
-      <a
-        href="/admin/sales-report/pdf?<%= new URLSearchParams({
-          filter,
-          ...(from && { from }),
-          ...(to && { to })
-        }) %>"
-        class="btn btn-danger"
-      >Download PDF</a>
 
       <a
-        href="/admin/sales-report/excel?<%= new URLSearchParams({
-          filter,
-          ...(from && { from }),
-          ...(to && { to })
-        }) %>"
+        href="/admin/sales-report/pdf?<%= new URLSearchParams({ filter, ...(from && {from}), ...(to && {to}) }) %>"
+        class="btn btn-danger"
+      >
+        Download PDF
+      </a>
+
+      <a
+        href="/admin/sales-report/excel?<%= new URLSearchParams({ filter, ...(from && {from}), ...(to && {to}) }) %>"
         class="btn btn-success"
-      >Download Excel</a>
+      >
+        Download Excel
+      </a>
+
     </div>
 
 
 
-   
+    <!-- ORDERS TABLE -->
     <table class="table table-bordered table-striped">
+
       <thead class="table-dark">
+
         <tr>
           <th>Order ID</th>
+          <th>Customer</th>
           <th>Date</th>
+          <th>Items</th>
           <th>Subtotal</th>
-          <th>Tax</th>
           <th>Discount</th>
+          <th>Tax</th>
           <th>Total</th>
           <th>Payment</th>
+          <th>Status</th>
         </tr>
+
       </thead>
+
       <tbody>
+
         <% orders.forEach(o => { %>
+
         <tr>
+
           <td><%= o.orderId %></td>
+
+          <td><%= o.userId?.name || "User" %></td>
+
           <td><%= o.createdAt.toDateString() %></td>
+
+          <td><%= o.items.length %></td>
+
           <td>₹ <%= o.priceDetails.subtotal %></td>
-          <td>₹ <%= o.priceDetails.tax %></td>
+
           <td>₹ <%= o.priceDetails.discount || 0 %></td>
+
+          <td>₹ <%= o.priceDetails.tax %></td>
+
           <td><strong>₹ <%= o.priceDetails.total %></strong></td>
+
           <td><%= o.paymentMethod %></td>
+
+          <td><%= o.orderStatus %></td>
+
         </tr>
+
         <% }) %>
+
       </tbody>
+
     </table>
 
   </main>
+
 </div>
