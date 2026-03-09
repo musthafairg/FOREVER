@@ -187,25 +187,28 @@
     </div>
 
 
-    <h2 style="margin-top:30px;">Select Payment Method</h2>
-    <label>
-  <input type="radio" name="paymentMethod" value="WALLET">
-  Wallet (Balance: ₹ <%= user.wallet.balance %>)
-</label>
+  <h2 style="margin-top:30px;">Select Payment Method</h2>
 
-<% if (total<1000) { %>
+<div class="payment-methods">
 
-<label>
-  <input type="radio" name="paymentMethod" value="COD" checked>
-  Cash on Delivery
-</label>
-<% } %>
+  <label class="payment-option">
+    <input type="radio" name="paymentMethod" value="WALLET">
+    <span>Wallet (Balance: ₹ <%= user.wallet.balance %>)</span>
+  </label>
 
-<label>
-  <input type="radio" name="paymentMethod" value="ONLINE" >
-  Online Payment
-</label>
+  <% if (total < 1000) { %>
+  <label class="payment-option">
+    <input type="radio" name="paymentMethod" value="COD" checked>
+    <span>Cash on Delivery</span>
+  </label>
+  <% } %>
 
+  <label class="payment-option">
+    <input type="radio" name="paymentMethod" value="ONLINE">
+    <span>Online Payment</span>
+  </label>
+
+</div>
 
     <button type="submit" class="place-order-btn">
       Place Order

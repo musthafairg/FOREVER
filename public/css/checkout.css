@@ -68,4 +68,30 @@
     @media (max-width: 768px) {
       .checkout-container { grid-template-columns: 1fr; }
     }
-  
+  .payment-methods{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-top:10px;
+}
+
+.payment-option{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.payment-option:hover{
+  border-color:#000;
+  background:#fafafa;
+}
+
+.payment-option input{
+  transform:scale(1.2);
+  cursor:pointer;
+}
