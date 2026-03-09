@@ -131,7 +131,7 @@ export const downloadSalesReportPDF = async (req, res) => {
 
     const fontPath = path.join(
       __dirname,
-      "../../public/fonts/NotoSans-Regular.ttf"
+      "../../public/fonts/NotoSans-Regular.ttf",
     );
 
     const doc = new PDFDocument({ size: "A4", margin: 40 });
@@ -142,12 +142,10 @@ export const downloadSalesReportPDF = async (req, res) => {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      "attachment; filename=sales-report.pdf"
+      "attachment; filename=sales-report.pdf",
     );
 
     doc.pipe(res);
-
- 
 
     doc.fontSize(20).text("Sales Report", { align: "center" });
 
@@ -160,8 +158,6 @@ export const downloadSalesReportPDF = async (req, res) => {
       });
 
     doc.moveDown(1);
-
-
 
     let grossRevenue = 0;
     let totalDiscount = 0;
@@ -201,7 +197,6 @@ export const downloadSalesReportPDF = async (req, res) => {
 
     doc.moveDown(1);
 
-
     const tableTop = doc.y;
 
     const column = {
@@ -226,11 +221,9 @@ export const downloadSalesReportPDF = async (req, res) => {
 
     doc.moveDown(0.5);
 
-
     let y = doc.y;
 
     orders.forEach((o) => {
-
       const customerName = (o.userId?.name || "User").substring(0, 20);
 
       doc.fontSize(9);
@@ -274,24 +267,18 @@ export const downloadSalesReportPDF = async (req, res) => {
 
       y += 18;
 
-      
       if (y > 750) {
         doc.addPage();
         y = 50;
       }
-
     });
 
     doc.end();
-
   } catch (err) {
-
     console.error("PDF export error:", err.message);
     res.status(500).send("PDF generation failed");
-
   }
 };
-
 
 export const downloadSalesReportExcel = async (req, res) => {
   try {
@@ -338,7 +325,7 @@ export const downloadSalesReportExcel = async (req, res) => {
 
     res.setHeader(
       "Content-Disposition",
-      "attachment; filename=sales-report.xlsx"
+      "attachment; filename=sales-report.xlsx",
     );
 
     await workbook.xlsx.write(res);

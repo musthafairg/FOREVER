@@ -13,7 +13,6 @@ import CategoryOffer from "../../models/categoryofferModel.js";
 import { generateReferralCode } from "../../utils/generateReferralCode.js";
 import Coupon from "../../models/couponModel.js";
 
-
 const REFERRAL_BONUS_AMOUNT = 200;
 
 export const loadOtp = async (req, res) => {
@@ -41,30 +40,25 @@ export const loadHomepage = async (req, res) => {
     const categoryOfferMap = new Map();
 
     productOffers.forEach((o) =>
-      productOfferMap.set(o.productId.toString(), o.discount)
+      productOfferMap.set(o.productId.toString(), o.discount),
     );
 
     categoryOffers.forEach((o) =>
-      categoryOfferMap.set(o.categoryId.toString(), o.discount)
+      categoryOfferMap.set(o.categoryId.toString(), o.discount),
     );
 
     const productsWithOffer = products.map((product) => {
-
-      const productDiscount =
-        productOfferMap.get(product._id.toString()) || 0;
+      const productDiscount = productOfferMap.get(product._id.toString()) || 0;
 
       const categoryDiscount =
         categoryOfferMap.get(product.category?._id.toString()) || 0;
 
       const maxDiscount = Math.max(productDiscount, categoryDiscount);
 
-  
       const updatedVariants = product.variants.map((variant) => {
-
         const originalPrice = variant.price;
 
-        const discountAmount =
-          (originalPrice * maxDiscount) / 100;
+        const discountAmount = (originalPrice * maxDiscount) / 100;
 
         const finalPrice =
           maxDiscount > 0
@@ -79,9 +73,8 @@ export const loadHomepage = async (req, res) => {
         };
       });
 
-      
       const minFinalPrice = Math.min(
-        ...updatedVariants.map((v) => v.finalPrice)
+        ...updatedVariants.map((v) => v.finalPrice),
       );
 
       return {
@@ -96,7 +89,6 @@ export const loadHomepage = async (req, res) => {
       products: productsWithOffer,
       user,
     });
-
   } catch (error) {
     console.error("Home page not loading :", error.message);
     res.status(500).render("errors/500");
@@ -153,52 +145,49 @@ export const loadShoppingPage = async (req, res) => {
     const productOfferMap = new Map();
     const categoryOfferMap = new Map();
     productOffers.forEach((o) =>
-      productOfferMap.set(o.productId.toString(), o.discount)
+      productOfferMap.set(o.productId.toString(), o.discount),
     );
     categoryOffers.forEach((o) =>
-      categoryOfferMap.set(o.categoryId.toString(), o.discount)
+      categoryOfferMap.set(o.categoryId.toString(), o.discount),
     );
 
-  const productsWithOffer = products.map(product => {
+    const productsWithOffer = products.map((product) => {
+      const productDiscount = productOfferMap.get(product._id.toString()) || 0;
 
-  const productDiscount =
-    productOfferMap.get(product._id.toString()) || 0;
+      const categoryDiscount =
+        categoryOfferMap.get(product.category?.toString()) || 0;
 
-  const categoryDiscount =
-    categoryOfferMap.get(product.category?.toString()) || 0;
+      const maxDiscount = Math.max(productDiscount, categoryDiscount);
 
-  const maxDiscount = Math.max(productDiscount, categoryDiscount);
+      const updatedVariants = product.variants.map((v) => {
+        const finalPrice =
+          maxDiscount > 0
+            ? Math.round(v.price - (v.price * maxDiscount) / 100)
+            : v.price;
 
-  const updatedVariants = product.variants.map(v => {
+        return {
+          ...v.toObject(),
+          originalPrice: v.price,
+          finalPrice,
+          discountPercent: maxDiscount,
+        };
+      });
 
-    const finalPrice =
-      maxDiscount > 0
-        ? Math.round(v.price - (v.price * maxDiscount) / 100)
-        : v.price;
+      const minVariant =
+        updatedVariants.length > 0
+          ? updatedVariants.reduce((min, v) =>
+              v.finalPrice < min.finalPrice ? v : min,
+            )
+          : null;
 
-    return {
-      ...v.toObject(),
-      originalPrice: v.price,
-      finalPrice,
-      discountPercent: maxDiscount
-    };
-  });
-
-  const minVariant = updatedVariants.length > 0
-    ? updatedVariants.reduce((min, v) =>
-        v.finalPrice < min.finalPrice ? v : min
-      )
-    : null;
-
-  return {
-    ...product.toObject(),
-    variants: updatedVariants,
-    finalPrice: minVariant ? minVariant.finalPrice : 0,
-    originalPrice: minVariant ? minVariant.originalPrice : 0,
-    discountPercent: maxDiscount
-  };
-});
-
+      return {
+        ...product.toObject(),
+        variants: updatedVariants,
+        finalPrice: minVariant ? minVariant.finalPrice : 0,
+        originalPrice: minVariant ? minVariant.originalPrice : 0,
+        discountPercent: maxDiscount,
+      };
+    });
 
     const totalProducts = await Product.countDocuments(filter);
 
@@ -283,10 +272,13 @@ export const login = async (req, res) => {
   } catch (error) {
     console.error("Error in post login");
 
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    }).render("errors/500");
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server Error",
+      })
+      .render("errors/500");
   }
 };
 
@@ -331,7 +323,7 @@ export const signupUser = async (req, res) => {
 
     const otp = generateOtp();
 
-    console.log(email,otp)
+    console.log(email, otp);
 
     const emailSent = await sendVerificationEmail(email, otp);
 
@@ -361,10 +353,13 @@ export const signupUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Signup Error :", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    }).render("errors/500");
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server Error",
+      })
+      .render("errors/500");
   }
 };
 
@@ -418,15 +413,15 @@ export const verifyOtp = async (req, res) => {
             $push: { redeemedUsers: saveUserData._id },
           });
 
-
           await User.findByIdAndUpdate(saveUserData._id, {
-            $inc:{"wallet.balance":REFERRAL_BONUS_AMOUNT},
-          $push: { "wallet.transactions": {
-              type: "CREDIT",
-              amount: REFERRAL_BONUS_AMOUNT,
-              reason: `Referral bonus from ${referringUser.name}`,
-            }
-          },
+            $inc: { "wallet.balance": REFERRAL_BONUS_AMOUNT },
+            $push: {
+              "wallet.transactions": {
+                type: "CREDIT",
+                amount: REFERRAL_BONUS_AMOUNT,
+                reason: `Referral bonus from ${referringUser.name}`,
+              },
+            },
           });
         }
       }
@@ -445,7 +440,10 @@ export const verifyOtp = async (req, res) => {
   } catch (error) {
     console.error("Error verifying OTP", error.message);
 
-    res.status(500).json({ success: false, message: "An error occured." }).render("errors/500");
+    res
+      .status(500)
+      .json({ success: false, message: "An error occured." })
+      .render("errors/500");
   }
 };
 
@@ -484,10 +482,13 @@ export const resendOtp = async (req, res) => {
   } catch (error) {
     console.error("Error resending OTP : ", error.message);
 
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error. Please try again.",
-    }).render("errors/500");
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Internal Server Error. Please try again.",
+      })
+      .render("errors/500");
   }
 };
 
@@ -535,10 +536,13 @@ export const emailValid = async (req, res) => {
     return res.render("user/forgot-pass-otp");
   } catch (error) {
     console.error("Email Verification Error");
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    }).render("errors/500");
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error",
+      })
+      .render("errors/500");
   }
 };
 
@@ -575,10 +579,13 @@ export const verifyOTPForgotPass = async (req, res) => {
     });
   } catch (error) {
     console.error("Error verifying OTP :", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    }).render("errors/500");  
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error",
+      })
+      .render("errors/500");
   }
 };
 
@@ -603,10 +610,13 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.error("Error in Reset Password :", error.message);
 
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    }).render("errors/500");
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error",
+      })
+      .render("errors/500");
   }
 };
 
@@ -641,9 +651,12 @@ export const demoLogin = async (req, res) => {
     return res.redirect("/");
   } catch (error) {
     console.error("Error in demo Login :", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    }).render("errors/500");  
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error",
+      })
+      .render("errors/500");
   }
 };

@@ -1,5 +1,6 @@
 import Product from "../../models/productModel.js";
 import Category from "../../models/categoryModel.js";
+import CategoryOffer from "../../models/categoryofferModel.js";
 
 export const categoryInfo = async (req, res) => {
   try {
@@ -41,7 +42,7 @@ export const categoryInfo = async (req, res) => {
 
     res.status(500).render("admin/errors/500", {
       page: "category",
-    }); 
+    });
   }
 };
 
@@ -61,25 +62,23 @@ export const addCategory = async (req, res) => {
   try {
     let { name, description, offer } = req.body;
 
-   
     name = name.trim();
 
-   
     const existingCategory = await Category.findOne({
-      name: { $regex: `^${name}$`, $options: "i" }
+      name: { $regex: `^${name}$`, $options: "i" },
     });
 
     if (existingCategory) {
       return res.status(400).json({
         success: false,
-        message: "Category already exists"
+        message: "Category already exists",
       });
     }
 
     const categoryData = new Category({
       name,
       description,
-      categoryOffer: offer
+      categoryOffer: offer,
     });
 
     await categoryData.save();
@@ -87,17 +86,19 @@ export const addCategory = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Add new category successfully",
-      redirect: "/admin/category"
+      redirect: "/admin/category",
     });
-
   } catch (error) {
     console.error("Error in addCategory:", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error"
-    }).render("admin/errors/500", {
-      page: "category",
-    });
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Internal Server Error",
+      })
+      .render("admin/errors/500", {
+        page: "category",
+      });
   }
 };
 
@@ -148,7 +149,6 @@ export const geteditCategoryPage = async (req, res) => {
   }
 };
 
-
 export const editCategory = async (req, res) => {
   try {
     const id = req.session.editId;
@@ -156,38 +156,38 @@ export const editCategory = async (req, res) => {
 
     name = name.trim();
 
-    
     const existingCategory = await Category.findOne({
       _id: { $ne: id },
-      name: { $regex: `^${name}$`, $options: "i" }
+      name: { $regex: `^${name}$`, $options: "i" },
     });
 
     if (existingCategory) {
       return res.status(400).json({
         success: false,
-        message: "Category name already exists"
+        message: "Category name already exists",
       });
     }
 
     await Category.updateOne(
       { _id: id },
-      { $set: { name, description, categoryOffer: offer } }
+      { $set: { name, description, categoryOffer: offer } },
     );
 
     return res.status(200).json({
       success: true,
       message: "Edit category successfully",
-      redirect: "/admin/category"
+      redirect: "/admin/category",
     });
-
   } catch (error) {
     console.error("Error in Edit category :", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error"
-    }).render("admin/errors/500", {
-      page: "category", 
-    });
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Internal Server Error",
+      })
+      .render("admin/errors/500", {
+        page: "category",
+      });
   }
 };
- 

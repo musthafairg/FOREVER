@@ -12,7 +12,7 @@ export const loadLogin = async (req, res) => {
 
     return res.status(500).render("admin/login", {
       error: "Server Error",
-    }); 
+    });
   }
 };
 

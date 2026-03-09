@@ -17,13 +17,6 @@ export const applyCoupon = async (req, res) => {
       return res.json({ success: false, message: "Coupon expired" });
     }
 
-    // if (coupon.usedCount >= coupon.usageLimit) {
-    //   return res.json({
-    //     success: false,
-    //     message: "Coupon usage limit reached",
-    //   });
-    // }
-
     if (subtotal < coupon.minPurchase) {
       return res.json({
         success: false,

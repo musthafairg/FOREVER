@@ -21,18 +21,15 @@ export const loadWishlist = async (req, res) => {
     }
 
     const validProducts = wishlist.products.filter(
-      (p) => p && !p.isBlocked && p.status === "Available"
+      (p) => p && !p.isBlocked && p.status === "Available",
     );
 
     const productsWithOffer = await Promise.all(
       validProducts.map(async (product) => {
-
         const baseOffer = await applyBestOffer(product);
         const discountPercent = baseOffer.discountPercent || 0;
 
-
-        const updatedVariants = product.variants.map(v => {
-
+        const updatedVariants = product.variants.map((v) => {
           const finalPrice =
             discountPercent > 0
               ? Math.round(v.price - (v.price * discountPercent) / 100)
@@ -42,13 +39,12 @@ export const loadWishlist = async (req, res) => {
             ...v.toObject(),
             originalPrice: v.price,
             finalPrice,
-            discountPercent
+            discountPercent,
           };
         });
 
-      
         const minVariant = updatedVariants.reduce((min, v) =>
-          v.finalPrice < min.finalPrice ? v : min
+          v.finalPrice < min.finalPrice ? v : min,
         );
 
         return {
@@ -57,14 +53,13 @@ export const loadWishlist = async (req, res) => {
           finalPrice: minVariant.finalPrice,
           discountPercent,
         };
-      })
+      }),
     );
 
     res.render("user/wishlist", {
       user,
       products: productsWithOffer,
     });
-
   } catch (error) {
     console.error("Load wishlist error:", error.message);
     return res.status(500).render("errors/500");
@@ -84,10 +79,7 @@ export const addToWishlist = async (req, res) => {
         products: [productId],
       });
     } else {
-
-      const exists = wishlist.products.some(
-        (p) => p.toString() === productId
-      );
+      const exists = wishlist.products.some((p) => p.toString() === productId);
 
       if (exists) {
         wishlist.products.pull(productId);
@@ -99,7 +91,6 @@ export const addToWishlist = async (req, res) => {
     await wishlist.save();
 
     return res.json({ success: true });
-
   } catch (error) {
     console.error("Add to wishlist error:", error.message);
     return res.status(500).json({ success: false });
@@ -111,13 +102,9 @@ export const removeFromWishlist = async (req, res) => {
     const userId = req.session.user._id;
     const { productId } = req.body;
 
-    await Wishlist.updateOne(
-      { userId },
-      { $pull: { products: productId } }
-    );
+    await Wishlist.updateOne({ userId }, { $pull: { products: productId } });
 
     return res.json({ success: true });
-
   } catch (error) {
     console.error("Remove wishlist error:", error.message);
     return res.status(500).json({ success: false });

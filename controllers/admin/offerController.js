@@ -3,30 +3,24 @@ import Category from "../../models/categoryModel.js";
 import ProductOffer from "../../models/productofferModel.js";
 import CategoryOffer from "../../models/categoryofferModel.js";
 
-
 export const loadProductOffers = async (req, res) => {
   try {
     const products = await Product.find({ isBlocked: false });
 
-    const offers = await ProductOffer.find()
-      .populate("productId")
-      .lean();
+    const offers = await ProductOffer.find().populate("productId").lean();
 
-
-    const validOffers = offers.filter(o => o.productId);
+    const validOffers = offers.filter((o) => o.productId);
 
     res.render("admin/product-offers", {
       page: "offers",
       products,
       offers: validOffers,
     });
-
   } catch (error) {
     console.error("Load Product Offers Error:", error.message);
     res.status(500).render("admin/errors/500", { page: "offers" });
   }
 };
-
 
 export const addProductOffer = async (req, res) => {
   try {
@@ -52,7 +46,7 @@ export const addProductOffer = async (req, res) => {
     const offer = await ProductOffer.findOneAndUpdate(
       { productId },
       { discount, isActive: true },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     ).populate("productId");
 
     res.json({
@@ -64,13 +58,11 @@ export const addProductOffer = async (req, res) => {
         isActive: offer.isActive,
       },
     });
-
   } catch (error) {
     console.error("Add Product Offer Error:", error.message);
     res.status(500).json({ success: false });
   }
 };
-
 
 export const toggleProductOffer = async (req, res) => {
   try {
@@ -87,38 +79,30 @@ export const toggleProductOffer = async (req, res) => {
       success: true,
       isActive: offer.isActive,
     });
-
   } catch (error) {
     console.error("Toggle Product Offer Error:", error.message);
     res.status(500).json({ success: false });
   }
 };
 
-
-
-
 export const loadCategoryOffers = async (req, res) => {
   try {
     const categories = await Category.find({ isListed: true });
 
-    const offers = await CategoryOffer.find()
-      .populate("categoryId")
-      .lean();
+    const offers = await CategoryOffer.find().populate("categoryId").lean();
 
-    const validOffers = offers.filter(o => o.categoryId);
+    const validOffers = offers.filter((o) => o.categoryId);
 
     res.render("admin/category-offers", {
       page: "offers",
       categories,
       offers: validOffers,
     });
-
   } catch (error) {
     console.error("Load Category Offers Error:", error.message);
     res.status(500).render("admin/errors/500", { page: "offers" });
   }
 };
-
 
 export const addCategoryOffer = async (req, res) => {
   try {
@@ -144,8 +128,14 @@ export const addCategoryOffer = async (req, res) => {
     const offer = await CategoryOffer.findOneAndUpdate(
       { categoryId },
       { discount, isActive: true },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     ).populate("categoryId");
+
+    await Category.findOneAndUpdate(
+      {_id:categoryId},
+      {categoryOffer:discount}
+    )
+    
 
     res.json({
       success: true,
@@ -156,13 +146,11 @@ export const addCategoryOffer = async (req, res) => {
         isActive: offer.isActive,
       },
     });
-
   } catch (error) {
     console.error("Add Category Offer Error:", error.message);
     res.status(500).json({ success: false });
   }
 };
-
 
 export const toggleCategoryOffer = async (req, res) => {
   try {
@@ -179,7 +167,6 @@ export const toggleCategoryOffer = async (req, res) => {
       success: true,
       isActive: offer.isActive,
     });
-
   } catch (error) {
     console.error("Toggle Category Offer Error:", error.message);
     res.status(500).json({ success: false });

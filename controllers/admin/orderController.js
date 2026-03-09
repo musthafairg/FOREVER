@@ -3,6 +3,9 @@ import User from "../../models/userModel.js";
 import Product from "../../models/productModel.js";
 import { creditWallet } from "../../utils/walletUtils.js";
 
+
+
+
 const recalculateOrderSummary = (order) => {
   const activeItems = order.items.filter((i) => !i.isCancelled && !i.refunded);
 
@@ -111,7 +114,7 @@ export const updateOrderStatus = async (req, res) => {
 
     if (!order) return res.redirect("/admin/orders");
 
-    // 🚫 BLOCK STATUS CHANGE AFTER RETURN APPROVED
+
     if (
       order.returnStatus === "APPROVED" ||
       order.orderStatus === "Returned" ||
@@ -245,12 +248,12 @@ export const updateReturnItemStatus = async (req, res) => {
         await creditWallet(
           order.userId,
           refundAmount,
-          `Refund for returned item ${item.productName}`
+          `Refund for returned item ${item.productName}`,
         );
       }
 
       const remainingItems = order.items.filter(
-        (i) => !i.isCancelled && !i.refunded
+        (i) => !i.isCancelled && !i.refunded,
       );
 
       if (remainingItems.length === 0) {
@@ -274,6 +277,3 @@ export const updateReturnItemStatus = async (req, res) => {
     res.status(500).render("admin/errors/500");
   }
 };
-
-
-

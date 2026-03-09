@@ -10,29 +10,24 @@ export const getProductDetailsPage = async (req, res) => {
 
     const category = await Category.find({ isListed: true });
 
-    let product = await Product.findById(id)
-      .populate("category")
-      .populate({
-        path: "reviews.user",
-        select: "name email",
-      });
+    let product = await Product.findById(id).populate("category").populate({
+      path: "reviews.user",
+      select: "name email",
+    });
 
     if (!product || product.isBlocked || product.status === "Discontinued") {
       return res.status(404).render("errors/product-not-found", {
         page: "shop",
-        user
+        user,
       });
     }
 
     const baseOffer = await applyBestOffer(product);
     const discountPercent = baseOffer.discountPercent || 0;
 
-  
     product = product.toObject();
 
-  
-    product.variants = product.variants.map(v => {
-
+    product.variants = product.variants.map((v) => {
       const finalPrice =
         discountPercent > 0
           ? Math.round(v.price - (v.price * discountPercent) / 100)
@@ -42,19 +37,19 @@ export const getProductDetailsPage = async (req, res) => {
         ...v,
         originalPrice: v.price,
         finalPrice,
-        discountPercent
+        discountPercent,
       };
     });
 
     const minVariant = product.variants.reduce((min, v) =>
-      v.finalPrice < min.finalPrice ? v : min
+      v.finalPrice < min.finalPrice ? v : min,
     );
 
     const offerData = {
       originalPrice: minVariant.originalPrice,
       finalPrice: minVariant.finalPrice,
       discountPercent,
-      appliedOffer: baseOffer.appliedOffer || null
+      appliedOffer: baseOffer.appliedOffer || null,
     };
 
     const latestreviews = product.reviews.reverse().slice(0, 6);
@@ -74,7 +69,6 @@ export const getProductDetailsPage = async (req, res) => {
       latestreviews,
       relatedProducts,
     });
-
   } catch (error) {
     console.error("Error fetching product details: ", error.message);
     return res.status(500).render("errors/500");

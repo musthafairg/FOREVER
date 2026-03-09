@@ -12,7 +12,6 @@ export const getCoupon = async (req, res) => {
 
 export const createCoupon = async (req, res) => {
   try {
-
     const code = req.body.code.trim().toUpperCase();
 
     const exists = await Coupon.findOne({ code });
@@ -20,27 +19,24 @@ export const createCoupon = async (req, res) => {
     if (exists) {
       return res.json({
         success: false,
-        errors: { code: "Coupon already exists" }
+        errors: { code: "Coupon already exists" },
       });
     }
 
     const coupon = await Coupon.create({ ...req.body, code });
 
     res.json({ success: true, coupon });
-
   } catch (err) {
-
     if (err.code === 11000) {
       return res.json({
         success: false,
-        errors: { code: "Duplicate coupon code" }
+        errors: { code: "Duplicate coupon code" },
       });
     }
 
     res.status(500).json({ success: false });
   }
 };
-
 
 export const updateCoupon = async (req, res) => {
   await Coupon.findByIdAndUpdate(req.params.id, {

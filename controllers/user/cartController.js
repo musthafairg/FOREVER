@@ -6,11 +6,8 @@ import { applyBestOffer } from "../../utils/applyBestOffer.js";
 const Max_QUANTITY_PER_PRODUCT = 5;
 export const loadCart = async (req, res) => {
   try {
-    
+    const userId = req.session.user._id;
 
-    const userId = req.session.user._id;  
-
-  
     const user = await User.findById(userId);
 
     const cart = await Cart.findOne({ userId }).populate({
@@ -43,7 +40,7 @@ export const loadCart = async (req, res) => {
         }
 
         const selectedVariant = product?.variants?.find(
-          (v) => v.size === item.size
+          (v) => v.size === item.size,
         );
 
         if (!selectedVariant || selectedVariant.quantity < item.quantity) {
@@ -62,7 +59,7 @@ export const loadCart = async (req, res) => {
           finalPrice =
             discountPercent > 0
               ? Math.round(
-                  originalPrice - (originalPrice * discountPercent) / 100
+                  originalPrice - (originalPrice * discountPercent) / 100,
                 )
               : originalPrice;
 
@@ -77,7 +74,7 @@ export const loadCart = async (req, res) => {
           isBlocked,
           stockIssue,
         };
-      })
+      }),
     );
 
     res.render("user/cart", {
@@ -94,20 +91,14 @@ export const loadCart = async (req, res) => {
 
 export const addToCart = async (req, res) => {
   try {
-  
-
-
-
     if (!req.session?.user?._id) {
-  return res.status(401).json({
-    success: false,
-    message: "Please login",
-  });
-}
+      return res.status(401).json({
+        success: false,
+        message: "Please login",
+      });
+    }
 
-const userId = req.session.user._id;
-   
-    
+    const userId = req.session.user._id;
 
     const { productId, quantity = 1, size } = req.body;
 
