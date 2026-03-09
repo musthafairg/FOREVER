@@ -121,31 +121,53 @@ export const placeOrder = async (req, res) => {
       req.session.appliedCoupon = null;
     }
 
-    for (const i of cart.items) {
-      const product = await Product.findById(i.productId._id);
-      const variant = product.variants.find((v) => v.size === i.size);
+   
+  if (paymentMethod === "WALLET") {
 
-      if (variant) {
-        variant.quantity -= i.quantity;
-      }
+  await debitWallet(userId, total, `Payment for order ${order.orderId}`);
 
-      await product.save();
+  order.paymentStatus = "PAID";
+  await order.save();
+
+  for (const item of order.items) {
+    const product = await Product.findById(item.productId);
+
+    const variant = product.variants.find(
+      (v) => v.size === item.size
+    );
+
+    if (variant) {
+      variant.quantity -= item.quantity;
     }
 
-    await Cart.deleteOne({ userId });
+    await product.save();
+  }
 
-    if (paymentMethod === "WALLET") {
-      await debitWallet(userId, total, `Payment for order ${order.orderId}`);
+  await Cart.deleteOne({ userId });
 
-      order.paymentStatus = "PAID";
-      await order.save();
-
-      return res.json({ success: true, redirect: "/order-success" });
-    }
+  return res.json({ success: true, redirect: "/order-success" });
+}
 
     if (paymentMethod === "COD") {
-      return res.json({ success: true, redirect: "/order-success" });
+
+  for (const item of order.items) {
+    const product = await Product.findById(item.productId);
+
+    const variant = product.variants.find(
+      (v) => v.size === item.size
+    );
+
+    if (variant) {
+      variant.quantity -= item.quantity;
     }
+
+    await product.save();
+  }
+
+  await Cart.deleteOne({ userId });
+
+  return res.json({ success: true, redirect: "/order-success" });
+}
 
     const razorpayOrder = await razorpay.orders.create({
       amount: total * 100,
@@ -168,6 +190,9 @@ export const placeOrder = async (req, res) => {
     res.status(500).json({ success: false });
   }
 };
+
+
+
 export const verifyPayment = async (req, res) => {
   try {
     const {
@@ -182,24 +207,46 @@ export const verifyPayment = async (req, res) => {
       .update(razorpay_order_id + "|" + razorpay_payment_id)
       .digest("hex");
 
+    const order = await Order.findById(orderId);
+
     if (generated !== razorpay_signature) {
-      await Order.findByIdAndUpdate(orderId, {
-        paymentStatus: "FAILED",
-        orderStatus: "Failed",
-      });
+      order.paymentStatus = "FAILED";
+      order.orderStatus = "Failed";
+      await order.save();
 
       return res.json({ success: false });
     }
 
-    await Order.findByIdAndUpdate(orderId, {
-      paymentStatus: "PAID",
-      razorpayPaymentId: razorpay_payment_id,
-      razorpaySignature: razorpay_signature,
-      orderStatus: "Placed",
-    });
+    
+    order.paymentStatus = "PAID";
+    order.razorpayPaymentId = razorpay_payment_id;
+    order.razorpaySignature = razorpay_signature;
+    order.orderStatus = "Placed";
+
+    await order.save();
+
+   
+    for (const item of order.items) {
+      const product = await Product.findById(item.productId);
+
+      const variant = product.variants.find(
+        (v) => v.size === item.size
+      );
+
+      if (variant) {
+        variant.quantity -= item.quantity;
+      }
+
+      await product.save();
+    }
+
+   
+    await Cart.deleteOne({ userId: order.userId });
 
     res.json({ success: true });
+
   } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false });
   }
 };
