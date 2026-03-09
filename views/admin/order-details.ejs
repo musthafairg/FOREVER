@@ -108,26 +108,41 @@
                 </span>
               </p>
 
-              <% if (order.orderStatus !== "Delivered" && order.orderStatus !==
-              "Cancelled"&&order.orderStatus!=="Failed" && order.returnStatus == "NONE" && order.orderStatus
-              !== "Return Requested" ) { %>
+           <% if (
+order.orderStatus !== "Delivered" &&
+order.orderStatus !== "Cancelled" &&
+order.orderStatus !== "Returned" &&
+order.returnStatus !== "APPROVED" &&
+!order.isFullyRefunded
+) { %>
 
-              <form
-                action="/admin/orders/<%= order.orderId %>/status"
-                method="POST"
-                class="d-flex justify-content-end gap-2 mt-2"
-              >
-                <select name="status" class="form-select form-select-sm w-auto">
-                  <option disabled selected>Change Status</option>
-                  <option value="Placed">Placed</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Out for Delivery">Out for Delivery</option>
-                  <option value="Delivered">Delivered</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select>
-                <button class="btn btn-sm btn-dark">Update</button>
-              </form>
-              <% } %> <% if (order.returnStatus === "REQUESTED" &&
+<form
+action="/admin/orders/<%= order.orderId %>/status"
+method="POST"
+class="d-flex justify-content-end gap-2 mt-2"
+>
+
+<select name="status" class="form-select form-select-sm w-auto">
+
+<option disabled selected>Change Status</option>
+
+<option value="Placed">Placed</option>
+<option value="Shipped">Shipped</option>
+<option value="Out for Delivery">Out for Delivery</option>
+<option value="Delivered">Delivered</option>
+<option value="Cancelled">Cancelled</option>
+
+</select>
+
+<button class="btn btn-sm btn-dark">
+Update
+</button>
+
+</form>
+
+<% } %>
+              
+              <% if (order.returnStatus === "REQUESTED" &&
               order.orderStatus !== "Returned") { %>
 
               <form

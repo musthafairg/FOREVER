@@ -103,19 +103,30 @@ export const loadAdminOrderDetail = async (req, res) => {
     });
   }
 };
-
 export const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
-    await Order.updateOne({ orderId: req.params.id }, { orderStatus: status });
+    const order = await Order.findOne({ orderId: req.params.id });
+
+    if (!order) return res.redirect("/admin/orders");
+
+    // 🚫 BLOCK STATUS CHANGE AFTER RETURN APPROVED
+    if (
+      order.returnStatus === "APPROVED" ||
+      order.orderStatus === "Returned" ||
+      order.isFullyRefunded
+    ) {
+      return res.redirect(`/admin/orders/${req.params.id}`);
+    }
+
+    order.orderStatus = status;
+    await order.save();
 
     res.redirect(`/admin/orders/${req.params.id}`);
   } catch (error) {
-    console.error("Update order status error : ", error.message);
-    res.status(500).render("admin/errors/500", {
-      page: "orders",
-    });
+    console.error(error);
+    res.status(500).render("admin/errors/500");
   }
 };
 
@@ -200,42 +211,27 @@ export const updateReturnItemStatus = async (req, res) => {
     const { id, productId } = req.params;
 
     const order = await Order.findOne({ orderId: id });
-    if (!order) return res.redirect("/admin/orders");
 
-    if (order.isFullyRefunded) {
-      return res.redirect(`/admin/orders/${id}`);
-    }
-    if (order.paymentStatus !== "PAID") {
-      return res.redirect(`/admin/orders/${id}`);
-    }
+    if (!order) return res.redirect("/admin/orders");
 
     const item = order.items.find((i) => i.productId.toString() === productId);
 
-    if (
-      !item ||
-      item.refunded ||
-      item.isCancelled ||
-      item.returnStatus !== "REQUESTED"
-    ) {
-      return res.redirect(`/admin/orders/${id}`);
-    }
+    if (!item) return res.redirect(`/admin/orders/${id}`);
 
     if (status === "APPROVED") {
-      if (item.refunded) {
-        return res.redirect(`/admin/orders/${id}`);
-      }
-
       const product = await Product.findById(item.productId);
+
       const variant = product.variants.find((v) => v.size === item.size);
 
       if (variant) {
         variant.quantity += item.quantity;
         await product.save();
       }
+
       const oldTotal = order.priceDetails.total;
 
-      item.refunded = true;
       item.returnStatus = "APPROVED";
+      item.refunded = true;
 
       const newTotal = recalculateOrderSummary(order);
 
@@ -249,34 +245,33 @@ export const updateReturnItemStatus = async (req, res) => {
         await creditWallet(
           order.userId,
           refundAmount,
-          `Refund for returned item ${item.productName} (Order ${order.orderId})`,
+          `Refund for returned item ${item.productName}`
         );
       }
 
       const remainingItems = order.items.filter(
-        (i) => !i.isCancelled && !i.refunded,
+        (i) => !i.isCancelled && !i.refunded
       );
 
       if (remainingItems.length === 0) {
         order.orderStatus = "Returned";
         order.isFullyRefunded = true;
-      } else {
-        order.orderStatus = "Delivered";
       }
+
+      order.returnStatus = "APPROVED";
 
       await order.save();
     }
 
     if (status === "REJECTED") {
       item.returnStatus = "REJECTED";
-      order.returnStatus = "REJECTED";
       await order.save();
     }
 
     res.redirect(`/admin/orders/${id}`);
   } catch (error) {
-    console.error("Update return item status error:", error.message);
-    res.status(500).render("admin/errors/500", { page: "orders" });
+    console.error(error);
+    res.status(500).render("admin/errors/500");
   }
 };
 
